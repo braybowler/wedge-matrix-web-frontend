@@ -14,7 +14,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "check": "npm run lint && npm run format && npm run test:unit"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",

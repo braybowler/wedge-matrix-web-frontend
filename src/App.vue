@@ -6,20 +6,8 @@ import { RouterLink, RouterView } from 'vue-router'
   <header>
     <div class="bg-[#111827]">
       <nav class="flex items-center justify-around p-4">
-        <RouterLink
-          active-class="active-link"
-          class="link"
-          to="/matrix"
-        >
-          Wedge Matrix
-        </RouterLink>
-        <RouterLink
-          active-class="active-link"
-          class="link"
-          to="/configure"
-        >
-          Configure
-        </RouterLink>
+        <RouterLink active-class="active-link" class="link" to="/matrix"> Wedge Matrix </RouterLink>
+        <RouterLink active-class="active-link" class="link" to="/configure"> Configure </RouterLink>
       </nav>
     </div>
   </header>
@@ -30,11 +18,11 @@ import { RouterLink, RouterView } from 'vue-router'
 <style scoped>
 @reference "tailwindcss";
 
- .link {
-   @apply text-[#9ca3af];
- }
+.link {
+  @apply text-[#9ca3af];
+}
 
- .active-link {
-   @apply text-[#818cf8];
- }
+.active-link {
+  @apply text-[#818cf8];
+}
 </style>

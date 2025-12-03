@@ -53,23 +53,17 @@ const wedges = [
           <tr>
             <td>
               <span class="row-label">
-                {{wedge.label}}
+                {{ wedge.label }}
               </span>
             </td>
             <td>
-              <span class="row-label">
-                50
-              </span>
+              <span class="row-label"> 50 </span>
             </td>
             <td>
-              <span class="row-label">
-                60
-              </span>
+              <span class="row-label"> 60 </span>
             </td>
             <td>
-              <span class="row-label">
-                70
-              </span>
+              <span class="row-label"> 70 </span>
             </td>
           </tr>
         </template>
@@ -112,7 +106,7 @@ td {
 }
 
 .swing-percentage-container {
-  @apply flex flex-col
+  @apply flex flex-col;
 }
 
 .swing-percentage {
