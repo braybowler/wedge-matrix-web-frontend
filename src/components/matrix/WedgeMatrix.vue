@@ -32,16 +32,18 @@ const wedges = [
 
 <template>
   <div class="bg-[#111827] p-4">
-    <table>
+    <table class="w-full">
       <thead>
         <tr>
           <th>
             <span class="column-header"> Club </span>
           </th>
           <template v-for="columnHeader in props.columnHeaders" :key="columnHeader.id">
-            <th class="">
-              <span class="swing-percentage"> {{ columnHeader.swingPercentage }}% </span>
-              <span class="swing-percentage-subheader"> Carry </span>
+            <th>
+              <div class="swing-percentage-container">
+                <span class="swing-percentage"> {{ columnHeader.swingPercentage }}% </span>
+                <span class="swing-percentage-subheader"> Carry </span>
+              </div>
             </th>
           </template>
         </tr>
@@ -54,9 +56,21 @@ const wedges = [
                 {{wedge.label}}
               </span>
             </td>
-            <td>50</td>
-            <td>60</td>
-            <td>70</td>
+            <td>
+              <span class="row-label">
+                50
+              </span>
+            </td>
+            <td>
+              <span class="row-label">
+                60
+              </span>
+            </td>
+            <td>
+              <span class="row-label">
+                70
+              </span>
+            </td>
           </tr>
         </template>
       </tbody>
@@ -69,15 +83,36 @@ const wedges = [
 
 table {
   border-collapse: collapse;
-  border-top: 1px solid #4b5563;
+  text-align: center;
+  background-color: #4b5563;
+  border-radius: 8px;
 }
 
 tr {
   border-bottom: 1px solid #4b5563;
+  background-color: #1f2937;
+}
+
+tr:last-child {
+  border-bottom: none;
+}
+
+th {
+  padding: 4px;
+  text-align: center;
+  border-bottom: 1px solid #4b5563;
+}
+
+td {
+  padding: 8px;
 }
 
 .swing-percentage-subheader {
   @apply text-[#9ca3af];
+}
+
+.swing-percentage-container {
+  @apply flex flex-col
 }
 
 .swing-percentage {

@@ -20,7 +20,7 @@ const columnHeaders = ref([
 </script>
 
 <template>
-  <main class="bg-[#111827]">
+  <main class="bg-[#111827] h-auto">
     <WedgeMatrix
       :num-columns="3"
       :column-headers=columnHeaders
