@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <div class="bg-[#111827]">
+    <div>
       <nav class="flex items-center justify-around p-4">
         <RouterLink active-class="active-link" class="link" to="/matrix"> Wedge Matrix </RouterLink>
         <RouterLink active-class="active-link" class="link" to="/configure"> Configure </RouterLink>

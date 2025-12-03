@@ -1,8 +1,5 @@
 <script setup lang="ts">
-type UserColumnHeaders = {
-  swingPercentage: number
-  id: number
-}
+import type { UserColumnHeaders } from '@/types/matrix'
 
 const props = defineProps<{
   numColumns: number
@@ -38,34 +35,37 @@ const wedges = [
           <th>
             <span class="column-header"> Club </span>
           </th>
-          <template v-for="columnHeader in props.columnHeaders" :key="columnHeader.id">
-            <th>
-              <div class="swing-percentage-container">
-                <span class="swing-percentage"> {{ columnHeader.swingPercentage }}% </span>
-                <span class="swing-percentage-subheader"> Carry </span>
-              </div>
-            </th>
+            <template v-for="columnHeader in props.columnHeaders" :key="columnHeader.id">
+              <th>
+                <div class="swing-percentage-container">
+                  <span class="swing-percentage"> {{ columnHeader.swingPercentage }}% </span>
+                  <span class="swing-percentage-subheader"> Carry </span>
+                </div>
+              </th>
           </template>
         </tr>
       </thead>
       <tbody>
-        <template v-for="wedge in wedges" :key="wedge.id">
-          <tr>
-            <td>
-              <span class="row-label">
-                {{ wedge.label }}
-              </span>
-            </td>
-            <td>
-              <span class="row-label"> 50 </span>
-            </td>
-            <td>
-              <span class="row-label"> 60 </span>
-            </td>
-            <td>
-              <span class="row-label"> 70 </span>
-            </td>
-          </tr>
+        <template
+          v-for="wedge in wedges"
+          :key="wedge.id"
+        >
+            <tr>
+              <td>
+                <span class="row-label">
+                  {{ wedge.label }}
+                </span>
+              </td>
+              <td>
+                <span class="row-label"> 50 </span>
+              </td>
+              <td>
+                <span class="row-label"> 60 </span>
+              </td>
+              <td>
+                <span class="row-label"> 70 </span>
+              </td>
+            </tr>
         </template>
       </tbody>
     </table>
