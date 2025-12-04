@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { UserColumnHeaders } from '@/types/matrix'
+import type { AllowableMatrixColumnNumber, UserColumnHeader } from '@/types/matrix'
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
-  const matrixColumns = ref(1)
-  const matrixColumnHeaders = ref<Array<UserColumnHeaders>>([
+  const matrixColumns = ref<AllowableMatrixColumnNumber>(3)
+  const matrixColumnHeaders = ref<Array<UserColumnHeader>>([
     {
       swingPercentage: 25,
       id: 1,
@@ -20,6 +20,6 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
 
   return {
     matrixColumns,
-    matrixColumnHeaders
+    matrixColumnHeaders,
   }
 })
