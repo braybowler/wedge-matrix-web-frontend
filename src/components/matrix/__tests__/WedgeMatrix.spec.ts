@@ -1,15 +1,11 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import WedgeMatrix, { type WedgeMatrixProps } from '@/components/matrix/WedgeMatrix.vue'
+import { createPinia, setActivePinia, storeToRefs } from 'pinia'
+import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import type { RowDisplayOption } from '@/types/matrix'
 
 const defaultMountProps: WedgeMatrixProps = {
-  numColumns: 1,
-  columnHeaders: [
-    {
-      swingPercentage: 100,
-      id: 1,
-    },
-  ],
   clubs: [
     {
       label: 'LW',
@@ -31,6 +27,11 @@ const defaultMountProps: WedgeMatrixProps = {
 }
 
 describe('WedgeMatrix Component', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+    setActivePinia(createPinia())
+  })
+
   describe('Matrix Rendering', () => {
     it('renders', () => {
       const wrapper = mount(WedgeMatrix, {
@@ -40,306 +41,131 @@ describe('WedgeMatrix Component', () => {
       expect(wrapper.exists()).toBeTruthy()
     })
 
-    it.each([
-      {
-        numColumns: 3,
-        columnHeaders: [
-          {
-            swingPercentage: 25,
-            id: 1,
-          },
-          {
-            swingPercentage: 50,
-            id: 2,
-          },
-          {
-            swingPercentage: 75,
-            id: 3,
-          },
-        ],
-        clubs: [
-          {
-            label: 'LW',
-            id: 1,
-          },
-        ],
-        clubLabelsNotPresent: ['SW', 'GW', 'PW'],
-      },
-      {
-        numColumns: 3,
-        columnHeaders: [
-          {
-            swingPercentage: 25,
-            id: 1,
-          },
-          {
-            swingPercentage: 50,
-            id: 2,
-          },
-          {
-            swingPercentage: 75,
-            id: 3,
-          },
-        ],
-        clubs: [
-          {
-            label: 'LW',
-            id: 1,
-          },
-          {
-            label: 'SW',
-            id: 2,
-          },
-        ],
-        clubLabelsNotPresent: ['GW', 'PW'],
-      },
-      {
-        numColumns: 3,
-        columnHeaders: [
-          {
-            swingPercentage: 25,
-            id: 1,
-          },
-          {
-            swingPercentage: 50,
-            id: 2,
-          },
-          {
-            swingPercentage: 75,
-            id: 3,
-          },
-        ],
-        clubs: [
-          {
-            label: 'LW',
-            id: 1,
-          },
-          {
-            label: 'SW',
-            id: 2,
-          },
-          {
-            label: 'GW',
-            id: 3,
-          },
-        ],
-        clubLabelsNotPresent: ['PW'],
-      },
-      {
-        numColumns: 3,
-        columnHeaders: [
-          {
-            swingPercentage: 25,
-            id: 1,
-          },
-          {
-            swingPercentage: 50,
-            id: 2,
-          },
-          {
-            swingPercentage: 75,
-            id: 3,
-          },
-        ],
-        clubs: [
-          {
-            label: 'LW',
-            id: 1,
-          },
-          {
-            label: 'SW',
-            id: 2,
-          },
-          {
-            label: 'GW',
-            id: 3,
-          },
-          {
-            label: 'PW',
-            id: 4,
-          },
-        ],
-        clubLabelsNotPresent: [],
-      },
-    ])(
-      'displays correct clubs (matrix rows) passed via props: $clubs',
-      ({ numColumns, columnHeaders, clubs, clubLabelsNotPresent }) => {
-        const wrapper = mount(WedgeMatrix, {
-          props: {
-            numColumns,
-            columnHeaders,
-            clubs,
-          } as WedgeMatrixProps,
-        })
+    it('displays correct clubs (matrix rows)', () => {
+      const wrapper = mount(WedgeMatrix, {
+        props: defaultMountProps,
+      })
 
-        clubs.forEach((club) => {
-          expect(wrapper.text()).toContain(club.label)
-          clubLabelsNotPresent.forEach((clubLabelNotPresent) => {
-            expect(wrapper.text()).not.toContain(clubLabelNotPresent)
-          })
-        })
-      },
-    )
+      defaultMountProps.clubs.forEach((club) => {
+        expect(wrapper.text()).toContain(club.label)
+      })
+    })
+
+    it('displays correct column headers (matrix columns)', () => {
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      const { matrixColumnHeaders } = storeToRefs(matrixConfigurationStore)
+      matrixColumnHeaders.value = [
+        {
+          label: 'Test 1',
+          id: 1,
+        },
+        {
+          label: 'Test 2',
+          id: 2,
+        },
+        {
+          label: 'Test 3',
+          id: 3,
+        },
+        {
+          label: 'Test 4',
+          id: 4,
+        },
+      ]
+
+      const wrapper = mount(WedgeMatrix, {
+        props: defaultMountProps,
+      })
+
+      matrixColumnHeaders.value.forEach((header) => {
+        expect(wrapper.text()).toContain(header.label)
+      })
+    })
 
     it.each([
       {
-        numColumns: 1,
-        columnHeaders: [
-          {
-            swingPercentage: 25,
-            id: 1,
-          },
-        ],
-        clubs: [
-          {
-            label: 'LW',
-            id: 1,
-          },
-          {
-            label: 'SW',
-            id: 2,
-          },
-          {
-            label: 'GW',
-            id: 3,
-          },
-          {
-            label: 'PW',
-            id: 4,
-          },
-        ],
+        testDisplayOptionValues: ['Carry', 'Total', 'Both'],
+        testRowDisplayOption: 'Carry',
       },
       {
-        numColumns: 2,
-        columnHeaders: [
-          {
-            swingPercentage: 25,
-            id: 1,
-          },
-          {
-            swingPercentage: 50,
-            id: 2,
-          },
-        ],
-        clubs: [
-          {
-            label: 'LW',
-            id: 1,
-          },
-          {
-            label: 'SW',
-            id: 2,
-          },
-          {
-            label: 'GW',
-            id: 3,
-          },
-          {
-            label: 'PW',
-            id: 4,
-          },
-        ],
-      },
-      {
-        numColumns: 3,
-        columnHeaders: [
-          {
-            swingPercentage: 25,
-            id: 1,
-          },
-          {
-            swingPercentage: 50,
-            id: 2,
-          },
-          {
-            swingPercentage: 75,
-            id: 3,
-          },
-        ],
-        clubs: [
-          {
-            label: 'LW',
-            id: 1,
-          },
-          {
-            label: 'SW',
-            id: 2,
-          },
-          {
-            label: 'GW',
-            id: 3,
-          },
-          {
-            label: 'PW',
-            id: 4,
-          },
-        ],
-      },
-      {
-        numColumns: 4,
-        columnHeaders: [
-          {
-            swingPercentage: 25,
-            id: 1,
-          },
-          {
-            swingPercentage: 50,
-            id: 2,
-          },
-          {
-            swingPercentage: 75,
-            id: 3,
-          },
-          {
-            swingPercentage: 100,
-            id: 4,
-          },
-        ],
-        clubs: [
-          {
-            label: 'LW',
-            id: 1,
-          },
-          {
-            label: 'SW',
-            id: 2,
-          },
-          {
-            label: 'GW',
-            id: 3,
-          },
-          {
-            label: 'PW',
-            id: 4,
-          },
-        ],
+        testDisplayOptionValues: ['Carry', 'Total', 'Both'],
+        testRowDisplayOption: 'Total',
       },
     ])(
-      'displays correct column headers (matrix columns) passed via props: $columnHeaders',
-      ({ numColumns, columnHeaders, clubs }) => {
+      'displays correct row display option when selected row option is: $testRowDisplayOption',
+      ({ testDisplayOptionValues, testRowDisplayOption }) => {
+        const matrixConfigurationStore = useMatrixConfigurationStore()
+        const { matrixRowDisplayOptions, selectedRowDisplayOption } =
+          storeToRefs(matrixConfigurationStore)
+        matrixRowDisplayOptions.value = testDisplayOptionValues as Array<RowDisplayOption>
+        selectedRowDisplayOption.value = testRowDisplayOption as RowDisplayOption
+
         const wrapper = mount(WedgeMatrix, {
-          props: {
-            numColumns,
-            columnHeaders,
-            clubs,
-          } as WedgeMatrixProps,
+          props: defaultMountProps,
         })
 
-        const columnsHeaders = wrapper.findAll('[data-test-id="swing-percentage-container"]')
-
-        expect(columnsHeaders.length).toEqual(numColumns)
-        columnHeaders.forEach((columnHeader) => {
-          expect(wrapper.text()).toContain(columnHeader.swingPercentage)
-        })
+        expect(wrapper.text()).toContain(testRowDisplayOption)
       },
     )
 
-    it.todo('displays correct row display options, if passed via props')
+    it('displays correct row display option when selected row option is: Both', () => {
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      const { matrixRowDisplayOptions, selectedRowDisplayOption } =
+        storeToRefs(matrixConfigurationStore)
+      matrixRowDisplayOptions.value = ['Carry', 'Total', 'Both']
+      selectedRowDisplayOption.value = 'Both'
+
+      const wrapper = mount(WedgeMatrix, {
+        props: defaultMountProps,
+      })
+
+      expect(wrapper.text()).toContain('Carry')
+      expect(wrapper.text()).toContain('Total')
+    })
   })
 
   describe('User Input', () => {
-    it.todo('accepts user yardage input')
+    it('accepts user yardage input', async () => {
+      const wrapper = mount(WedgeMatrix, {
+        props: defaultMountProps,
+      })
+
+      const inputs = wrapper.findAll('[data-test-id="carry-input"]')
+
+      await inputs[0]?.setValue('50')
+      await inputs[0]?.trigger('input')
+
+      expect((inputs[0]?.element as HTMLInputElement).value).toBe('50')
+    })
+
+    it('clears the matrix values on clear matrix button press', async () => {
+      vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+      const wrapper = mount(WedgeMatrix, {
+        props: defaultMountProps,
+        attachTo: document.body,
+      })
+
+      const inputs = wrapper.findAll('[data-test-id="carry-input"]')
+
+      for (const input of inputs) {
+        await input.setValue('50')
+        await input.trigger('input')
+      }
+
+      for (const input of inputs) {
+        expect((input.element as HTMLInputElement).value).toBe('50')
+      }
+
+      const clearAllButton = wrapper.find('[data-test-id="clear-all-button"]')
+
+      await clearAllButton.trigger('click')
+
+      for (const input of inputs) {
+        expect((input.element as HTMLInputElement).value).toBe('')
+      }
+    })
+
     it.todo('validates user yardage input')
-    it.todo('clears the matrix values on clear matrix button press')
   })
 })
