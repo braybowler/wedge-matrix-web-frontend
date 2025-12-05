@@ -1,17 +1,68 @@
-import { describe, it } from 'vitest'
-describe('SwingPercentageColumnSelector Component', () => {
-  describe('Swing Columns Rendering', () => {
-    it.todo('renders four options for the number of swing columns a user may configure', () => {
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mount } from '@vue/test-utils'
+import SwingPercentageColumnSelector from '@/components/configure/SwingPercentageColumnSelector.vue'
+import { createPinia, setActivePinia } from 'pinia'
+import { ref } from 'vue'
 
+const mockMatrixConfigurationStore = {
+  matrixColumns: ref(3),
+}
+
+vi.mock('@/stores/matrix/matrixConfigurationStore', () => ({
+  useMatrixConfigurationStore: () => mockMatrixConfigurationStore
+}))
+
+
+describe('SwingPercentageColumnSelector Component', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+    setActivePinia(createPinia())
+  })
+
+  describe('Swing Columns Rendering', () => {
+    it('renders', () => {
+      const wrapper = mount(SwingPercentageColumnSelector)
+
+      expect(wrapper.exists()).toBeTruthy()
+    })
+
+    it('renders four options for the number of swing columns a user may configure', () => {
+      const wrapper = mount(SwingPercentageColumnSelector)
+
+      const selectors = wrapper.findAll('[data-test-id="selector"]')
+
+      expect(selectors.length).toEqual(4);
     })
   })
 
   describe('User Input', () => {
-    it.todo('allows a user to select the number of swing columns')
+    it('allows a user to select the number of swing columns', async () => {
+      const wrapper = mount(SwingPercentageColumnSelector)
+
+      const selectors = wrapper.findAll('[data-test-id="selector"]')
+
+      expect(selectors[0]?.classes()).not.toContain('selector-container-active')
+      expect(selectors[0]?.classes()).toContain('selector-container')
+
+      await selectors[0]?.trigger('click');
+
+      expect(selectors[0]?.classes()).toContain('selector-container-active')
+      expect(selectors[0]?.classes()).not.toContain('selector-container')
+    })
   })
 
   describe('Interaction With MatrixConfigurationStore', () => {
-    it.todo('receives initialization values from store on mount')
+    it('receives initialization values from store on mount', () => {
+      const mockedInitializedColumnValue = mockMatrixConfigurationStore.matrixColumns.value = 4
+      const wrapper = mount(SwingPercentageColumnSelector)
+
+      const selectors = wrapper.findAll('[data-test-id="selector"]')
+
+      console.log(wrapper.html())
+
+      expect(selectors[mockedInitializedColumnValue - 1]?.classes()).toContain('selector-container-active')
+    })
+
     it.todo('updates store values when a user makes a selection')
   })
 })

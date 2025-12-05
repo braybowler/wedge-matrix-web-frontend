@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import type { AllowableMatrixColumnNumber } from '@/types/matrix'
+import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import { storeToRefs } from 'pinia'
+
+const matrixConfigurationStore = useMatrixConfigurationStore();
+const { matrixColumns } = storeToRefs(matrixConfigurationStore);
 
 const allowMatrixColumnNumbers: Array<AllowableMatrixColumnNumber> = [1, 2, 3, 4]
 
+const handleColumnSelectorClick = (selectedColumnNumber: AllowableMatrixColumnNumber) => {
+  matrixColumns.value = selectedColumnNumber
+}
 </script>
 
 <template>
@@ -13,9 +21,11 @@ const allowMatrixColumnNumbers: Array<AllowableMatrixColumnNumber> = [1, 2, 3, 4
       <div
         v-for="selector in allowMatrixColumnNumbers"
         :key="selector"
-        class="selector-container"
+        :class="matrixColumns === selector ? `selector-container-active` : `selector-container`"
+        @click="handleColumnSelectorClick(selector)"
+        data-test-id="selector"
       >
-        <div>{{selector}}</div>
+        <div> {{selector}} </div>
       </div>
     </section>
   </section>
@@ -49,8 +59,29 @@ const allowMatrixColumnNumbers: Array<AllowableMatrixColumnNumber> = [1, 2, 3, 4
   color: #9ca3af;
 }
 
-.selector-container.active {
+.selector-container:hover {
+  background-color: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.selector-container-active {
   background-color: #818cf8;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 8px 16px;
   color: #f3f4f6;
+}
+
+.selector-container-active:hover {
+  background-color: #818cf8;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #f3f4f6;
+  cursor: pointer;
 }
 </style>
