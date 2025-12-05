@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import SwingPercentageColumnSelector from '@/components/configure/SwingPercentageColumnSelector.vue'
-import { createPinia, setActivePinia } from 'pinia'
+import { createPinia, setActivePinia, storeToRefs } from 'pinia'
 import { ref } from 'vue'
+import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 
 const mockMatrixConfigurationStore = {
   matrixColumns: ref(3),
@@ -58,11 +59,28 @@ describe('SwingPercentageColumnSelector Component', () => {
 
       const selectors = wrapper.findAll('[data-test-id="selector"]')
 
-      console.log(wrapper.html())
-
       expect(selectors[mockedInitializedColumnValue - 1]?.classes()).toContain('selector-container-active')
     })
 
-    it.todo('updates store values when a user makes a selection')
+    it('updates store values when a user makes a selection', async () => {
+      setActivePinia(createPinia())
+
+      const store = useMatrixConfigurationStore()
+      const { matrixColumns } = storeToRefs(store)
+
+      const wrapper = mount(SwingPercentageColumnSelector, {
+        global: {
+          plugins: [createPinia()]
+        }
+      })
+
+      const selectors = wrapper.findAll('[data-test-id="selector"]')
+
+      expect(matrixColumns.value).toBe(4)
+
+      await selectors[0]?.trigger('click')
+
+      expect(matrixColumns.value).toBe(1)
+    })
   })
 })
