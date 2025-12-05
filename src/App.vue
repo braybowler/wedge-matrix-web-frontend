@@ -8,5 +8,4 @@ import NavigationHeader from '@/components/header/NavigationHeader.vue'
   <RouterView />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
