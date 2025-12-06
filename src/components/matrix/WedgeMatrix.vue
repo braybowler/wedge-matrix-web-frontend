@@ -36,10 +36,10 @@ const clearMatrix = () => {
           <th>
             <span class="column-header"> Club </span>
           </th>
-          <template v-for="columnHeader in props.columnHeaders" :key="columnHeader.id">
+          <template v-for="numColumn in props.numColumns" :key="numColumn">
             <th>
               <div data-test-id="swing-percentage-container" class="swing-percentage-container">
-                <span class="swing-percentage"> {{ columnHeader.swingPercentage }}% </span>
+                <span class="swing-percentage"> {{ props.columnHeaders[numColumn - 1]?.swingPercentage }}% </span>
                 <span class="swing-percentage-subheader"> Carry </span>
               </div>
             </th>
@@ -54,15 +54,14 @@ const clearMatrix = () => {
                 {{ club.label }}
               </span>
             </td>
-            <td>
-              <input type="text" class="input" placeholder="C" />
-            </td>
-            <td>
-              <input type="text" class="input" placeholder="C" />
-            </td>
-            <td>
-              <input type="text" class="input" placeholder="C" />
-            </td>
+            <template
+              v-for="numColumn in props.numColumns"
+              :key="numColumn"
+            >
+              <td>
+                <input type="text" class="input" placeholder="C" />
+              </td>
+            </template>
           </tr>
         </template>
       </tbody>

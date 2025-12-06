@@ -2,8 +2,10 @@
 import WedgeMatrix from '@/components/matrix/WedgeMatrix.vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import type { UserClub } from '@/types/matrix'
+import { storeToRefs } from 'pinia'
 
-const { matrixColumns, matrixColumnHeaders } = useMatrixConfigurationStore()
+const matrixConfigurationStore = useMatrixConfigurationStore()
+const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationStore)
 
 const tempWedges: Array<UserClub> = [
   {

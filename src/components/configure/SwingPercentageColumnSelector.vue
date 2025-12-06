@@ -5,7 +5,6 @@ import { storeToRefs } from 'pinia'
 
 const matrixConfigurationStore = useMatrixConfigurationStore();
 const { matrixColumns } = storeToRefs(matrixConfigurationStore);
-
 const allowMatrixColumnNumbers: Array<AllowableMatrixColumnNumber> = [1, 2, 3, 4]
 
 const handleColumnSelectorClick = (selectedColumnNumber: AllowableMatrixColumnNumber) => {
