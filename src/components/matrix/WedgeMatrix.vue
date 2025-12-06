@@ -74,8 +74,6 @@ const clearMatrix = () => {
 </template>
 
 <style scoped>
-@reference "tailwindcss";
-
 table {
   width: 100%;
   border-radius: 8px;
@@ -139,9 +137,12 @@ td {
 }
 
 .input {
-  @apply bg-[#374151] text-[#f3f4f6] border border-[#4b5563] rounded-lg;
+  background-color: #374151;
   padding: 2px 0px;
   color: #f3f4f6;
+  border: solid 1px;
+  border-color: #4b5563;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   text-align: center;
@@ -155,7 +156,12 @@ td {
 }
 
 .button {
-  @apply mt-4 bg-[#374151] text-[#f3f4f6] border border-[#4b5563] rounded-lg;
+  background-color: #374151;
+  color: #f3f4f6;
+  border: solid 1px;
+  border-color: #4b5563;
+  border-radius: 8px;
+  margin-top: 16px;
   padding: 8px 20px;
   font-size: 16px;
   font-weight: 500;

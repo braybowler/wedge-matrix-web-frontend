@@ -31,8 +31,6 @@ const handleColumnSelectorClick = (selectedColumnNumber: AllowableMatrixColumnNu
 </template>
 
 <style scoped>
-@reference "tailwindcss";
-
 .component-container {
   padding: 8px;
 }
@@ -44,9 +42,9 @@ const handleColumnSelectorClick = (selectedColumnNumber: AllowableMatrixColumnNu
 }
 
 .selector-section {
-  @apply justify-around;
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
   margin-top: 12px;
 }
 
