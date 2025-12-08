@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import type {
-  AllowableMatrixColumnNumber,
-  RowDisplayOption,
-  UserClub,
-  UserColumnHeader,
-} from '@/types/matrix'
+import type { UserClub } from '@/types/matrix'
+import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import { storeToRefs } from 'pinia'
+
+const matrixConfigurationStore = useMatrixConfigurationStore()
+const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption } =
+  storeToRefs(matrixConfigurationStore)
 
 export interface WedgeMatrixProps {
-  numColumns: AllowableMatrixColumnNumber
-  columnHeaders: Array<UserColumnHeader>
   clubs: Array<UserClub>
-  rowDisplayOption?: RowDisplayOption
 }
 
 const props = defineProps<WedgeMatrixProps>()
@@ -24,7 +22,11 @@ const handleClearMatrixButtonPress = () => {
 }
 
 const clearMatrix = () => {
-  console.log('matrix cleared')
+  const inputs = document.getElementsByTagName('input')
+
+  for (const input of inputs) {
+    input.value = ''
+  }
 }
 </script>
 
@@ -36,17 +38,19 @@ const clearMatrix = () => {
           <th>
             <span class="column-header"> Club </span>
           </th>
-          <template
-            v-for="columnHeader in props.columnHeaders"
-            :key="columnHeader.id"
-          >
+          <template v-for="(numColumn, index) in matrixColumns" :key="numColumn">
             <th>
-              <div
-                data-test-id="swing-percentage-container"
-                class="swing-percentage-container"
-              >
-                <span class="swing-percentage"> {{ columnHeader.swingPercentage }}% </span>
-                <span class="swing-percentage-subheader"> Carry </span>
+              <div data-test-id="swing-percentage-container" class="swing-percentage-container">
+                <span class="swing-percentage">
+                  {{ matrixColumnHeaders[index]?.label }}
+                </span>
+                <template v-if="selectedRowDisplayOption != 'Both'">
+                  <span class="swing-percentage-subheader"> {{ selectedRowDisplayOption }} </span>
+                </template>
+                <template v-else>
+                  <span class="swing-percentage-subheader"> Carry </span>
+                  <span class="swing-percentage-subheader"> Total </span>
+                </template>
               </div>
             </th>
           </template>
@@ -60,29 +64,34 @@ const clearMatrix = () => {
                 {{ club.label }}
               </span>
             </td>
-            <td>
-              <input type="text" class="input" placeholder="C" />
-            </td>
-            <td>
-              <input type="text" class="input" placeholder="C" />
-            </td>
-            <td>
-              <input type="text" class="input" placeholder="C" />
-            </td>
+            <template v-for="numColumn in matrixColumns" :key="numColumn">
+              <td v-if="selectedRowDisplayOption === 'Carry'">
+                <input type="text" class="input" placeholder="C" data-test-id="carry-input" />
+              </td>
+              <td v-else-if="selectedRowDisplayOption === 'Total'">
+                <input type="text" class="input" placeholder="T" data-test-id="total-input" />
+              </td>
+              <td v-else>
+                <template class="input-pair-container">
+                  <input type="text" class="input" placeholder="C" data-test-id="carry-input" />
+                  <input type="text" class="input" placeholder="T" data-test-id="total-input" />
+                </template>
+              </td>
+            </template>
           </tr>
         </template>
       </tbody>
     </table>
 
     <div class="button-container">
-      <button @click="handleClearMatrixButtonPress" class="button">Clear Matrix</button>
+      <button @click="handleClearMatrixButtonPress" class="button" data-test-id="clear-all-button">
+        Clear Matrix
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-@reference "tailwindcss";
-
 table {
   width: 100%;
   border-radius: 8px;
@@ -146,13 +155,42 @@ td {
 }
 
 .input {
-  @apply bg-[#374151] text-[#f3f4f6] border border-[#4b5563] rounded-lg;
+  background-color: #374151;
   padding: 2px 0px;
   color: #f3f4f6;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   text-align: center;
-  width: 85%;
+  max-width: 50px;
+}
+
+.input:nth-child(2) {
+  margin-top: 4px;
+}
+
+.input:focus {
+  background-color: #374151;
+  padding: 2px 0px;
+  color: #f3f4f6;
+  border: 1px solid #818cf8;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 50px;
+}
+
+.input:focus::placeholder {
+  color: transparent;
+}
+
+.input-pair-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .button-container {
@@ -162,8 +200,12 @@ td {
 }
 
 .button {
-  @apply mt-4 bg-[#374151] text-[#f3f4f6] border border-[#4b5563] rounded-lg;
-  padding: 8px 20px;
+  background-color: #374151;
+  color: #f3f4f6;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  margin-top: 12px;
+  padding: 6px 16px;
   font-size: 16px;
   font-weight: 500;
 }
