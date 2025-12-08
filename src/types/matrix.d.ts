@@ -10,6 +10,6 @@ export type UserClub = {
 }
 
 export type UserColumnHeader = {
-  swingPercentage: number
   id: number
+  label: string
 }
