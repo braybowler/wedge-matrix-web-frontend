@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
+    "axios": "^1.13.2",
     "pinia": "^3.0.4",
     "tailwindcss": "^4.1.17",
     "vue": "^3.5.25",
@@ -27,7 +28,7 @@
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",
     "@types/jsdom": "^27.0.0",
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.10.2",
     "@vitejs/plugin-vue": "^6.0.2",
     "@vitest/eslint-plugin": "^1.5.0",
     "@vue/eslint-config-prettier": "^10.2.0",
