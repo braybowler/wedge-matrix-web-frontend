@@ -2,10 +2,14 @@
 import type { UserClub } from '@/types/matrix'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { storeToRefs } from 'pinia'
+import { useAxios } from '@/composables/axios.ts'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
-const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption } =
-  storeToRefs(matrixConfigurationStore)
+const {
+  matrixColumns,
+  matrixColumnHeaders,
+  selectedRowDisplayOption
+} = storeToRefs(matrixConfigurationStore)
 
 export interface WedgeMatrixProps {
   clubs: Array<UserClub>
@@ -208,5 +212,17 @@ td {
   padding: 6px 16px;
   font-size: 16px;
   font-weight: 500;
+}
+
+.button:hover {
+  background-color: #374151;
+  color: #f3f4f6;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  margin-top: 12px;
+  padding: 6px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
 }
 </style>
