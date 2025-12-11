@@ -2,23 +2,35 @@
 import { ref } from 'vue'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user/userStore.ts'
 
 const router = useRouter()
 const { post } = useAxios()
+
+const { setUser } = useUserStore()
 
 const email = ref('')
 const password = ref('')
 const showLoginErrorMessage = ref(false)
 
 const handleLoginSubmission = async () => {
-  const response = await post('/login', {
-    email: email.value,
-    password: password.value,
-  })
+  showLoginErrorMessage.value = false
 
-  if (response?.status === 200) {
-    await router.push({ name: 'matrix' })
-  } else {
+  try {
+    const response = await post('/login', {
+      email: email.value,
+      password: password.value,
+    })
+
+    if (response?.status === 200) {
+      setUser(response.data.user)
+
+      await router.push({ name: 'matrix' })
+    } else {
+      showLoginErrorMessage.value = true
+    }
+  } catch (error) {
+    console.log(error)
     showLoginErrorMessage.value = true
   }
 }
