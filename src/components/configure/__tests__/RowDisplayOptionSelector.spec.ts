@@ -4,6 +4,16 @@ import RowDisplayOptionSelector from '@/components/configure/RowDisplayOptionSel
 import { createPinia, setActivePinia, storeToRefs } from 'pinia'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 
+const mockUseAxiosComposable = vi.hoisted(() => ({
+  post: vi.fn(),
+  get: vi.fn(),
+  put: vi.fn(),
+}))
+
+vi.mock('@/composables/axios/axios.ts', () => ({
+  useAxios: () => mockUseAxiosComposable,
+}))
+
 describe('RowDisplayOptionSelector Component', () => {
   beforeEach(() => {
     vi.restoreAllMocks()

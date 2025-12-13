@@ -3,35 +3,163 @@ import { ref } from 'vue'
 import type {
   AllowableMatrixColumnNumber,
   RowDisplayOption,
-  UserColumnHeader,
+  WedgeMatrix,
+  YardageGrid,
 } from '@/types/matrix'
+import { useAxios } from '@/composables/axios/axios.ts'
+
+const { put } = useAxios()
+
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
+  const requiresSync = ref(false)
   const matrixColumns = ref<AllowableMatrixColumnNumber>(4)
-  const matrixColumnHeaders = ref<Array<UserColumnHeader>>([
-    {
-      label: '25%',
-      id: 1,
-    },
-    {
-      label: '50%',
-      id: 2,
-    },
-    {
-      label: '75%',
-      id: 3,
-    },
-    {
-      label: '100%',
-      id: 4,
-    },
-  ])
+  const matrixColumnHeaders = ref<Array<string>>(['', '', '', ''])
   const selectedRowDisplayOption = ref<RowDisplayOption>('Carry')
-  const matrixRowDisplayOptions = ref<Array<RowDisplayOption>>(['Carry', 'Total', 'Both'])
+  const yardageValues = ref<YardageGrid>([
+    [
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+    ],
+    [
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+    ],
+    [
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+    ],
+    [
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+    ],
+  ])
+
+  function initializeMatrixValues(initialMatrixValues: WedgeMatrix) {
+    matrixColumns.value = initialMatrixValues.number_of_columns
+    selectedRowDisplayOption.value = initialMatrixValues.selected_row_display_option
+
+    if (initialMatrixValues.column_headers) {
+      matrixColumnHeaders.value = initialMatrixValues.column_headers
+    }
+
+    if (initialMatrixValues.yardage_values) {
+      yardageValues.value = initialMatrixValues.yardage_values
+    }
+  }
+
+  async function synchronizeValues() {
+    if (requiresSync.value) {
+      await put('/wedge-matrix', {
+        number_of_columns: matrixColumns.value,
+        column_headers: matrixColumnHeaders.value,
+        selected_row_display_option: selectedRowDisplayOption.value,
+        yardage_values: yardageValues.value,
+      })
+
+      requiresSync.value = false
+    }
+  }
+
+  function setYardageValue(
+    field: 'carry_value' | 'total_value',
+    rawVal: string,
+    clubIndex: number,
+    columnIndex: number,
+  ) {
+    requiresSync.value = true
+
+    console.log('got in', rawVal)
+    const cell = yardageValues.value[clubIndex]?.[columnIndex]
+    if (!cell) return
+
+    const trimmed = rawVal.trim()
+    const parsed = trimmed === '' ? null : Number(trimmed)
+
+    cell[field] = parsed === null || Number.isNaN(parsed) ? null : parsed
+  }
+
+  function setMatrixColumnHeader(newVal: string, index: number) {
+    requiresSync.value = true
+    matrixColumnHeaders.value[index] = newVal
+  }
+
+  function setNumberOfMatrixColumns(newVal: AllowableMatrixColumnNumber) {
+    requiresSync.value = true
+    matrixColumns.value = newVal
+  }
+
+  function setSelectedRowDisplayOption(newVal: RowDisplayOption) {
+    requiresSync.value = true
+    selectedRowDisplayOption.value = newVal
+  }
 
   return {
+    yardageValues,
     matrixColumns,
     matrixColumnHeaders,
-    matrixRowDisplayOptions,
     selectedRowDisplayOption,
+    requiresSync,
+    initializeMatrixValues,
+    setYardageValue,
+    setMatrixColumnHeader,
+    setNumberOfMatrixColumns,
+    setSelectedRowDisplayOption,
+    synchronizeValues,
   }
 })

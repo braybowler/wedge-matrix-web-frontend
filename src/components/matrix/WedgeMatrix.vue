@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import type { UserClub } from '@/types/matrix'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { storeToRefs } from 'pinia'
+import { onUnmounted } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
-const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption } =
+const { setYardageValue } = matrixConfigurationStore
+const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption, yardageValues } =
   storeToRefs(matrixConfigurationStore)
 
-export interface WedgeMatrixProps {
-  clubs: Array<UserClub>
-}
-
-const props = defineProps<WedgeMatrixProps>()
+onUnmounted(async () => {
+  await matrixConfigurationStore.synchronizeValues()
+})
 
 const handleClearMatrixButtonPress = () => {
   const userResponse = confirm('Are you sure you want to clear all records?')
@@ -28,6 +27,8 @@ const clearMatrix = () => {
     input.value = ''
   }
 }
+
+const clubs = ['LW', 'SW', 'GW', 'PW']
 </script>
 
 <template>
@@ -42,7 +43,7 @@ const clearMatrix = () => {
             <th>
               <div data-test-id="swing-percentage-container" class="swing-percentage-container">
                 <span class="swing-percentage">
-                  {{ matrixColumnHeaders[index]?.label }}
+                  {{ matrixColumnHeaders[index] }}
                 </span>
                 <template v-if="selectedRowDisplayOption != 'Both'">
                   <span class="swing-percentage-subheader"> {{ selectedRowDisplayOption }} </span>
@@ -57,24 +58,80 @@ const clearMatrix = () => {
         </tr>
       </thead>
       <tbody>
-        <template v-for="club in props.clubs" :key="club.id">
+        <template v-for="(club, clubIndex) in clubs" :key="club">
           <tr>
             <td>
               <span class="row-label">
-                {{ club.label }}
+                {{ club }}
               </span>
             </td>
-            <template v-for="numColumn in matrixColumns" :key="numColumn">
+            <template v-for="(numColumn, colIndex) in matrixColumns" :key="numColumn">
               <td v-if="selectedRowDisplayOption === 'Carry'">
-                <input type="text" class="input" placeholder="C" data-test-id="carry-input" />
+                <input
+                  type="number"
+                  class="input"
+                  placeholder="C"
+                  data-test-id="carry-input"
+                  :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
+                  @change="
+                    setYardageValue(
+                      'carry_value',
+                      ($event.target as HTMLInputElement).value,
+                      clubIndex,
+                      colIndex,
+                    )
+                  "
+                />
               </td>
               <td v-else-if="selectedRowDisplayOption === 'Total'">
-                <input type="text" class="input" placeholder="T" data-test-id="total-input" />
+                <input
+                  type="number"
+                  class="input"
+                  placeholder="T"
+                  data-test-id="total-input"
+                  :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
+                  @change="
+                    setYardageValue(
+                      'total_value',
+                      ($event.target as HTMLInputElement).value,
+                      clubIndex,
+                      colIndex,
+                    )
+                  "
+                />
               </td>
               <td v-else>
                 <template class="input-pair-container">
-                  <input type="text" class="input" placeholder="C" data-test-id="carry-input" />
-                  <input type="text" class="input" placeholder="T" data-test-id="total-input" />
+                  <input
+                    type="number"
+                    class="input"
+                    placeholder="C"
+                    data-test-id="carry-input"
+                    :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
+                    @change="
+                      setYardageValue(
+                        'carry_value',
+                        ($event.target as HTMLInputElement).value,
+                        clubIndex,
+                        colIndex,
+                      )
+                    "
+                  />
+                  <input
+                    type="number"
+                    class="input"
+                    placeholder="T"
+                    data-test-id="total-input"
+                    :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
+                    @change="
+                      setYardageValue(
+                        'total_value',
+                        ($event.target as HTMLInputElement).value,
+                        clubIndex,
+                        colIndex,
+                      )
+                    "
+                  />
                 </template>
               </td>
             </template>
@@ -132,13 +189,13 @@ td {
 
 .swing-percentage {
   color: #818cf8;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .swing-percentage-subheader {
   color: #9ca3af;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 300;
 }
 

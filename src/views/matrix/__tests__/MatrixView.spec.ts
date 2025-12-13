@@ -25,6 +25,80 @@ const mockMatrixConfigurationStore = {
       id: 4,
     },
   ]),
+  yardageValues: ref([
+    [
+      {
+        carry_value: 50,
+        total_value: 55,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+    ],
+    [
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+    ],
+    [
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+    ],
+    [
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+      {
+        carry_value: null,
+        total_value: null,
+      },
+    ],
+  ]),
 }
 
 vi.mock('@/stores/matrix/matrixConfigurationStore', () => ({

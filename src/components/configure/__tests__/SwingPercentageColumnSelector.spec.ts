@@ -2,15 +2,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import SwingPercentageColumnSelector from '@/components/configure/SwingPercentageColumnSelector.vue'
 import { createPinia, setActivePinia, storeToRefs } from 'pinia'
-import { ref } from 'vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 
-const mockMatrixConfigurationStore = {
-  matrixColumns: ref(3),
-}
+const mockUseAxiosComposable = vi.hoisted(() => ({
+  post: vi.fn(),
+  get: vi.fn(),
+  put: vi.fn(),
+}))
 
-vi.mock('@/stores/matrix/matrixConfigurationStore', () => ({
-  useMatrixConfigurationStore: () => mockMatrixConfigurationStore,
+vi.mock('@/composables/axios/axios.ts', () => ({
+  useAxios: () => mockUseAxiosComposable,
 }))
 
 describe('SwingPercentageColumnSelector Component', () => {
@@ -53,27 +54,21 @@ describe('SwingPercentageColumnSelector Component', () => {
 
   describe('Interaction With MatrixConfigurationStore', () => {
     it('receives initialization values from store on mount', () => {
-      const mockedInitializedColumnValue = (mockMatrixConfigurationStore.matrixColumns.value = 4)
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      const { matrixColumns } = storeToRefs(matrixConfigurationStore)
+      matrixColumns.value = 4
       const wrapper = mount(SwingPercentageColumnSelector)
 
       const selectors = wrapper.findAll('[data-test-id="selector"]')
 
-      expect(selectors[mockedInitializedColumnValue - 1]?.classes()).toContain(
-        'selector-container-active',
-      )
+      expect(selectors[matrixColumns.value - 1]?.classes()).toContain('selector-container-active')
     })
 
     it('updates store values when a user makes a selection', async () => {
-      setActivePinia(createPinia())
-
       const store = useMatrixConfigurationStore()
       const { matrixColumns } = storeToRefs(store)
 
-      const wrapper = mount(SwingPercentageColumnSelector, {
-        global: {
-          plugins: [createPinia()],
-        },
-      })
+      const wrapper = mount(SwingPercentageColumnSelector)
 
       const selectors = wrapper.findAll('[data-test-id="selector"]')
 
