@@ -2,13 +2,13 @@
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { storeToRefs } from 'pinia'
 import type { RowDisplayOption } from '@/types/matrix'
+import { ref } from 'vue'
+
+const matrixRowDisplayOptions = ref<Array<RowDisplayOption>>(['Carry', 'Total', 'Both'])
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
-const { matrixRowDisplayOptions, selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
-
-const handleRowDisplayOptionClick = (rowDisplayOption: RowDisplayOption) => {
-  selectedRowDisplayOption.value = rowDisplayOption
-}
+const { setSelectedRowDisplayOption } = matrixConfigurationStore
+const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
 </script>
 
 <template>
@@ -22,7 +22,7 @@ const handleRowDisplayOptionClick = (rowDisplayOption: RowDisplayOption) => {
         :class="
           selectedRowDisplayOption === option ? `option-container-active` : `option-container`
         "
-        @click="handleRowDisplayOptionClick(option)"
+        @click="setSelectedRowDisplayOption(option)"
         data-test-id="option"
       >
         <div>{{ option }}</div>

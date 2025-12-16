@@ -34,10 +34,11 @@ const router = createRouter({
   ],
 })
 
-const mockUseAxiosComposable = {
+const mockUseAxiosComposable = vi.hoisted(() => ({
   post: vi.fn(),
   get: vi.fn(),
-}
+  put: vi.fn(),
+}))
 
 vi.mock('@/composables/axios/axios.ts', () => ({
   useAxios: () => mockUseAxiosComposable,
@@ -95,8 +96,16 @@ describe('LoginForm Component', () => {
             id: 3,
             email: 'braybowler1995@gmail.com',
             email_verified_at: null,
-            created_at: '2025-12-10T13:44:15.000000Z',
-            updated_at: '2025-12-10T13:44:15.000000Z',
+            wedge_matrix: {
+              id: 1,
+              user_id: 1,
+              label: null,
+              number_of_rows: 4,
+              number_of_columns: 4,
+              selected_row_display_option: 'Both',
+              column_headers: null,
+              values: null,
+            },
           },
         },
         status: 200,

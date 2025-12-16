@@ -3,11 +3,14 @@ import { ref } from 'vue'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user/userStore.ts'
+import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import type { User } from '@/types/user'
 
 const router = useRouter()
 const { post } = useAxios()
 
-const { setUser } = useUserStore()
+const { initializeUserStoreValues } = useUserStore()
+const { initializeMatrixValues } = useMatrixConfigurationStore()
 
 const email = ref('')
 const password = ref('')
@@ -23,7 +26,11 @@ const handleLoginSubmission = async () => {
     })
 
     if (response?.status === 200) {
-      setUser(response.data.user)
+      if (response.data.user) {
+        const user: User = response.data.user
+        const accessToken: string = response.data.access_token
+        initializeStoreValues(user, accessToken)
+      }
 
       await router.push({ name: 'matrix' })
     } else {
@@ -33,6 +40,11 @@ const handleLoginSubmission = async () => {
     console.log(error)
     showLoginErrorMessage.value = true
   }
+}
+
+const initializeStoreValues = (user: User, accessToken: string) => {
+  initializeUserStoreValues(user, accessToken)
+  initializeMatrixValues(user.wedge_matrix)
 }
 </script>
 

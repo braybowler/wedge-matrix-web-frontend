@@ -1,30 +1,19 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import WedgeMatrix, { type WedgeMatrixProps } from '@/components/matrix/WedgeMatrix.vue'
+import WedgeMatrix from '@/components/matrix/WedgeMatrix.vue'
 import { createPinia, setActivePinia, storeToRefs } from 'pinia'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import type { RowDisplayOption } from '@/types/matrix'
 
-const defaultMountProps: WedgeMatrixProps = {
-  clubs: [
-    {
-      label: 'LW',
-      id: 1,
-    },
-    {
-      label: 'SW',
-      id: 2,
-    },
-    {
-      label: 'GW',
-      id: 3,
-    },
-    {
-      label: 'PW',
-      id: 4,
-    },
-  ],
-}
+const mockUseAxiosComposable = vi.hoisted(() => ({
+  post: vi.fn(),
+  get: vi.fn(),
+  put: vi.fn(),
+}))
+
+vi.mock('@/composables/axios/axios.ts', () => ({
+  useAxios: () => mockUseAxiosComposable,
+}))
 
 describe('WedgeMatrix Component', () => {
   beforeEach(() => {
@@ -34,75 +23,47 @@ describe('WedgeMatrix Component', () => {
 
   describe('Matrix Rendering', () => {
     it('renders', () => {
-      const wrapper = mount(WedgeMatrix, {
-        props: defaultMountProps,
-      })
+      const wrapper = mount(WedgeMatrix)
 
       expect(wrapper.exists()).toBeTruthy()
     })
 
     it('displays correct clubs (matrix rows)', () => {
-      const wrapper = mount(WedgeMatrix, {
-        props: defaultMountProps,
-      })
+      const wrapper = mount(WedgeMatrix)
+      const clubs = ['LW', 'SW', 'GW', 'PW']
 
-      defaultMountProps.clubs.forEach((club) => {
-        expect(wrapper.text()).toContain(club.label)
+      clubs.forEach((club) => {
+        expect(wrapper.text()).toContain(club)
       })
     })
 
     it('displays correct column headers (matrix columns)', () => {
       const matrixConfigurationStore = useMatrixConfigurationStore()
       const { matrixColumnHeaders } = storeToRefs(matrixConfigurationStore)
-      matrixColumnHeaders.value = [
-        {
-          label: 'Test 1',
-          id: 1,
-        },
-        {
-          label: 'Test 2',
-          id: 2,
-        },
-        {
-          label: 'Test 3',
-          id: 3,
-        },
-        {
-          label: 'Test 4',
-          id: 4,
-        },
-      ]
+      matrixColumnHeaders.value = ['25%', '50%', '75%', '100%']
 
-      const wrapper = mount(WedgeMatrix, {
-        props: defaultMountProps,
-      })
+      const wrapper = mount(WedgeMatrix)
 
-      matrixColumnHeaders.value.forEach((header) => {
-        expect(wrapper.text()).toContain(header.label)
+      matrixColumnHeaders.value.forEach((header, index) => {
+        expect(wrapper.text()).toContain(header[index])
       })
     })
 
     it.each([
       {
-        testDisplayOptionValues: ['Carry', 'Total', 'Both'],
         testRowDisplayOption: 'Carry',
       },
       {
-        testDisplayOptionValues: ['Carry', 'Total', 'Both'],
         testRowDisplayOption: 'Total',
       },
     ])(
       'displays correct row display option when selected row option is: $testRowDisplayOption',
-      ({ testDisplayOptionValues, testRowDisplayOption }) => {
+      ({ testRowDisplayOption }) => {
         const matrixConfigurationStore = useMatrixConfigurationStore()
-        const { matrixRowDisplayOptions, selectedRowDisplayOption } =
-          storeToRefs(matrixConfigurationStore)
-        matrixRowDisplayOptions.value = testDisplayOptionValues as Array<RowDisplayOption>
+        const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
         selectedRowDisplayOption.value = testRowDisplayOption as RowDisplayOption
 
-        const wrapper = mount(WedgeMatrix, {
-          props: defaultMountProps,
-        })
+        const wrapper = mount(WedgeMatrix)
 
         expect(wrapper.text()).toContain(testRowDisplayOption)
       },
@@ -110,14 +71,10 @@ describe('WedgeMatrix Component', () => {
 
     it('displays correct row display option when selected row option is: Both', () => {
       const matrixConfigurationStore = useMatrixConfigurationStore()
-      const { matrixRowDisplayOptions, selectedRowDisplayOption } =
-        storeToRefs(matrixConfigurationStore)
-      matrixRowDisplayOptions.value = ['Carry', 'Total', 'Both']
+      const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
       selectedRowDisplayOption.value = 'Both'
 
-      const wrapper = mount(WedgeMatrix, {
-        props: defaultMountProps,
-      })
+      const wrapper = mount(WedgeMatrix)
 
       expect(wrapper.text()).toContain('Carry')
       expect(wrapper.text()).toContain('Total')
@@ -126,9 +83,7 @@ describe('WedgeMatrix Component', () => {
 
   describe('User Input', () => {
     it('accepts user yardage input', async () => {
-      const wrapper = mount(WedgeMatrix, {
-        props: defaultMountProps,
-      })
+      const wrapper = mount(WedgeMatrix)
 
       const inputs = wrapper.findAll('[data-test-id="carry-input"]')
 
@@ -142,7 +97,6 @@ describe('WedgeMatrix Component', () => {
       vi.spyOn(window, 'confirm').mockReturnValue(true)
 
       const wrapper = mount(WedgeMatrix, {
-        props: defaultMountProps,
         attachTo: document.body,
       })
 

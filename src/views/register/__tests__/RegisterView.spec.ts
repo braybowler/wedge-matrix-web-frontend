@@ -4,6 +4,16 @@ import MatrixView from '@/views/matrix/MatrixView.vue'
 import { createPinia, setActivePinia } from 'pinia'
 import WedgeMatrix from '@/components/matrix/WedgeMatrix.vue'
 
+const mockUseAxiosComposable = vi.hoisted(() => ({
+  post: vi.fn(),
+  get: vi.fn(),
+  put: vi.fn(),
+}))
+
+vi.mock('@/composables/axios/axios.ts', () => ({
+  useAxios: () => mockUseAxiosComposable,
+}))
+
 describe('RegisterView', () => {
   beforeEach(() => {
     vi.restoreAllMocks()

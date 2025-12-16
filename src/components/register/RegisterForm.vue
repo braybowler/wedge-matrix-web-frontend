@@ -21,7 +21,7 @@ const handleRegisterSubmission = async () => {
   const response = await post('/register', {
     email: email.value,
     password: password.value,
-    passwordConfirmation: passwordConfirmation.value,
+    password_confirmation: passwordConfirmation.value,
   })
 
   if (response?.status === 201) {

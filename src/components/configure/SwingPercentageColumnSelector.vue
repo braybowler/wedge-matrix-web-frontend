@@ -3,13 +3,11 @@ import type { AllowableMatrixColumnNumber } from '@/types/matrix'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { storeToRefs } from 'pinia'
 
-const matrixConfigurationStore = useMatrixConfigurationStore()
-const { matrixColumns } = storeToRefs(matrixConfigurationStore)
 const allowMatrixColumnNumbers: Array<AllowableMatrixColumnNumber> = [1, 2, 3, 4]
 
-const handleColumnSelectorClick = (selectedColumnNumber: AllowableMatrixColumnNumber) => {
-  matrixColumns.value = selectedColumnNumber
-}
+const matrixConfigurationStore = useMatrixConfigurationStore()
+const { setNumberOfMatrixColumns } = matrixConfigurationStore
+const { matrixColumns } = storeToRefs(matrixConfigurationStore)
 </script>
 
 <template>
@@ -21,7 +19,7 @@ const handleColumnSelectorClick = (selectedColumnNumber: AllowableMatrixColumnNu
         v-for="selector in allowMatrixColumnNumbers"
         :key="selector"
         :class="matrixColumns === selector ? `selector-container-active` : `selector-container`"
-        @click="handleColumnSelectorClick(selector)"
+        @click="setNumberOfMatrixColumns(selector)"
         data-test-id="selector"
       >
         <div>{{ selector }}</div>

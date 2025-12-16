@@ -3,24 +3,42 @@ import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfiguration
 import { storeToRefs } from 'pinia'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
+const { setMatrixColumnHeader } = matrixConfigurationStore
 const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationStore)
 </script>
 
 <template>
   <section class="component-container">
     <h2 class="section-title">Column Header Labels</h2>
-    <p class="section-text">Please keep labels to a maximum of 7 characters.</p>
 
     <section class="input-container">
-      <input
+      <div
         v-for="(column, index) in matrixColumns"
         :key="column"
-        type="text"
-        :placeholder="`Header for column: ${column}`"
-        class="input"
-        data-test-id="column-header-input"
-        v-model="matrixColumnHeaders[index]!.label"
-      />
+        class="column-label-selector-pair"
+        data-test-id="column-label-selector-pair"
+      >
+        <label class="column-header-selector-label" for="column-header-selector"
+          >Column {{ column }}:
+        </label>
+
+        <select
+          class="column-header-selector"
+          name="column-header-selector"
+          id="column-headers"
+          :value="matrixColumnHeaders[index]"
+          @change="setMatrixColumnHeader(($event.target as HTMLSelectElement).value, index)"
+          data-test-id="column-header-selector"
+        >
+          <option value="25%">25%</option>
+          <option value="33%">33%</option>
+          <option value="50%">50%</option>
+          <option value="66%">66%</option>
+          <option value="75%">75%</option>
+          <option value="90%">90%</option>
+          <option value="100%">100%</option>
+        </select>
+      </div>
     </section>
   </section>
 </template>
@@ -28,20 +46,13 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
 <style scoped>
 .component-container {
   padding: 8px;
-  min-height: 250px;
+  min-height: 225px;
 }
 
 .section-title {
   color: #f3f4f6;
   font-size: 16px;
   font-weight: 700;
-}
-
-.section-text {
-  margin-top: 8px;
-  color: #9ca3af;
-  font-size: 12px;
-  font-weight: 300;
 }
 
 .input-container {
@@ -51,23 +62,25 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
   gap: 12px;
 }
 
-.input {
+.column-label-selector-pair {
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.column-header-selector-label {
+  color: #f3f4f6;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.column-header-selector {
   color: #f3f4f6;
   background-color: #374151;
   border: 1px solid #4b5563;
   border-radius: 8px;
   padding: 4px 8px;
-}
-
-input:focus {
-  color: #f3f4f6;
-  background-color: #374151;
-  border: 1px solid #818cf8;
-  border-radius: 8px;
-  padding: 4px 8px;
-}
-
-.input:focus::placeholder {
-  color: transparent;
 }
 </style>
