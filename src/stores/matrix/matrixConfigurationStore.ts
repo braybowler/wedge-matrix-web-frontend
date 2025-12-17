@@ -12,6 +12,7 @@ const { put } = useAxios()
 
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
   const requiresSync = ref(false)
+  const selectedMatrixId = ref<number | null>(null)
   const matrixColumns = ref<AllowableMatrixColumnNumber>(4)
   const matrixColumnHeaders = ref<Array<string>>(['', '', '', ''])
   const selectedRowDisplayOption = ref<RowDisplayOption>('Carry')
@@ -91,6 +92,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   ])
 
   function initializeMatrixValues(initialMatrixValues: WedgeMatrix) {
+    selectedMatrixId.value = initialMatrixValues.id
     matrixColumns.value = initialMatrixValues.number_of_columns
     selectedRowDisplayOption.value = initialMatrixValues.selected_row_display_option
 
@@ -105,7 +107,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
 
   async function synchronizeValues() {
     if (requiresSync.value) {
-      await put('/wedge-matrix', {
+      await put('/wedge-matrix/' + selectedMatrixId.value, {
         number_of_columns: matrixColumns.value,
         column_headers: matrixColumnHeaders.value,
         selected_row_display_option: selectedRowDisplayOption.value,
