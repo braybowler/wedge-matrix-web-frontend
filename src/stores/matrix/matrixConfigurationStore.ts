@@ -126,7 +126,6 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   ) {
     requiresSync.value = true
 
-    console.log('got in', rawVal)
     const cell = yardageValues.value[clubIndex]?.[columnIndex]
     if (!cell) return
 
@@ -134,6 +133,15 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     const parsed = trimmed === '' ? null : Number(trimmed)
 
     cell[field] = parsed === null || Number.isNaN(parsed) ? null : parsed
+  }
+
+  function clearYardageValues() {
+    for (const row of yardageValues.value) {
+      for (const cell of row) {
+        cell.carry_value = null
+        cell.total_value = null
+      }
+    }
   }
 
   function setMatrixColumnHeader(newVal: string, index: number) {
@@ -159,6 +167,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     requiresSync,
     initializeMatrixValues,
     setYardageValue,
+    clearYardageValues,
     setMatrixColumnHeader,
     setNumberOfMatrixColumns,
     setSelectedRowDisplayOption,
