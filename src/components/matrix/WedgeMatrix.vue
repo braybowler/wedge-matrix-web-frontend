@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { onUnmounted } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
-const { setYardageValue } = matrixConfigurationStore
+const { setYardageValue, clearYardageValues } = matrixConfigurationStore
 const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption, yardageValues } =
   storeToRefs(matrixConfigurationStore)
 
@@ -16,15 +16,7 @@ const handleClearMatrixButtonPress = () => {
   const userResponse = confirm('Are you sure you want to clear all records?')
 
   if (userResponse) {
-    clearMatrix()
-  }
-}
-
-const clearMatrix = () => {
-  const inputs = document.getElementsByTagName('input')
-
-  for (const input of inputs) {
-    input.value = ''
+    clearYardageValues()
   }
 }
 
@@ -68,6 +60,7 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
             <template v-for="(numColumn, colIndex) in matrixColumns" :key="numColumn">
               <td v-if="selectedRowDisplayOption === 'Carry'">
                 <input
+                  name="yardage-input"
                   type="number"
                   class="input"
                   placeholder="C"
@@ -85,6 +78,7 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
               </td>
               <td v-else-if="selectedRowDisplayOption === 'Total'">
                 <input
+                  name="yardage-input"
                   type="number"
                   class="input"
                   placeholder="T"
@@ -103,6 +97,7 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
               <td v-else>
                 <template class="input-pair-container">
                   <input
+                    name="yardage-input"
                     type="number"
                     class="input"
                     placeholder="C"
@@ -118,6 +113,7 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
                     "
                   />
                   <input
+                    name="yardage-input"
                     type="number"
                     class="input"
                     placeholder="T"
