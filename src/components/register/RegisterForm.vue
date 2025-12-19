@@ -7,16 +7,24 @@ const router = useRouter()
 const { post } = useAxios()
 
 const email = ref('')
+const showInvalidEmailErrorMessage = ref(false)
+const invalidEmailErrorMessage = ref('')
+
 const password = ref('')
 const passwordConfirmation = ref('')
-const showPasswordMismatchErrorMessage = ref(false)
+const showInvalidPasswordErrorMessage = ref(false)
+const invalidPasswordErrorMessage = ref('')
 
 const handleRegisterSubmission = async () => {
-  if (!passwordValuesMatch()) {
-    showPasswordMismatchErrorMessage.value = true
+  if (!validateEmail()) {
     return
   }
-  showPasswordMismatchErrorMessage.value = false
+  showInvalidEmailErrorMessage.value = false
+
+  if (!validatePassword()) {
+    return
+  }
+  showInvalidPasswordErrorMessage.value = false
 
   const response = await post('/register', {
     email: email.value,
@@ -29,8 +37,84 @@ const handleRegisterSubmission = async () => {
   }
 }
 
+const validateEmail = () => {
+  if (!isEmailValuePresent()) {
+    return false
+  }
+
+  if (!isEmailValid()) {
+    return false
+  }
+
+  return true
+}
+
+const isEmailValuePresent = () => {
+  if (email.value === null || email.value === '') {
+    invalidEmailErrorMessage.value = 'Email is required.'
+    showInvalidEmailErrorMessage.value = true
+    return false
+  }
+
+  return true
+}
+
+const isEmailValid = () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+  if (emailRegex.test(email.value.trim())) {
+    return true
+  }
+
+  invalidEmailErrorMessage.value = 'Email must be valid.'
+  showInvalidEmailErrorMessage.value = true
+  return false
+}
+
+const validatePassword = () => {
+  if (!isPasswordValuePresent()) {
+    return false
+  }
+
+  if (!isPasswordConfirmationValuePresent()) {
+    return false
+  }
+
+  if (!passwordValuesMatch()) {
+    return false
+  }
+
+  return true
+}
+
+const isPasswordValuePresent = () => {
+  if (password.value === null || password.value === '') {
+    invalidPasswordErrorMessage.value = 'Password is required.'
+    showInvalidPasswordErrorMessage.value = true
+    return false
+  }
+
+  return true
+}
+
+const isPasswordConfirmationValuePresent = () => {
+  if (passwordConfirmation.value === null || passwordConfirmation.value === '') {
+    invalidPasswordErrorMessage.value = 'Password Confirmation is required.'
+    showInvalidPasswordErrorMessage.value = true
+    return false
+  }
+
+  return true
+}
+
 const passwordValuesMatch = () => {
-  return passwordConfirmation.value === password.value
+  if (passwordConfirmation.value !== password.value) {
+    invalidPasswordErrorMessage.value = 'Password and Password Confirmation must match.'
+    showInvalidPasswordErrorMessage.value = true
+    return false
+  }
+
+  return true
 }
 </script>
 
@@ -62,7 +146,12 @@ const passwordValuesMatch = () => {
         data-test-id="password-confirmation-input"
       />
 
-      <p v-if="showPasswordMismatchErrorMessage" class="error-message">Passwords do not match.</p>
+      <p v-if="showInvalidEmailErrorMessage" class="error-message">
+        {{ invalidEmailErrorMessage }}
+      </p>
+      <p v-if="showInvalidPasswordErrorMessage" class="error-message">
+        {{ invalidPasswordErrorMessage }}
+      </p>
       <button
         class="button"
         type="submit"
