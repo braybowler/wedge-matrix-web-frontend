@@ -91,10 +91,10 @@ describe('LoginForm Component', () => {
     it('redirects a user to /matrix after a successful login attempt', async () => {
       mockUseAxiosComposable.post.mockResolvedValueOnce({
         data: {
-          message: 'Login succesful',
+          message: 'Login successful',
           user: {
             id: 3,
-            email: 'braybowler1995@gmail.com',
+            email: 'email@example.com',
             email_verified_at: null,
             wedge_matrix: {
               id: 1,
@@ -120,7 +120,7 @@ describe('LoginForm Component', () => {
       const passwordInput = wrapper.find('[data-test-id="password-input"]')
       const loginButton = wrapper.find('[data-test-id="login-button"]')
 
-      await emailInput.setValue('email')
+      await emailInput.setValue('email@example.com')
       await passwordInput.setValue('password')
       await loginButton.trigger('click')
       await flushPromises()
@@ -137,13 +137,13 @@ describe('LoginForm Component', () => {
       const passwordInput = wrapper.find('[data-test-id="password-input"]')
       const loginButton = wrapper.find('[data-test-id="login-button"]')
 
-      await emailInput.setValue('email')
+      await emailInput.setValue('email@example.com')
       await passwordInput.setValue('password')
       await loginButton.trigger('click')
       await nextTick()
 
       expect(useAxios().post).toHaveBeenCalledExactlyOnceWith('/login', {
-        email: 'email',
+        email: 'email@example.com',
         password: 'password',
       })
     })
