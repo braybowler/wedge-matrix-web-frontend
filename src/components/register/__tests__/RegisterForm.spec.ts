@@ -107,21 +107,24 @@ describe('RegisterForm Component', () => {
         email: 'test @domain.com',
         expectedErrorMessage: 'Email must be valid.',
       },
-    ])('invalidates poorly formed email input: $email and reports: $expectedErrorMessage', async ({email, expectedErrorMessage}) => {
-      const wrapper = mount(RegisterForm, { global: { plugins: [router] } })
+    ])(
+      'invalidates poorly formed email input: $email and reports: $expectedErrorMessage',
+      async ({ email, expectedErrorMessage }) => {
+        const wrapper = mount(RegisterForm, { global: { plugins: [router] } })
 
-      const emailInput = wrapper.find(`[data-test-id="email-input"]`)
+        const emailInput = wrapper.find(`[data-test-id="email-input"]`)
 
-      await emailInput.setValue(email)
-      await emailInput.trigger('input')
+        await emailInput.setValue(email)
+        await emailInput.trigger('input')
 
-      const registerButton = wrapper.find(`[data-test-id="register-button"]`)
+        const registerButton = wrapper.find(`[data-test-id="register-button"]`)
 
-      await registerButton.trigger('click')
-      await nextTick()
+        await registerButton.trigger('click')
+        await nextTick()
 
-      expect(wrapper.text()).toContain(expectedErrorMessage)
-    })
+        expect(wrapper.text()).toContain(expectedErrorMessage)
+      },
+    )
 
     it.each([
       {
@@ -226,14 +229,14 @@ describe('RegisterForm Component', () => {
       const passwordConfirmationInput = wrapper.find('[data-test-id="password-confirmation-input"]')
       const registerButton = wrapper.find('[data-test-id="register-button"]')
 
-      await emailInput.setValue('email')
+      await emailInput.setValue('test@example.com')
       await passwordInput.setValue('password')
       await passwordConfirmationInput.setValue('password')
       await registerButton.trigger('click')
       await nextTick()
 
       expect(useAxios().post).toHaveBeenCalledExactlyOnceWith('/register', {
-        email: 'email',
+        email: 'test@example.com',
         password: 'password',
         password_confirmation: 'password',
       })
