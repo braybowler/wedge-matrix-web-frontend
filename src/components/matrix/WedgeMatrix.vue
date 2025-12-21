@@ -169,13 +169,21 @@ th {
   border-bottom: 1px solid #4b5563;
 }
 
+th:last-child {
+  padding: 8px;
+  padding-right: 16px;
+}
+
 td {
   padding: 8px 0;
 }
 
+td:last-child {
+  padding-right: 8px;
+}
+
 .component-container {
-  background-color: #111827;
-  padding: 16px;
+  padding: 8px;
 }
 
 .swing-percentage-container {

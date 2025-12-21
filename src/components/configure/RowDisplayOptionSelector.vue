@@ -33,7 +33,7 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
 
 <style scoped>
 .component-container {
-  padding: 8px;
+  margin-top: 8px;
 }
 
 .section-title {
@@ -46,7 +46,7 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .option-container {

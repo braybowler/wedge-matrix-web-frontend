@@ -11,7 +11,7 @@ const { matrixColumns } = storeToRefs(matrixConfigurationStore)
 </script>
 
 <template>
-  <section class="component-container">
+  <section>
     <h2 class="section-title">Number of Swing Columns</h2>
 
     <section class="selector-section">
@@ -29,10 +29,6 @@ const { matrixColumns } = storeToRefs(matrixConfigurationStore)
 </template>
 
 <style scoped>
-.component-container {
-  padding: 8px;
-}
-
 .section-title {
   color: #f3f4f6;
   font-size: 16px;
@@ -43,7 +39,7 @@ const { matrixColumns } = storeToRefs(matrixConfigurationStore)
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .selector-container {

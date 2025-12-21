@@ -122,7 +122,6 @@ const initializeStoreValues = (user: User, accessToken: string) => {
 @reference "tailwindcss";
 
 .component-container {
-  @apply h-dvh;
   padding: 16px;
   display: flex;
   flex-direction: column;

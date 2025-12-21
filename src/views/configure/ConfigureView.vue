@@ -13,7 +13,7 @@ onUnmounted(async () => {
 </script>
 
 <template>
-  <main>
+  <main class="p-2 min-h-[500px]">
     <SwingPercentageColumnSelector />
     <ColumnHeaderLabelInput />
     <RowDisplayOptionSelector />
