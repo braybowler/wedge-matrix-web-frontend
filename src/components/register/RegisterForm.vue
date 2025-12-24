@@ -108,7 +108,6 @@ const handleRegisterSubmission = async () => {
 @reference "tailwindcss";
 
 .component-container {
-  @apply h-dvh;
   padding: 16px;
   display: flex;
   flex-direction: column;

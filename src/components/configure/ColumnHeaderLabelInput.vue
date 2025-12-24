@@ -45,8 +45,8 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
 
 <style scoped>
 .component-container {
-  padding: 8px;
-  min-height: 225px;
+  margin-top: 8px;
+  min-height: 195px;
 }
 
 .section-title {
@@ -58,7 +58,7 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
 .input-container {
   display: flex;
   flex-direction: column;
-  margin-top: 12px;
+  margin-top: 8px;
   gap: 12px;
 }
 
