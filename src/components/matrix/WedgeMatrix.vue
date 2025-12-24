@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { storeToRefs } from 'pinia'
-import { onUnmounted } from 'vue'
+import { onBeforeUnmount } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues } = matrixConfigurationStore
 const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption, yardageValues } =
   storeToRefs(matrixConfigurationStore)
 
-onUnmounted(async () => {
+onBeforeUnmount(async () => {
   await matrixConfigurationStore.synchronizeValues()
 })
 
@@ -65,6 +65,10 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
                   class="input"
                   placeholder="C"
                   data-test-id="carry-input"
+                  min="1"
+                  max="999"
+                  step="1"
+                  inputmode="numeric"
                   :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
                   @change="
                     setYardageValue(
@@ -83,6 +87,10 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
                   class="input"
                   placeholder="T"
                   data-test-id="total-input"
+                  min="1"
+                  max="999"
+                  step="1"
+                  inputmode="numeric"
                   :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
                   @change="
                     setYardageValue(
@@ -102,6 +110,10 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
                     class="input"
                     placeholder="C"
                     data-test-id="carry-input"
+                    min="1"
+                    max="999"
+                    step="1"
+                    inputmode="numeric"
                     :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
                     @change="
                       setYardageValue(
@@ -118,6 +130,10 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
                     class="input"
                     placeholder="T"
                     data-test-id="total-input"
+                    min="1"
+                    max="999"
+                    step="1"
+                    inputmode="numeric"
                     :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
                     @change="
                       setYardageValue(

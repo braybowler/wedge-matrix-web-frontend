@@ -130,9 +130,15 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     if (!cell) return
 
     const trimmed = rawVal.trim()
-    const parsed = trimmed === '' ? null : Number(trimmed)
+    if (trimmed === '') {
+      cell[field] = null
+      return
+    }
 
-    cell[field] = parsed === null || Number.isNaN(parsed) ? null : parsed
+    const parsed = Number(trimmed)
+    const isValid = Number.isFinite(parsed) && parsed > 0 && parsed < 1000
+
+    cell[field] = isValid ? parsed : null
   }
 
   function clearYardageValues() {
