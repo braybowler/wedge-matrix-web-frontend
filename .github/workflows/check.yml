@@ -2,9 +2,7 @@ name: check
 
 on:
   pull_request:
-    branches:
-      - "development"
-      - "main"
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
