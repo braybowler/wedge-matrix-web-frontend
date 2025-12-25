@@ -15,7 +15,10 @@
     "lint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/",
     "test": "vitest run",
-    "check": "npm run lint && npm run format && npm run type-check && npm run test"
+    "check": "npm run lint && npm run format && npm run type-check && npm run test",
+    "lint:ci": "eslint . --max-warnings=0 --cache",
+    "check:ci": "npm run lint:ci && npm run format:check && npm run type-check && npm run test",
+    "format:check": "prettier --check src/"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
