@@ -34,22 +34,18 @@ jobs:
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SERVER_PATH: ${{ secrets.SERVER_PATH }}
         run: |
-          : "${SSH_PRIVATE_KEY:?Missing SERVER_SSH_KEY}"
-          : "${SERVER_IP:?Missing SERVER_IP}"
-          : "${SERVER_PATH:?Missing SERVER_PATH}"
-
-          # write key safely
-          printf '%s' "$SSH_PRIVATE_KEY" | tr -d '\r' > ssh_key
+          echo -e "$SSH_PRIVATE_KEY" > ssh_key
           chmod 600 ssh_key
-
-          # quick validity check (safe output)
-          ssh-keygen -lf ssh_key
-
+          
+          # Create the .ssh directory and set permissions
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
+          
+          # Add server to known_hosts to avoid host verification prompt
           ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
-
-          ssh -i ssh_key -o IdentitiesOnly=yes "root@$SERVER_IP" "rm -rf '$SERVER_PATH'/*"
-          scp -i ssh_key -o IdentitiesOnly=yes -r dist/* "root@$SERVER_IP:$SERVER_PATH"
-
-          rm -f ssh_key
+          
+          # Transfer files to the server
+          scp -i ssh_key -o StrictHostKeyChecking=no -r dist/* root@$SERVER_IP:$SERVER_PATH
+          
+          # Clean up the private SSH key
+          rm ssh_key
