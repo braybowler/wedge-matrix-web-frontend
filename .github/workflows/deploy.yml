@@ -28,24 +28,22 @@ jobs:
       - name: Build Vue app
         run: npm run build
 
-      - name: Copy build files to servers
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
-          SERVER_PATH: ${{ secrets.SERVER_PATH }}
+      # Load SSH key into agent (no files written to disk)
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      # Trust the server host key
+      - name: Add server to known_hosts
         run: |
-          echo -e "$SSH_PRIVATE_KEY" > ssh_key
-          chmod 600 ssh_key
-          
-          # Create the .ssh directory and set permissions
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          
-          # Add server to known_hosts to avoid host verification prompt
-          ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
-          
-          # Transfer files to the server
-          scp -i ssh_key -o StrictHostKeyChecking=no -r dist/* root@$SERVER_IP:$SERVER_PATH
-          
-          # Clean up the private SSH key
-          rm ssh_key
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      # Sync files to the server
+      - name: Deploy to server
+        run: |
+          rsync -avz --delete \
+            dist/ \
+            root@${{ secrets.SERVER_IP }}:${{ secrets.SERVER_PATH }}
