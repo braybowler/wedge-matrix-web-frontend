@@ -1,5 +1,5 @@
-##env
-#.env
+#env files
+.env
 
 # Logs
 logs
