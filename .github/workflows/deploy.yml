@@ -32,6 +32,8 @@ jobs:
           context: .
           file: docker/js/Dockerfile
           push: true
+          build-args: |
+            VITE_API_URL=${{ secrets.PROD_VITE_API_URL }}
           tags: |
             ghcr.io/braybowler/wedge-matrix:latest
             ghcr.io/braybowler/wedge-matrix:${{ github.sha }}
