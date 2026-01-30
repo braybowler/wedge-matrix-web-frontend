@@ -9,41 +9,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
-          node-version: 22
-          cache: npm
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Vue app
-        run: npm run build
-
-      # Load SSH key into agent (no files written to disk)
-      - name: Set up SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: Build and push image
+        uses: docker/build-push-action@v5
         with:
-          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-
-      # Trust the server host key
-      - name: Add server to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-      # Sync files to the server
-      - name: Deploy to server
-        run: |
-          rsync -avz --delete \
-            dist/ \
-            root@${{ secrets.SERVER_IP }}:${{ secrets.SERVER_PATH }}
+          context: .
+          file: docker/js/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/braybowler/wedge-matrix:latest
+            ghcr.io/braybowler/wedge-matrix:${{ github.sha }}
