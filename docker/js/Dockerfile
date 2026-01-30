@@ -11,13 +11,13 @@ RUN npm run build
 # ---------- Runtime stage ----------
 FROM nginx:alpine
 
-# Remove default nginx config
+# Remove default config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# SPA-friendly nginx config
-COPY docker/nginx.conf /etc/nginx/nginx.conf
+# Copy SPA server config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy built files
+# Copy built assets
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
