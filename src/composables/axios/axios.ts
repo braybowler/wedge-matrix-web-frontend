@@ -1,59 +1,109 @@
-import axios from 'axios'
+import axios, { type AxiosError, type AxiosResponse } from 'axios'
 import { useLoadingStore } from '@/stores/loading/loadingStore.ts'
-import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user/userStore.ts'
+import { storeToRefs } from 'pinia'
+
+type ApiResponse<T = unknown> = {
+  data?: T
+  error?: string
+  status?: number
+}
 
 export function useAxios() {
   const userStore = useUserStore()
   const { accessToken } = storeToRefs(userStore)
 
   const loadingStore = useLoadingStore()
-  const { isLoading } = storeToRefs(loadingStore)
+  const { startLoading, stopLoading } = loadingStore
 
   const wedgeMatrixBasePath = import.meta.env.VITE_API_URL
 
   const authHeaders = () =>
     accessToken.value ? { Authorization: `Bearer ${accessToken.value}` } : {}
 
-  const get = async (path: string) => {
-    try {
-      isLoading.value = true
-      const response = await axios.get(wedgeMatrixBasePath + path, {
-        headers: authHeaders(),
-      })
-      isLoading.value = false
-      return response
-    } catch (error) {
-      console.log(error)
-      isLoading.value = false
+  const handleError = <T = unknown>(error: unknown): ApiResponse<T> => {
+    const axiosError = error as AxiosError<{ message?: string }>
+
+    if (axiosError.response) {
+      // Server responded with error status
+      const message =
+        axiosError.response.data?.message || 'An error occurred processing your request'
+      return {
+        error: message,
+        status: axiosError.response.status,
+      }
+    } else if (axiosError.request) {
+      // Request made but no response
+      return {
+        error: 'Unable to reach the server. Please check your connection.',
+        status: 0,
+      }
+    } else {
+      // Something else happened
+      return {
+        error: 'An unexpected error occurred',
+        status: 0,
+      }
     }
   }
 
-  const post = async (path: string, requestBody: object) => {
+  const get = async <T = unknown>(path: string): Promise<ApiResponse<T>> => {
+    startLoading()
     try {
-      isLoading.value = true
-      const response = await axios.post(wedgeMatrixBasePath + path, requestBody, {
+      const response: AxiosResponse<T> = await axios.get(wedgeMatrixBasePath + path, {
         headers: authHeaders(),
       })
-      isLoading.value = false
-      return response
+      return { data: response.data, status: response.status }
     } catch (error) {
-      console.log(error)
-      isLoading.value = false
+      return handleError<T>(error)
+    } finally {
+      stopLoading()
     }
   }
 
-  const put = async (path: string, requestBody: object) => {
+  const post = async <T = unknown>(path: string, requestBody: unknown): Promise<ApiResponse<T>> => {
+    startLoading()
     try {
-      isLoading.value = true
-      const response = await axios.put(wedgeMatrixBasePath + path, requestBody, {
+      const response: AxiosResponse<T> = await axios.post(
+        wedgeMatrixBasePath + path,
+        requestBody,
+        {
+          headers: authHeaders(),
+        },
+      )
+      return { data: response.data, status: response.status }
+    } catch (error) {
+      return handleError<T>(error)
+    } finally {
+      stopLoading()
+    }
+  }
+
+  const put = async <T = unknown>(path: string, requestBody: unknown): Promise<ApiResponse<T>> => {
+    startLoading()
+    try {
+      const response: AxiosResponse<T> = await axios.put(wedgeMatrixBasePath + path, requestBody, {
         headers: authHeaders(),
       })
-      isLoading.value = false
-      return response
+      return { data: response.data, status: response.status }
     } catch (error) {
-      console.log(error)
-      isLoading.value = false
+      return handleError<T>(error)
+    } finally {
+      stopLoading()
+    }
+  }
+
+  const del = async <T = unknown>(path: string): Promise<ApiResponse<T>> => {
+    startLoading()
+    try {
+      const response: AxiosResponse<T> = await axios.delete(wedgeMatrixBasePath + path, {
+        headers: authHeaders(),
+      })
+      return { data: response.data, status: response.status }
+    } catch (error) {
+      return handleError<T>(error)
+    } finally {
+      stopLoading()
     }
   }
 
@@ -61,5 +111,6 @@ export function useAxios() {
     get,
     post,
     put,
+    del,
   }
 }

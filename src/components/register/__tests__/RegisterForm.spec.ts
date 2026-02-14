@@ -32,6 +32,7 @@ const mockUseAxiosComposable = vi.hoisted(() => ({
   post: vi.fn(),
   get: vi.fn(),
   put: vi.fn(),
+  del: vi.fn(),
 }))
 
 vi.mock('@/composables/axios/axios.ts', () => ({

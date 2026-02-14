@@ -1,10 +1,23 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export const useLoadingStore = defineStore('loading', () => {
-  const isLoading = ref(false)
+  const loadingCount = ref(0)
+  const isLoading = computed(() => loadingCount.value > 0)
+
+  function startLoading() {
+    loadingCount.value++
+  }
+
+  function stopLoading() {
+    if (loadingCount.value > 0) {
+      loadingCount.value--
+    }
+  }
 
   return {
     isLoading,
+    startLoading,
+    stopLoading,
   }
 })

@@ -7,6 +7,11 @@ import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfiguration
 import type { User } from '@/types/user'
 import { useValidation } from '@/composables/validation/validation.ts'
 
+type LoginResponse = {
+  user: User
+  access_token: string
+}
+
 const router = useRouter()
 
 const { post } = useAxios()
@@ -47,22 +52,22 @@ const handleLoginSubmission = async () => {
   }
   showInvalidPasswordErrorMessage.value = false
 
-  const response = await post('/login', {
+  const response = await post<LoginResponse>('/login', {
     email: email.value,
     password: password.value,
   })
 
-  if (response?.status === 200) {
-    if (response.data.user) {
-      const user: User = response.data.user
-      const accessToken: string = response.data.access_token
-      initializeStoreValues(user, accessToken)
-    }
-
-    await router.push({ name: 'matrix' })
+  if (response?.error) {
+    showInvalidCredentialsErrorMessage.value = true
+    return
   }
 
-  showInvalidCredentialsErrorMessage.value = true
+  if (response?.status === 200 && response?.data) {
+    const user: User = response.data.user
+    const accessToken: string = response.data.access_token
+    initializeStoreValues(user, accessToken)
+    await router.push({ name: 'matrix' })
+  }
 }
 
 const initializeStoreValues = (user: User, accessToken: string) => {
@@ -189,17 +194,14 @@ input:focus {
   padding: 6px 16px;
   font-size: 16px;
   font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .button:hover {
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 6px 16px;
-  font-size: 16px;
-  font-weight: 500;
+  background-color: #4b5563;
+  border-color: #818cf8;
   cursor: pointer;
+  transform: translateY(-1px);
 }
 
 .login-link {

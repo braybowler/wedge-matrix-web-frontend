@@ -38,6 +38,7 @@ const mockUseAxiosComposable = vi.hoisted(() => ({
   post: vi.fn(),
   get: vi.fn(),
   put: vi.fn(),
+  del: vi.fn(),
 }))
 
 vi.mock('@/composables/axios/axios.ts', () => ({
@@ -107,6 +108,7 @@ describe('LoginForm Component', () => {
               values: null,
             },
           },
+          access_token: 'mock-token-123',
         },
         status: 200,
       })
