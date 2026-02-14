@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import { useUserStore } from '@/stores/user/userStore'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { onBeforeUnmount } from 'vue'
 
@@ -7,6 +9,9 @@ const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues } = matrixConfigurationStore
 const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption, yardageValues } =
   storeToRefs(matrixConfigurationStore)
+
+const userStore = useUserStore()
+const router = useRouter()
 
 onBeforeUnmount(async () => {
   await matrixConfigurationStore.synchronizeValues()
@@ -18,6 +23,11 @@ const handleClearMatrixButtonPress = () => {
   if (userResponse) {
     clearYardageValues()
   }
+}
+
+const handleLogout = async () => {
+  userStore.logout()
+  await router.push({ name: 'login' })
 }
 
 const clubs = ['LW', 'SW', 'GW', 'PW']
@@ -156,6 +166,9 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
       <button @click="handleClearMatrixButtonPress" class="button" data-test-id="clear-all-button">
         Clear Matrix
       </button>
+      <button @click="handleLogout" class="button logout-button" data-test-id="logout-button">
+        Logout
+      </button>
     </div>
   </div>
 </template>
@@ -272,8 +285,10 @@ td:last-child {
 
 .button-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 }
 
 .button {
@@ -285,6 +300,7 @@ td:last-child {
   padding: 6px 16px;
   font-size: 16px;
   font-weight: 500;
+  width: 150px;
 }
 
 .button:hover {
@@ -297,5 +313,9 @@ td:last-child {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
+}
+
+.logout-button {
+  margin-top: 0;
 }
 </style>

@@ -41,12 +41,31 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  const userStore = useUserStore()
-  const { user } = userStore
+let isAuthVerified = false
 
-  if (to.meta.requiresAuth && !user) {
+router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore()
+  const { user, verifyAndRefreshAuth } = userStore
+
+  // If navigating to a protected route and we haven't verified auth yet
+  if (to.meta.requiresAuth && !isAuthVerified && user) {
+    // Verify the token is still valid
+    const isValid = await verifyAndRefreshAuth()
+    isAuthVerified = true
+
+    if (!isValid) {
+      // Token invalid, redirect to login
+      next({ name: 'login' })
+      return
+    }
+  }
+
+  // Standard auth check
+  if (to.meta.requiresAuth && !userStore.user) {
     next({ name: 'login' })
+  } else if (!to.meta.requiresAuth && userStore.user && (to.name === 'login' || to.name === 'register')) {
+    // If logged in and trying to access login/register, redirect to matrix
+    next({ name: 'matrix' })
   } else {
     next()
   }
