@@ -57,12 +57,12 @@ const handleLoginSubmission = async () => {
     password: password.value,
   })
 
-  if (response.error) {
+  if (response?.error) {
     showInvalidCredentialsErrorMessage.value = true
     return
   }
 
-  if (response.status === 200 && response.data) {
+  if (response?.status === 200 && response?.data) {
     const user: User = response.data.user
     const accessToken: string = response.data.access_token
     initializeStoreValues(user, accessToken)
