@@ -107,14 +107,16 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
 
   async function synchronizeValues() {
     if (requiresSync.value) {
-      await put('/wedge-matrix/' + selectedMatrixId.value, {
+      const response = await put('/wedge-matrix/' + selectedMatrixId.value, {
         number_of_columns: matrixColumns.value,
         column_headers: matrixColumnHeaders.value,
         selected_row_display_option: selectedRowDisplayOption.value,
         yardage_values: yardageValues.value,
       })
 
-      requiresSync.value = false
+      if (!response.error) {
+        requiresSync.value = false
+      }
     }
   }
 

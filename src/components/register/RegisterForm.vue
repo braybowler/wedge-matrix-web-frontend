@@ -45,7 +45,13 @@ const handleRegisterSubmission = async () => {
     password_confirmation: passwordConfirmation.value,
   })
 
-  if (response?.status === 201) {
+  if (response.error) {
+    invalidEmailErrorMessage.value = response.error
+    showInvalidEmailErrorMessage.value = true
+    return
+  }
+
+  if (response.status === 201) {
     await router.push({ name: 'login' })
   }
 }
