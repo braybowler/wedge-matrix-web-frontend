@@ -103,7 +103,7 @@ const handleRegisterSubmission = async () => {
 
     <p class="section-text">
       Already have an account?
-      <RouterLink to="/login" class="login-link" data-test-id="login-page-link">
+      <RouterLink to="/login" class="register-link" data-test-id="login-page-link">
         Login here.
       </RouterLink>
     </p>
@@ -184,21 +184,17 @@ input:focus {
 }
 
 .button:hover {
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 6px 16px;
-  font-size: 16px;
-  font-weight: 500;
+  background-color: #4b5563;
+  border-color: #818cf8;
   cursor: pointer;
+  transform: translateY(-1px);
 }
 
-.login-link {
+.register-link {
   text-decoration: underline;
 }
 
-.login-link:hover {
+.register-link:hover {
   text-decoration: underline;
   color: #818cf8;
   text-decoration-color: #818cf8;
