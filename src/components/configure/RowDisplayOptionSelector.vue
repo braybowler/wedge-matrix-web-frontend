@@ -58,12 +58,13 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
 }
 
 .option-container:hover {
-  background-color: #374151;
-  border: 1px solid #4b5563;
+  background-color: #4b5563;
+  border-color: #818cf8;
   border-radius: 8px;
   padding: 8px 16px;
   color: #9ca3af;
   cursor: pointer;
+  transform: translateY(-1px);
 }
 
 .option-container-active {
@@ -81,5 +82,6 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
   padding: 8px 16px;
   color: #f3f4f6;
   cursor: pointer;
+  transform: translateY(-1px);
 }
 </style>

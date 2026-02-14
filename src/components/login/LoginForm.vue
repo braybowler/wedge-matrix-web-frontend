@@ -194,17 +194,14 @@ input:focus {
   padding: 6px 16px;
   font-size: 16px;
   font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .button:hover {
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 6px 16px;
-  font-size: 16px;
-  font-weight: 500;
+  background-color: #4b5563;
+  border-color: #818cf8;
   cursor: pointer;
+  transform: translateY(-1px);
 }
 
 .login-link {

@@ -212,7 +212,9 @@ td:last-child {
 }
 
 .component-container {
-  padding: 8px;
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .swing-percentage-container {
@@ -301,18 +303,14 @@ td:last-child {
   font-size: 16px;
   font-weight: 500;
   width: 150px;
+  transition: all 0.2s ease;
 }
 
 .button:hover {
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  margin-top: 12px;
-  padding: 6px 16px;
-  font-size: 16px;
-  font-weight: 500;
+  background-color: #4b5563;
+  border-color: #818cf8;
   cursor: pointer;
+  transform: translateY(-1px);
 }
 
 .logout-button {
