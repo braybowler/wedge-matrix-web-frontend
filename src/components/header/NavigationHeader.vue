@@ -26,6 +26,10 @@
   color: #9ca3af;
 }
 
+.link:hover {
+  transform: translateY(-1px);
+}
+
 .active-link {
   color: #818cf8;
   font-weight: 700;
