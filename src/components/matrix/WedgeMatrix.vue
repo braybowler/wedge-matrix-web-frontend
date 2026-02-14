@@ -166,7 +166,7 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
       <button @click="handleClearMatrixButtonPress" class="button" data-test-id="clear-all-button">
         Clear Matrix
       </button>
-      <button @click="handleLogout" class="button logout-button" data-test-id="logout-button">
+      <button @click="handleLogout" class="button" data-test-id="logout-button">
         Logout
       </button>
     </div>
