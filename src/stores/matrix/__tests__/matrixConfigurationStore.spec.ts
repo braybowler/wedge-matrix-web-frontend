@@ -1,0 +1,193 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
+import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import type { WedgeMatrix } from '@/types/matrix'
+
+vi.mock('@/composables/axios/axios.ts', () => {
+  const putMock = vi.fn()
+  return {
+    useAxios: () => ({
+      put: putMock,
+      get: vi.fn(),
+      post: vi.fn(),
+      del: vi.fn(),
+    }),
+    __putMock: putMock,
+  }
+})
+
+let putMock: ReturnType<typeof vi.fn>
+
+beforeEach(async () => {
+  setActivePinia(createPinia())
+  const mod = await import('@/composables/axios/axios.ts')
+  putMock = (mod as unknown as { __putMock: ReturnType<typeof vi.fn> }).__putMock
+  putMock.mockReset()
+})
+
+const buildMatrix = (overrides: Partial<WedgeMatrix> = {}): WedgeMatrix => ({
+  id: 10,
+  user_id: 1,
+  label: null,
+  number_of_rows: 4,
+  number_of_columns: 3,
+  column_headers: ['100%', '75%', '50%'],
+  selected_row_display_option: 'Total',
+  yardage_values: [
+    [
+      { carry_value: 100, total_value: 110 },
+      { carry_value: 80, total_value: 90 },
+      { carry_value: 60, total_value: 70 },
+    ],
+  ],
+  ...overrides,
+})
+
+describe('useMatrixConfigurationStore', () => {
+  describe('initializeMatrixValues', () => {
+    it('populates all store values from a WedgeMatrix object', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix()
+
+      store.initializeMatrixValues(matrix)
+
+      expect(store.matrixColumns).toBe(3)
+      expect(store.matrixColumnHeaders).toEqual(['100%', '75%', '50%'])
+      expect(store.selectedRowDisplayOption).toBe('Total')
+      expect(store.yardageValues).toEqual(matrix.yardage_values)
+    })
+  })
+
+  describe('setYardageValue', () => {
+    it('sets a carry value and marks requiresSync', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setYardageValue('carry_value', '120', 0, 0)
+
+      expect(store.yardageValues[0]![0]!.carry_value).toBe(120)
+      expect(store.requiresSync).toBe(true)
+    })
+
+    it('sets a total value', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setYardageValue('total_value', '95', 0, 1)
+
+      expect(store.yardageValues[0]![1]!.total_value).toBe(95)
+    })
+
+    it('sets cell to null for empty string', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues(buildMatrix())
+
+      store.setYardageValue('carry_value', '', 0, 0)
+
+      expect(store.yardageValues[0]![0]!.carry_value).toBeNull()
+    })
+
+    it('sets cell to null for invalid numbers', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setYardageValue('carry_value', '-5', 0, 0)
+      expect(store.yardageValues[0]![0]!.carry_value).toBeNull()
+
+      store.setYardageValue('carry_value', '1000', 0, 0)
+      expect(store.yardageValues[0]![0]!.carry_value).toBeNull()
+
+      store.setYardageValue('carry_value', 'abc', 0, 0)
+      expect(store.yardageValues[0]![0]!.carry_value).toBeNull()
+    })
+
+    it('does nothing for out-of-bounds indices', () => {
+      const store = useMatrixConfigurationStore()
+      const before = JSON.stringify(store.yardageValues)
+
+      store.setYardageValue('carry_value', '100', 99, 99)
+
+      expect(JSON.stringify(store.yardageValues)).toBe(before)
+    })
+  })
+
+  describe('clearYardageValues', () => {
+    it('resets all cells to null', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues(buildMatrix())
+
+      store.clearYardageValues()
+
+      for (const row of store.yardageValues) {
+        for (const cell of row) {
+          expect(cell.carry_value).toBeNull()
+          expect(cell.total_value).toBeNull()
+        }
+      }
+    })
+  })
+
+  describe('setMatrixColumnHeader', () => {
+    it('updates the header at the given index and marks requiresSync', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setMatrixColumnHeader('Full', 0)
+
+      expect(store.matrixColumnHeaders[0]).toBe('Full')
+      expect(store.requiresSync).toBe(true)
+    })
+  })
+
+  describe('setNumberOfMatrixColumns', () => {
+    it('updates column count and marks requiresSync', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setNumberOfMatrixColumns(2)
+
+      expect(store.matrixColumns).toBe(2)
+      expect(store.requiresSync).toBe(true)
+    })
+  })
+
+  describe('setSelectedRowDisplayOption', () => {
+    it('updates the display option and marks requiresSync', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setSelectedRowDisplayOption('Both')
+
+      expect(store.selectedRowDisplayOption).toBe('Both')
+      expect(store.requiresSync).toBe(true)
+    })
+  })
+
+  describe('synchronizeValues', () => {
+    it('calls PUT and clears requiresSync on success', async () => {
+      putMock.mockResolvedValue({ data: {}, status: 200 })
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues(buildMatrix())
+      store.requiresSync = true
+
+      await store.synchronizeValues()
+
+      expect(putMock).toHaveBeenCalledWith('/wedge-matrix/10', expect.any(Object))
+      expect(store.requiresSync).toBe(false)
+    })
+
+    it('keeps requiresSync true when PUT returns an error', async () => {
+      putMock.mockResolvedValue({ error: 'Server error', status: 500 })
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues(buildMatrix())
+      store.requiresSync = true
+
+      await store.synchronizeValues()
+
+      expect(store.requiresSync).toBe(true)
+    })
+
+    it('does nothing when requiresSync is false', async () => {
+      const store = useMatrixConfigurationStore()
+      store.requiresSync = false
+
+      await store.synchronizeValues()
+
+      expect(putMock).not.toHaveBeenCalled()
+    })
+  })
+})

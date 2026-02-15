@@ -14,6 +14,12 @@ vi.mock('@/composables/axios/axios.ts', () => ({
   useAxios: () => mockUseAxiosComposable,
 }))
 
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}))
+
 describe('RegisterView', () => {
   beforeEach(() => {
     vi.restoreAllMocks()

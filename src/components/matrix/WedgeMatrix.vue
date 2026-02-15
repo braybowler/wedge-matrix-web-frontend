@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { useUserStore } from '@/stores/user/userStore'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { onBeforeUnmount } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues } = matrixConfigurationStore
@@ -17,12 +18,19 @@ onBeforeUnmount(async () => {
   await matrixConfigurationStore.synchronizeValues()
 })
 
-const handleClearMatrixButtonPress = () => {
-  const userResponse = confirm('Are you sure you want to clear all records?')
+const showClearConfirm = ref(false)
 
-  if (userResponse) {
-    clearYardageValues()
-  }
+const handleClearMatrixButtonPress = () => {
+  showClearConfirm.value = true
+}
+
+const handleClearConfirm = () => {
+  clearYardageValues()
+  showClearConfirm.value = false
+}
+
+const handleClearCancel = () => {
+  showClearConfirm.value = false
 }
 
 const handleLogout = async () => {
@@ -162,13 +170,19 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
       </tbody>
     </table>
 
+    <ConfirmationModal
+      :visible="showClearConfirm"
+      title="Clear Matrix"
+      message="Are you sure you want to clear all records?"
+      @confirm="handleClearConfirm"
+      @cancel="handleClearCancel"
+    />
+
     <div class="button-container">
       <button @click="handleClearMatrixButtonPress" class="button" data-test-id="clear-all-button">
         Clear Matrix
       </button>
-      <button @click="handleLogout" class="button" data-test-id="logout-button">
-        Logout
-      </button>
+      <button @click="handleLogout" class="button" data-test-id="logout-button">Logout</button>
     </div>
   </div>
 </template>
