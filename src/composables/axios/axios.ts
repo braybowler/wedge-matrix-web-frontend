@@ -25,7 +25,6 @@ export function useAxios() {
     const axiosError = error as AxiosError<{ message?: string }>
 
     if (axiosError.response) {
-      // Server responded with error status
       const message =
         axiosError.response.data?.message || 'An error occurred processing your request'
       return {
@@ -33,13 +32,11 @@ export function useAxios() {
         status: axiosError.response.status,
       }
     } else if (axiosError.request) {
-      // Request made but no response
       return {
         error: 'Unable to reach the server. Please check your connection.',
         status: 0,
       }
     } else {
-      // Something else happened
       return {
         error: 'An unexpected error occurred',
         status: 0,
@@ -64,13 +61,9 @@ export function useAxios() {
   const post = async <T = unknown>(path: string, requestBody: unknown): Promise<ApiResponse<T>> => {
     startLoading()
     try {
-      const response: AxiosResponse<T> = await axios.post(
-        wedgeMatrixBasePath + path,
-        requestBody,
-        {
-          headers: authHeaders(),
-        },
-      )
+      const response: AxiosResponse<T> = await axios.post(wedgeMatrixBasePath + path, requestBody, {
+        headers: authHeaders(),
+      })
       return { data: response.data, status: response.status }
     } catch (error) {
       return handleError<T>(error)

@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { User } from '@/types/user'
+import { useAxios } from '@/composables/axios/axios.ts'
+import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 
 const USER_STORAGE_KEY = 'wedge_matrix_user'
 const TOKEN_STORAGE_KEY = 'wedge_matrix_token'
@@ -67,7 +69,6 @@ export const useUserStore = defineStore('user', () => {
 
     // Token exists, attempt to verify it by fetching user data
     try {
-      const { useAxios } = await import('@/composables/axios/axios.ts')
       const { get } = useAxios()
       const response = await get<{ user: User }>('/user')
 
@@ -83,16 +84,13 @@ export const useUserStore = defineStore('user', () => {
 
       // Initialize matrix configuration store if user has wedge_matrix data
       if (response.data.user.wedge_matrix) {
-        const { useMatrixConfigurationStore } = await import(
-          '@/stores/matrix/matrixConfigurationStore.ts'
-        )
         const matrixStore = useMatrixConfigurationStore()
         matrixStore.initializeMatrixValues(response.data.user.wedge_matrix)
       }
 
       return true
     } catch (error) {
-      // If verification fails, clear storage
+      console.error('Failed to verify:', error)
       logout()
       return false
     }

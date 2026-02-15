@@ -101,6 +101,12 @@ const mockMatrixConfigurationStore = {
   ]),
 }
 
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}))
+
 vi.mock('@/stores/matrix/matrixConfigurationStore', () => ({
   useMatrixConfigurationStore: () => mockMatrixConfigurationStore,
 }))

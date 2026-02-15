@@ -8,8 +8,6 @@ import type {
 } from '@/types/matrix'
 import { useAxios } from '@/composables/axios/axios.ts'
 
-const { put } = useAxios()
-
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
   const requiresSync = ref(false)
   const selectedMatrixId = ref<number | null>(null)
@@ -107,6 +105,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
 
   async function synchronizeValues() {
     if (requiresSync.value) {
+      const { put } = useAxios()
       const response = await put('/wedge-matrix/' + selectedMatrixId.value, {
         number_of_columns: matrixColumns.value,
         column_headers: matrixColumnHeaders.value,

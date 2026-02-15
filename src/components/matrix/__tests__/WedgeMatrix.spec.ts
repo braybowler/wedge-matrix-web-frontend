@@ -11,6 +11,12 @@ const mockUseAxiosComposable = vi.hoisted(() => ({
   put: vi.fn(),
 }))
 
+vi.mock('vue-router', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}))
+
 vi.mock('@/composables/axios/axios.ts', () => ({
   useAxios: () => mockUseAxiosComposable,
 }))
@@ -94,8 +100,6 @@ describe('WedgeMatrix Component', () => {
     })
 
     it('clears the matrix values on clear matrix button press', async () => {
-      vi.spyOn(window, 'confirm').mockReturnValue(true)
-
       const wrapper = mount(WedgeMatrix, {
         attachTo: document.body,
       })
@@ -112,14 +116,16 @@ describe('WedgeMatrix Component', () => {
       }
 
       const clearAllButton = wrapper.find('[data-test-id="clear-all-button"]')
-
       await clearAllButton.trigger('click')
+
+      const confirmButton = document.body.querySelector('[data-test-id="confirm-button"]')
+      expect(confirmButton).not.toBeNull()
+      ;(confirmButton as HTMLElement).click()
+      await wrapper.vm.$nextTick()
 
       for (const input of inputs) {
         expect((input.element as HTMLInputElement).value).toBe('')
       }
     })
-
-    it.todo('validates user yardage input')
   })
 })

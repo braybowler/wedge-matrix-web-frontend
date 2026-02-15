@@ -63,7 +63,11 @@ router.beforeEach(async (to, from, next) => {
   // Standard auth check
   if (to.meta.requiresAuth && !userStore.user) {
     next({ name: 'login' })
-  } else if (!to.meta.requiresAuth && userStore.user && (to.name === 'login' || to.name === 'register')) {
+  } else if (
+    !to.meta.requiresAuth &&
+    userStore.user &&
+    (to.name === 'login' || to.name === 'register')
+  ) {
     // If logged in and trying to access login/register, redirect to matrix
     next({ name: 'matrix' })
   } else {
