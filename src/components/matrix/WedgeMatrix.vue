@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import { CLUB_LABELS } from '@/types/matrix'
 import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, ref } from 'vue'
 
@@ -28,7 +29,7 @@ const handleClearCancel = () => {
   showClearConfirm.value = false
 }
 
-const clubs = ['LW', 'SW', 'GW', 'PW']
+const clubs = CLUB_LABELS
 </script>
 
 <template>

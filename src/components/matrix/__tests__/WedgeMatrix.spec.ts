@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import WedgeMatrix from '@/components/matrix/WedgeMatrix.vue'
 import { createPinia, setActivePinia, storeToRefs } from 'pinia'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import { CLUB_LABELS } from '@/types/matrix'
 import type { RowDisplayOption } from '@/types/matrix'
 
 const mockUseAxiosComposable = vi.hoisted(() => ({
@@ -30,9 +31,7 @@ describe('WedgeMatrix Component', () => {
 
     it('displays correct clubs (matrix rows)', () => {
       const wrapper = mount(WedgeMatrix)
-      const clubs = ['LW', 'SW', 'GW', 'PW']
-
-      clubs.forEach((club) => {
+      CLUB_LABELS.forEach((club) => {
         expect(wrapper.text()).toContain(club)
       })
     })

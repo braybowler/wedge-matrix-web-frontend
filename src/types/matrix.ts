@@ -1,6 +1,7 @@
 export type AllowableMatrixColumnNumber = 1 | 2 | 3 | 4
 
-export type ClubLabel = 'LW' | 'SW' | 'GW' | 'AW' | 'PW'
+export const CLUB_LABELS = ['LW', 'SW', 'GW', 'PW'] as const
+export type ClubLabel = (typeof CLUB_LABELS)[number]
 
 export type RowDisplayOption = 'Carry' | 'Total' | 'Both'
 
