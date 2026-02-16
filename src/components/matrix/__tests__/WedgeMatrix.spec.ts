@@ -11,12 +11,6 @@ const mockUseAxiosComposable = vi.hoisted(() => ({
   put: vi.fn(),
 }))
 
-vi.mock('vue-router', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-  }),
-}))
-
 vi.mock('@/composables/axios/axios.ts', () => ({
   useAxios: () => mockUseAxiosComposable,
 }))

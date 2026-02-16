@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
-import { useUserStore } from '@/stores/user/userStore'
-import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, ref } from 'vue'
 
@@ -10,9 +8,6 @@ const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues } = matrixConfigurationStore
 const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption, yardageValues } =
   storeToRefs(matrixConfigurationStore)
-
-const userStore = useUserStore()
-const router = useRouter()
 
 onBeforeUnmount(async () => {
   await matrixConfigurationStore.synchronizeValues()
@@ -31,11 +26,6 @@ const handleClearConfirm = () => {
 
 const handleClearCancel = () => {
   showClearConfirm.value = false
-}
-
-const handleLogout = async () => {
-  userStore.logout()
-  await router.push({ name: 'login' })
 }
 
 const clubs = ['LW', 'SW', 'GW', 'PW']
@@ -182,7 +172,6 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
       <button @click="handleClearMatrixButtonPress" class="button" data-test-id="clear-all-button">
         Clear Matrix
       </button>
-      <button @click="handleLogout" class="button" data-test-id="logout-button">Logout</button>
     </div>
   </div>
 </template>
@@ -325,9 +314,5 @@ td:last-child {
   border-color: #818cf8;
   cursor: pointer;
   transform: translateY(-1px);
-}
-
-.logout-button {
-  margin-top: 0;
 }
 </style>
