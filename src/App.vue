@@ -3,11 +3,13 @@ import { RouterView } from 'vue-router'
 import SidebarNavigation from '@/components/sidebar/SidebarNavigation.vue'
 import NavigationHeader from '@/components/header/NavigationHeader.vue'
 import MobileFooter from '@/components/footer/MobileFooter.vue'
+import LoadingBar from '@/components/loading/LoadingBar.vue'
 import router from '@/router'
 import { publicRoutes } from '@/router'
 </script>
 
 <template>
+  <LoadingBar />
   <template v-if="!publicRoutes.includes(router.currentRoute.value.name)">
     <div class="mobile-layout">
       <NavigationHeader />

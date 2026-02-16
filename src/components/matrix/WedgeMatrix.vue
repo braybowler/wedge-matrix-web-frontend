@@ -7,7 +7,7 @@ import { onBeforeUnmount, ref } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues } = matrixConfigurationStore
-const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption, yardageValues } =
+const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption, yardageValues, syncError } =
   storeToRefs(matrixConfigurationStore)
 
 onBeforeUnmount(async () => {
@@ -34,6 +34,9 @@ const clubs = CLUB_LABELS
 
 <template>
   <div class="component-container">
+    <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
+      {{ syncError }}
+    </p>
     <table>
       <thead>
         <tr>
@@ -178,6 +181,13 @@ const clubs = CLUB_LABELS
 </template>
 
 <style scoped>
+.error-message {
+  color: #818cf8;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
 table {
   width: 100%;
   border-radius: 8px;

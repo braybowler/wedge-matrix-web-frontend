@@ -10,6 +10,7 @@ import { useAxios } from '@/composables/axios/axios.ts'
 
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
   const requiresSync = ref(false)
+  const syncError = ref<string | null>(null)
   const selectedMatrixId = ref<number | null>(null)
   const matrixColumns = ref<AllowableMatrixColumnNumber>(4)
   const matrixColumnHeaders = ref<Array<string>>(['', '', '', ''])
@@ -105,6 +106,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
 
   async function synchronizeValues() {
     if (requiresSync.value) {
+      syncError.value = null
       const { put } = useAxios()
       const response = await put('/wedge-matrix/' + selectedMatrixId.value, {
         number_of_columns: matrixColumns.value,
@@ -113,7 +115,9 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
         yardage_values: yardageValues.value,
       })
 
-      if (!response.error) {
+      if (response.error) {
+        syncError.value = response.error
+      } else {
         requiresSync.value = false
       }
     }
@@ -143,6 +147,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   }
 
   function clearYardageValues() {
+    requiresSync.value = true
     for (const row of yardageValues.value) {
       for (const cell of row) {
         cell.carry_value = null
@@ -172,6 +177,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     matrixColumnHeaders,
     selectedRowDisplayOption,
     requiresSync,
+    syncError,
     initializeMatrixValues,
     setYardageValue,
     clearYardageValues,

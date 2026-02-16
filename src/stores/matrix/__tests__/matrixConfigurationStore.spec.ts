@@ -109,7 +109,7 @@ describe('useMatrixConfigurationStore', () => {
   })
 
   describe('clearYardageValues', () => {
-    it('resets all cells to null', () => {
+    it('resets all cells to null and marks requiresSync', () => {
       const store = useMatrixConfigurationStore()
       store.initializeMatrixValues(buildMatrix())
 
@@ -121,6 +121,7 @@ describe('useMatrixConfigurationStore', () => {
           expect(cell.total_value).toBeNull()
         }
       }
+      expect(store.requiresSync).toBe(true)
     })
   })
 
@@ -158,7 +159,7 @@ describe('useMatrixConfigurationStore', () => {
   })
 
   describe('synchronizeValues', () => {
-    it('calls PUT and clears requiresSync on success', async () => {
+    it('calls PUT and clears requiresSync and syncError on success', async () => {
       putMock.mockResolvedValue({ data: {}, status: 200 })
       const store = useMatrixConfigurationStore()
       store.initializeMatrixValues(buildMatrix())
@@ -168,9 +169,10 @@ describe('useMatrixConfigurationStore', () => {
 
       expect(putMock).toHaveBeenCalledWith('/wedge-matrix/10', expect.any(Object))
       expect(store.requiresSync).toBe(false)
+      expect(store.syncError).toBeNull()
     })
 
-    it('keeps requiresSync true when PUT returns an error', async () => {
+    it('keeps requiresSync true and sets syncError when PUT returns an error', async () => {
       putMock.mockResolvedValue({ error: 'Server error', status: 500 })
       const store = useMatrixConfigurationStore()
       store.initializeMatrixValues(buildMatrix())
@@ -179,6 +181,23 @@ describe('useMatrixConfigurationStore', () => {
       await store.synchronizeValues()
 
       expect(store.requiresSync).toBe(true)
+      expect(store.syncError).toBe('Server error')
+    })
+
+    it('clears syncError on next successful sync', async () => {
+      putMock.mockResolvedValue({ error: 'Server error', status: 500 })
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues(buildMatrix())
+      store.requiresSync = true
+
+      await store.synchronizeValues()
+      expect(store.syncError).toBe('Server error')
+
+      putMock.mockResolvedValue({ data: {}, status: 200 })
+      await store.synchronizeValues()
+
+      expect(store.syncError).toBeNull()
+      expect(store.requiresSync).toBe(false)
     })
 
     it('does nothing when requiresSync is false', async () => {
