@@ -3,7 +3,7 @@ import WedgeMatrix from '@/components/matrix/WedgeMatrix.vue'
 </script>
 
 <template>
-  <main class="min-h-[500px]">
+  <main>
     <WedgeMatrix />
   </main>
 </template>

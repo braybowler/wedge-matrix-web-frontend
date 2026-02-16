@@ -13,9 +13,17 @@ onUnmounted(async () => {
 </script>
 
 <template>
-  <main class="p-2 min-h-[500px]">
+  <main class="configure-container">
     <SwingPercentageColumnSelector />
     <ColumnHeaderLabelInput />
     <RowDisplayOptionSelector />
   </main>
 </template>
+
+<style scoped>
+.configure-container {
+  padding: 16px;
+  background-color: #1f2937;
+  border-radius: 8px;
+}
+</style>

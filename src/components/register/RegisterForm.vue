@@ -97,13 +97,6 @@ const handleRegisterSubmission = async () => {
         data-test-id="password-confirmation-input"
       />
 
-      <p v-if="showInvalidEmailErrorMessage" class="error-message">
-        {{ invalidEmailErrorMessage }}
-      </p>
-      <p v-if="showInvalidPasswordErrorMessage" class="error-message">
-        {{ invalidPasswordErrorMessage }}
-      </p>
-
       <div class="tos-container">
         <input
           class="tos-checkbox"
@@ -118,6 +111,12 @@ const handleRegisterSubmission = async () => {
           </span>
         </label>
       </div>
+      <p v-if="showInvalidEmailErrorMessage" class="error-message">
+        {{ invalidEmailErrorMessage }}
+      </p>
+      <p v-if="showInvalidPasswordErrorMessage" class="error-message">
+        {{ invalidPasswordErrorMessage }}
+      </p>
       <p v-if="showTosErrorMessage" class="error-message" data-test-id="tos-error-message">
         You must accept the Terms of Service to register.
       </p>
@@ -227,6 +226,7 @@ input:focus {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   width: 100%;
 }
