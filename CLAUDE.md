@@ -47,4 +47,4 @@ Login → API returns user + access_token → stored in userStore (+ localStorag
 - Tests are colocated in `__tests__/` directories next to their source files.
 - Tailwind CSS v4 with Vite plugin; component scoped styles use `@reference "tailwindcss"`.
 - **File-level imports only** — never use inline dynamic `await import()`. All imports must be at the top of the file.
-- `npm run check` must pass (lint + format + type-check + test) after every change.
+- `npm run check` must pass (lint + format + type-check + test + E2E testing) after every change.

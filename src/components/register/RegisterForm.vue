@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useRouter } from 'vue-router'
 import { useValidation } from '@/composables/validation/validation.ts'
+import TosModal from '@/components/register/TosModal.vue'
 
 const router = useRouter()
 
@@ -19,9 +20,14 @@ const passwordConfirmation = ref('')
 const showInvalidPasswordErrorMessage = ref(false)
 const invalidPasswordErrorMessage = ref('')
 
+const tosAccepted = ref(false)
+const showTosModal = ref(false)
+const showTosErrorMessage = ref(false)
+
 const handleRegisterSubmission = async () => {
   showInvalidEmailErrorMessage.value = false
   showInvalidPasswordErrorMessage.value = false
+  showTosErrorMessage.value = false
 
   const validEmail = validateEmail(email.value)
   if (!validEmail.isEmailValid) {
@@ -39,10 +45,16 @@ const handleRegisterSubmission = async () => {
   }
   showInvalidPasswordErrorMessage.value = false
 
+  if (!tosAccepted.value) {
+    showTosErrorMessage.value = true
+    return
+  }
+
   const response = await post('/register', {
     email: email.value,
     password: password.value,
     password_confirmation: passwordConfirmation.value,
+    tos_accepted: tosAccepted.value,
   })
 
   if (response?.error) {
@@ -91,6 +103,27 @@ const handleRegisterSubmission = async () => {
       <p v-if="showInvalidPasswordErrorMessage" class="error-message">
         {{ invalidPasswordErrorMessage }}
       </p>
+
+      <div class="tos-container">
+        <input
+          class="tos-checkbox"
+          type="checkbox"
+          v-model="tosAccepted"
+          data-test-id="tos-checkbox"
+        />
+        <label class="tos-label">
+          I agree to the
+          <span class="tos-link" data-test-id="tos-link" @click="showTosModal = true">
+            Terms of Service
+          </span>
+        </label>
+      </div>
+      <p v-if="showTosErrorMessage" class="error-message" data-test-id="tos-error-message">
+        You must accept the Terms of Service to register.
+      </p>
+
+      <TosModal :visible="showTosModal" @close="showTosModal = false" />
+
       <button
         class="button"
         type="submit"
@@ -188,6 +221,32 @@ input:focus {
   border-color: #818cf8;
   cursor: pointer;
   transform: translateY(-1px);
+}
+
+.tos-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.tos-checkbox {
+  accent-color: #818cf8;
+  width: 16px;
+  height: 16px;
+}
+
+.tos-label {
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.tos-link {
+  color: #818cf8;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .register-link {

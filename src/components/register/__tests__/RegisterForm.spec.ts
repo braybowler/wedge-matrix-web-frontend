@@ -51,6 +51,13 @@ describe('RegisterForm Component', () => {
 
       expect(wrapper.exists).toBeTruthy()
     })
+
+    it('renders TOS checkbox and TOS link', () => {
+      const wrapper = mount(RegisterForm, { global: { plugins: [router] } })
+
+      expect(wrapper.find('[data-test-id="tos-checkbox"]').exists()).toBe(true)
+      expect(wrapper.find('[data-test-id="tos-link"]').exists()).toBe(true)
+    })
   })
 
   describe('User Input', () => {
@@ -73,6 +80,26 @@ describe('RegisterForm Component', () => {
       await input.trigger('input')
 
       expect((input.element as HTMLInputElement).value).toBe('test-text')
+    })
+
+    it('toggles TOS checkbox', async () => {
+      const wrapper = mount(RegisterForm, { global: { plugins: [router] } })
+
+      const checkbox = wrapper.find('[data-test-id="tos-checkbox"]')
+      await checkbox.setValue(true)
+
+      expect((checkbox.element as HTMLInputElement).checked).toBe(true)
+    })
+
+    it('opens TOS modal when TOS link is clicked', async () => {
+      const wrapper = mount(RegisterForm, {
+        global: { plugins: [router], stubs: { teleport: true } },
+      })
+
+      await wrapper.find('[data-test-id="tos-link"]').trigger('click')
+      await nextTick()
+
+      expect(wrapper.find('[data-test-id="tos-modal-overlay"]').exists()).toBe(true)
     })
 
     it('links a user to the login page', async () => {
@@ -113,6 +140,7 @@ describe('RegisterForm Component', () => {
       await emailInput.setValue('test@admin.com')
       await passwordInput.setValue('password')
       await passwordConfirmationInput.setValue('password')
+      await wrapper.find('[data-test-id="tos-checkbox"]').setValue(true)
       await registerButton.trigger('click')
       await flushPromises()
 
@@ -121,6 +149,35 @@ describe('RegisterForm Component', () => {
   })
 
   describe('Communication', () => {
+    it('shows error when registering without accepting TOS', async () => {
+      const wrapper = mount(RegisterForm, { global: { plugins: [router] } })
+
+      await wrapper.find('[data-test-id="email-input"]').setValue('test@example.com')
+      await wrapper.find('[data-test-id="password-input"]').setValue('password')
+      await wrapper.find('[data-test-id="password-confirmation-input"]').setValue('password')
+      await wrapper.find('[data-test-id="register-button"]').trigger('click')
+      await nextTick()
+
+      expect(wrapper.find('[data-test-id="tos-error-message"]').exists()).toBe(true)
+      expect(wrapper.find('[data-test-id="tos-error-message"]').text()).toBe(
+        'You must accept the Terms of Service to register.',
+      )
+      expect(useAxios().post).not.toHaveBeenCalled()
+    })
+
+    it('does not show TOS error when TOS is accepted', async () => {
+      const wrapper = mount(RegisterForm, { global: { plugins: [router] } })
+
+      await wrapper.find('[data-test-id="email-input"]').setValue('test@example.com')
+      await wrapper.find('[data-test-id="password-input"]').setValue('password')
+      await wrapper.find('[data-test-id="password-confirmation-input"]').setValue('password')
+      await wrapper.find('[data-test-id="tos-checkbox"]').setValue(true)
+      await wrapper.find('[data-test-id="register-button"]').trigger('click')
+      await nextTick()
+
+      expect(wrapper.find('[data-test-id="tos-error-message"]').exists()).toBe(false)
+    })
+
     it('sends an API request with form values on register attempt', async () => {
       const wrapper = mount(RegisterForm, { global: { plugins: [router] } })
 
@@ -132,6 +189,7 @@ describe('RegisterForm Component', () => {
       await emailInput.setValue('test@example.com')
       await passwordInput.setValue('password')
       await passwordConfirmationInput.setValue('password')
+      await wrapper.find('[data-test-id="tos-checkbox"]').setValue(true)
       await registerButton.trigger('click')
       await nextTick()
 
@@ -139,6 +197,7 @@ describe('RegisterForm Component', () => {
         email: 'test@example.com',
         password: 'password',
         password_confirmation: 'password',
+        tos_accepted: true,
       })
     })
   })
