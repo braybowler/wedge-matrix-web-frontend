@@ -48,7 +48,7 @@ const toggleClub = (club: (typeof CLUB_LABELS)[number]) => {
 .selector-section {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-evenly;
   margin-top: 8px;
 }
 
@@ -56,15 +56,16 @@ const toggleClub = (club: (typeof CLUB_LABELS)[number]) => {
   background-color: #374151;
   border: 1px solid #4b5563;
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 6px 8px;
   color: #9ca3af;
+  font-size: 14px;
 }
 
 .selector-container:hover {
   background-color: #4b5563;
   border-color: #818cf8;
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 6px 8px;
   color: #9ca3af;
   cursor: pointer;
   transform: translateY(-1px);
@@ -74,17 +75,33 @@ const toggleClub = (club: (typeof CLUB_LABELS)[number]) => {
   background-color: #818cf8;
   border: 1px solid #4b5563;
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 6px 8px;
   color: #f3f4f6;
+  font-size: 14px;
 }
 
 .selector-container-active:hover {
   background-color: #818cf8;
   border: 1px solid #4b5563;
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 6px 8px;
   color: #f3f4f6;
   cursor: pointer;
   transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .selector-section {
+    margin-top: 4px;
+    gap: 6px;
+  }
+
+  .selector-container,
+  .selector-container:hover,
+  .selector-container-active,
+  .selector-container-active:hover {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
 }
 </style>

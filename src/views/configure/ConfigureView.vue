@@ -16,18 +16,26 @@ onUnmounted(async () => {
 </script>
 
 <template>
-  <main class="configure-container">
-    <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
-      {{ syncError }}
-    </p>
-    <SwingPercentageColumnSelector />
-    <ColumnHeaderLabelInput />
-    <RowDisplayOptionSelector />
-    <ClubSelector />
+  <main class="configure-wrapper">
+    <div class="configure-container">
+      <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
+        {{ syncError }}
+      </p>
+      <SwingPercentageColumnSelector />
+      <ColumnHeaderLabelInput />
+      <RowDisplayOptionSelector />
+      <ClubSelector />
+    </div>
   </main>
 </template>
 
 <style scoped>
+.configure-wrapper {
+  padding: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .error-message {
   color: #818cf8;
   font-size: 14px;
@@ -42,5 +50,12 @@ onUnmounted(async () => {
   padding: 20px;
   background-color: #1f2937;
   border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+  .configure-container {
+    gap: 10px;
+    padding: 12px;
+  }
 }
 </style>

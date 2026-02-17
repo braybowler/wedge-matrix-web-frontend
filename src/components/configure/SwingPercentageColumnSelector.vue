@@ -77,4 +77,17 @@ const { matrixColumns } = storeToRefs(matrixConfigurationStore)
   cursor: pointer;
   transform: translateY(-1px);
 }
+
+@media (max-width: 480px) {
+  .selector-section {
+    margin-top: 4px;
+  }
+
+  .selector-container,
+  .selector-container:hover,
+  .selector-container-active,
+  .selector-container-active:hover {
+    padding: 6px 12px;
+  }
+}
 </style>

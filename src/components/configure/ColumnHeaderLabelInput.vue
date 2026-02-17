@@ -45,7 +45,6 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
 
 <style scoped>
 .component-container {
-  margin-top: 8px;
   min-height: 195px;
 }
 
@@ -82,5 +81,21 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
   border: 1px solid #4b5563;
   border-radius: 8px;
   padding: 4px 8px;
+}
+
+@media (max-width: 480px) {
+  .component-container {
+    min-height: auto;
+  }
+
+  .input-container {
+    margin-top: 4px;
+    gap: 8px;
+  }
+
+  .column-label-selector-pair {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 }
 </style>
