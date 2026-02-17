@@ -56,6 +56,24 @@ describe('useMatrixConfigurationStore', () => {
       expect(store.selectedRowDisplayOption).toBe('Total')
       expect(store.yardageValues).toEqual(matrix.yardage_values)
     })
+
+    it('reads club_labels into selectedClubs', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix({ club_labels: ['LW', 'AW', 'PW'] })
+
+      store.initializeMatrixValues(matrix)
+
+      expect(store.selectedClubs).toEqual(['LW', 'AW', 'PW'])
+    })
+
+    it('falls back to default clubs when club_labels is absent', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix()
+
+      store.initializeMatrixValues(matrix)
+
+      expect(store.selectedClubs).toEqual(['LW', 'SW', 'GW', 'PW'])
+    })
   })
 
   describe('setYardageValue', () => {
@@ -158,6 +176,50 @@ describe('useMatrixConfigurationStore', () => {
     })
   })
 
+  describe('setSelectedClubs', () => {
+    it('updates selectedClubs, sets requiresSync, and resizes yardageValues', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setSelectedClubs(['LW', 'SW'])
+
+      expect(store.selectedClubs).toEqual(['LW', 'SW'])
+      expect(store.requiresSync).toBe(true)
+      expect(store.yardageValues).toHaveLength(2)
+    })
+
+    it('preserves existing row data when reordering or adding clubs', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues(
+        buildMatrix({
+          club_labels: ['LW', 'SW'],
+          yardage_values: [
+            [
+              { carry_value: 100, total_value: 110 },
+              { carry_value: 80, total_value: 90 },
+              { carry_value: 60, total_value: 70 },
+            ],
+            [
+              { carry_value: 50, total_value: 55 },
+              { carry_value: 40, total_value: 45 },
+              { carry_value: 30, total_value: 35 },
+            ],
+          ],
+        }),
+      )
+
+      store.setSelectedClubs(['AW', 'SW', 'LW'])
+
+      expect(store.selectedClubs).toEqual(['AW', 'SW', 'LW'])
+      expect(store.yardageValues).toHaveLength(3)
+      // AW is new — empty row
+      expect(store.yardageValues[0]!.every((c) => c.carry_value === null)).toBe(true)
+      // SW preserved
+      expect(store.yardageValues[1]![0]!.carry_value).toBe(50)
+      // LW preserved
+      expect(store.yardageValues[2]![0]!.carry_value).toBe(100)
+    })
+  })
+
   describe('synchronizeValues', () => {
     it('calls PUT and clears requiresSync and syncError on success', async () => {
       putMock.mockResolvedValue({ data: {}, status: 200 })
@@ -170,6 +232,20 @@ describe('useMatrixConfigurationStore', () => {
       expect(putMock).toHaveBeenCalledWith('/wedge-matrix/10', expect.any(Object))
       expect(store.requiresSync).toBe(false)
       expect(store.syncError).toBeNull()
+    })
+
+    it('includes club_labels in the PUT body', async () => {
+      putMock.mockResolvedValue({ data: {}, status: 200 })
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues(buildMatrix({ club_labels: ['LW', 'AW'] }))
+      store.requiresSync = true
+
+      await store.synchronizeValues()
+
+      expect(putMock).toHaveBeenCalledWith(
+        '/wedge-matrix/10',
+        expect.objectContaining({ club_labels: ['LW', 'AW'] }),
+      )
     })
 
     it('keeps requiresSync true and sets syncError when PUT returns an error', async () => {

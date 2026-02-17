@@ -3,7 +3,6 @@ import { mount } from '@vue/test-utils'
 import WedgeMatrix from '@/components/matrix/WedgeMatrix.vue'
 import { createPinia, setActivePinia, storeToRefs } from 'pinia'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
-import { CLUB_LABELS } from '@/types/matrix'
 import type { RowDisplayOption } from '@/types/matrix'
 
 const mockUseAxiosComposable = vi.hoisted(() => ({
@@ -30,10 +29,26 @@ describe('WedgeMatrix Component', () => {
     })
 
     it('displays correct clubs (matrix rows)', () => {
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      const { selectedClubs } = storeToRefs(matrixConfigurationStore)
+
       const wrapper = mount(WedgeMatrix)
-      CLUB_LABELS.forEach((club) => {
+      selectedClubs.value.forEach((club) => {
         expect(wrapper.text()).toContain(club)
       })
+    })
+
+    it('updates rendered rows when selectedClubs changes', async () => {
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      const wrapper = mount(WedgeMatrix)
+
+      matrixConfigurationStore.setSelectedClubs(['LW', 'PW'])
+      await wrapper.vm.$nextTick()
+
+      expect(wrapper.text()).toContain('LW')
+      expect(wrapper.text()).toContain('PW')
+      expect(wrapper.text()).not.toContain('SW')
+      expect(wrapper.text()).not.toContain('GW')
     })
 
     it('displays correct column headers (matrix columns)', () => {

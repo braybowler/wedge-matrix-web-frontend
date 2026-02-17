@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ClubSelector from '@/components/configure/ClubSelector.vue'
 import SwingPercentageColumnSelector from '@/components/configure/SwingPercentageColumnSelector.vue'
 import ColumnHeaderLabelInput from '@/components/configure/ColumnHeaderLabelInput.vue'
 import RowDisplayOptionSelector from '@/components/configure/RowDisplayOptionSelector.vue'
@@ -22,6 +23,7 @@ onUnmounted(async () => {
     <SwingPercentageColumnSelector />
     <ColumnHeaderLabelInput />
     <RowDisplayOptionSelector />
+    <ClubSelector />
   </main>
 </template>
 
@@ -34,7 +36,10 @@ onUnmounted(async () => {
 }
 
 .configure-container {
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
   background-color: #1f2937;
   border-radius: 8px;
 }

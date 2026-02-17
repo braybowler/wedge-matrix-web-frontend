@@ -2,11 +2,23 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type {
   AllowableMatrixColumnNumber,
+  ClubLabel,
   RowDisplayOption,
   WedgeMatrix,
+  YardageCell,
   YardageGrid,
 } from '@/types/matrix'
 import { useAxios } from '@/composables/axios/axios.ts'
+
+const DEFAULT_CLUBS: ClubLabel[] = ['LW', 'SW', 'GW', 'PW']
+
+function createEmptyRow(columns: number): YardageCell[] {
+  return Array.from({ length: columns }, () => ({ carry_value: null, total_value: null }))
+}
+
+function createEmptyGrid(rows: number, columns: number): YardageGrid {
+  return Array.from({ length: rows }, () => createEmptyRow(columns))
+}
 
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
   const requiresSync = ref(false)
@@ -15,85 +27,19 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   const matrixColumns = ref<AllowableMatrixColumnNumber>(4)
   const matrixColumnHeaders = ref<Array<string>>(['', '', '', ''])
   const selectedRowDisplayOption = ref<RowDisplayOption>('Carry')
-  const yardageValues = ref<YardageGrid>([
-    [
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-    ],
-    [
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-    ],
-    [
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-    ],
-    [
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-      {
-        carry_value: null,
-        total_value: null,
-      },
-    ],
-  ])
+  const selectedClubs = ref<ClubLabel[]>([...DEFAULT_CLUBS])
+  const yardageValues = ref<YardageGrid>(createEmptyGrid(DEFAULT_CLUBS.length, 4))
 
   function initializeMatrixValues(initialMatrixValues: WedgeMatrix) {
     selectedMatrixId.value = initialMatrixValues.id
     matrixColumns.value = initialMatrixValues.number_of_columns
     selectedRowDisplayOption.value = initialMatrixValues.selected_row_display_option
+
+    if (initialMatrixValues.club_labels && initialMatrixValues.club_labels.length > 0) {
+      selectedClubs.value = initialMatrixValues.club_labels
+    } else {
+      selectedClubs.value = [...DEFAULT_CLUBS]
+    }
 
     if (initialMatrixValues.column_headers) {
       matrixColumnHeaders.value = initialMatrixValues.column_headers
@@ -113,6 +59,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
         column_headers: matrixColumnHeaders.value,
         selected_row_display_option: selectedRowDisplayOption.value,
         yardage_values: yardageValues.value,
+        club_labels: selectedClubs.value,
       })
 
       if (response.error) {
@@ -171,6 +118,20 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     selectedRowDisplayOption.value = newVal
   }
 
+  function setSelectedClubs(clubs: ClubLabel[]) {
+    requiresSync.value = true
+
+    const clubRowMap = new Map<ClubLabel, YardageCell[]>()
+    selectedClubs.value.forEach((club, index) => {
+      const row = yardageValues.value[index]
+      if (row) clubRowMap.set(club, row)
+    })
+
+    const cols = matrixColumns.value
+    yardageValues.value = clubs.map((club) => clubRowMap.get(club) ?? createEmptyRow(cols))
+    selectedClubs.value = clubs
+  }
+
   return {
     yardageValues,
     matrixColumns,
@@ -182,7 +143,9 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     setYardageValue,
     clearYardageValues,
     setMatrixColumnHeader,
+    selectedClubs,
     setNumberOfMatrixColumns,
+    setSelectedClubs,
     setSelectedRowDisplayOption,
     synchronizeValues,
   }
