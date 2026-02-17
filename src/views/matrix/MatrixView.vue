@@ -14,14 +14,18 @@ watch(showTutorialModal, (value) => {
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import WedgeMatrix from '@/components/matrix/WedgeMatrix.vue'
 import TutorialModal from '@/components/matrix/TutorialModal.vue'
 import { useUserStore } from '@/stores/user/userStore.ts'
+import { useTutorialStore } from '@/stores/tutorial/tutorialStore.ts'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { storeToRefs } from 'pinia'
 import type { User } from '@/types/user'
 
+const router = useRouter()
 const userStore = useUserStore()
+const tutorialStore = useTutorialStore()
 const { user } = storeToRefs(userStore)
 const { patch } = useAxios()
 
@@ -40,6 +44,12 @@ async function dismissTutorialPermanently() {
   }
   showTutorialModal.value = false
 }
+
+function handleLearnMore() {
+  showTutorialModal.value = false
+  tutorialStore.startTutorial()
+  router.push('/configure')
+}
 </script>
 
 <template>
@@ -49,6 +59,7 @@ async function dismissTutorialPermanently() {
       :visible="tutorialVisible"
       @dismiss="dismissTutorial"
       @dismiss-permanently="dismissTutorialPermanently"
+      @learn-more="handleLearnMore"
     />
   </main>
 </template>

@@ -8,6 +8,7 @@ defineProps<{
 const emit = defineEmits<{
   dismiss: []
   dismissPermanently: []
+  learnMore: []
 }>()
 
 const doNotShowAgain = ref(false)
@@ -39,6 +40,13 @@ function handleDismiss() {
           Do not show me this again
         </label>
         <div class="button-row">
+          <button
+            class="button learn-more-button"
+            data-test-id="tutorial-learn-more-button"
+            @click="emit('learnMore')"
+          >
+            Learn More
+          </button>
           <button
             class="button dismiss-button"
             data-test-id="tutorial-dismiss-button"
@@ -130,5 +138,15 @@ function handleDismiss() {
 
 .dismiss-button:hover {
   background-color: #4b5563;
+}
+
+.learn-more-button {
+  background-color: #818cf8;
+  color: #1f2937;
+  border: 1px solid #818cf8;
+}
+
+.learn-more-button:hover {
+  background-color: #a5b4fc;
 }
 </style>

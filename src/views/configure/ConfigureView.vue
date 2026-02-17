@@ -3,12 +3,31 @@ import ClubSelector from '@/components/configure/ClubSelector.vue'
 import SwingPercentageColumnSelector from '@/components/configure/SwingPercentageColumnSelector.vue'
 import ColumnHeaderLabelInput from '@/components/configure/ColumnHeaderLabelInput.vue'
 import RowDisplayOptionSelector from '@/components/configure/RowDisplayOptionSelector.vue'
-import { onUnmounted } from 'vue'
+import TutorialHighlight from '@/components/configure/TutorialHighlight.vue'
+import { computed, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import { useTutorialStore } from '@/stores/tutorial/tutorialStore.ts'
 import { storeToRefs } from 'pinia'
 
+const router = useRouter()
 const matrixConfigurationStore = useMatrixConfigurationStore()
+const tutorialStore = useTutorialStore()
 const { syncError } = storeToRefs(matrixConfigurationStore)
+
+const showClubHighlight = computed(() => tutorialStore.tutorialStep === 1)
+const showSwingHighlight = computed(() => tutorialStore.tutorialStep === 2)
+const showLabelHighlight = computed(() => tutorialStore.tutorialStep === 3)
+const showRowDisplayHighlight = computed(() => tutorialStore.tutorialStep === 4)
+
+function advanceStep() {
+  tutorialStore.nextStep()
+}
+
+function finishTutorial() {
+  tutorialStore.endTutorial()
+  router.push('/matrix')
+}
 
 onUnmounted(async () => {
   await matrixConfigurationStore.synchronizeValues()
@@ -21,10 +40,38 @@ onUnmounted(async () => {
       <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
         {{ syncError }}
       </p>
-      <SwingPercentageColumnSelector />
-      <ColumnHeaderLabelInput />
-      <RowDisplayOptionSelector />
-      <ClubSelector />
+      <TutorialHighlight
+        :visible="showClubHighlight"
+        message="Start by selecting which wedges are in your bag"
+        button-label="Next"
+        @dismiss="advanceStep"
+      >
+        <ClubSelector />
+      </TutorialHighlight>
+      <TutorialHighlight
+        :visible="showSwingHighlight"
+        message="Select the number of partial or full shots you have, or would like to have, with each wedge"
+        button-label="Next"
+        @dismiss="advanceStep"
+      >
+        <SwingPercentageColumnSelector />
+      </TutorialHighlight>
+      <TutorialHighlight
+        :visible="showLabelHighlight"
+        message="Set custom labels for each swing column to match the shots you want to track with each wedge"
+        button-label="Next"
+        @dismiss="advanceStep"
+      >
+        <ColumnHeaderLabelInput />
+      </TutorialHighlight>
+      <TutorialHighlight
+        :visible="showRowDisplayHighlight"
+        message="Choose whether to track carry distance, total distance, or both for each yardage"
+        button-label="Finish Configuration"
+        @dismiss="finishTutorial"
+      >
+        <RowDisplayOptionSelector />
+      </TutorialHighlight>
     </div>
   </main>
 </template>
