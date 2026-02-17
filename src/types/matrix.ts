@@ -1,6 +1,7 @@
 export type AllowableMatrixColumnNumber = 1 | 2 | 3 | 4
 
-export type ClubLabel = 'LW' | 'SW' | 'GW' | 'AW' | 'PW'
+export const CLUB_LABELS = ['LW', 'SW', 'GW', 'AW', 'UW', 'PW'] as const
+export type ClubLabel = (typeof CLUB_LABELS)[number]
 
 export type RowDisplayOption = 'Carry' | 'Total' | 'Both'
 
@@ -16,4 +17,5 @@ export type WedgeMatrix = {
   column_headers: Array<string>
   selected_row_display_option: RowDisplayOption
   yardage_values: YardageGrid
+  club_labels?: ClubLabel[]
 }

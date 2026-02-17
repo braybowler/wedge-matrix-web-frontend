@@ -59,14 +59,16 @@ describe('useUserStore', () => {
   })
 
   describe('logout', () => {
-    it('clears user, accessToken, and localStorage', () => {
+    it('clears user, accessToken, isAuthVerified, and localStorage', () => {
       const store = useUserStore()
       store.initializeUserStoreValues(mockUser, 'abc-token')
+      store.isAuthVerified = true
 
       store.logout()
 
       expect(store.user).toBeNull()
       expect(store.accessToken).toBeNull()
+      expect(store.isAuthVerified).toBe(false)
       expect(localStorage.getItem('wedge_matrix_user')).toBeNull()
       expect(localStorage.getItem('wedge_matrix_token')).toBeNull()
     })

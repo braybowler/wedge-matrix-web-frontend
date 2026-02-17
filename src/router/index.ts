@@ -41,17 +41,15 @@ const router = createRouter({
   ],
 })
 
-let isAuthVerified = false
-
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   const { user, verifyAndRefreshAuth } = userStore
 
   // If navigating to a protected route and we haven't verified auth yet
-  if (to.meta.requiresAuth && !isAuthVerified && user) {
+  if (to.meta.requiresAuth && !userStore.isAuthVerified && user) {
     // Verify the token is still valid
     const isValid = await verifyAndRefreshAuth()
-    isAuthVerified = true
+    userStore.isAuthVerified = true
 
     if (!isValid) {
       // Token invalid, redirect to login

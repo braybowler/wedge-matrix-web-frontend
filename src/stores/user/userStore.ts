@@ -10,6 +10,7 @@ const TOKEN_STORAGE_KEY = 'wedge_matrix_token'
 export const useUserStore = defineStore('user', () => {
   const user = ref<User | null>(loadUserFromStorage())
   const accessToken = ref<string | null>(loadTokenFromStorage())
+  const isAuthVerified = ref(false)
 
   function loadUserFromStorage(): User | null {
     try {
@@ -57,6 +58,7 @@ export const useUserStore = defineStore('user', () => {
   function logout() {
     user.value = null
     accessToken.value = null
+    isAuthVerified.value = false
     clearStorage()
   }
 
@@ -99,6 +101,7 @@ export const useUserStore = defineStore('user', () => {
   return {
     user,
     accessToken,
+    isAuthVerified,
     initializeUserStoreValues,
     logout,
     verifyAndRefreshAuth,

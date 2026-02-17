@@ -6,8 +6,14 @@ import { onBeforeUnmount, ref } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues } = matrixConfigurationStore
-const { matrixColumns, matrixColumnHeaders, selectedRowDisplayOption, yardageValues } =
-  storeToRefs(matrixConfigurationStore)
+const {
+  matrixColumns,
+  matrixColumnHeaders,
+  selectedRowDisplayOption,
+  yardageValues,
+  syncError,
+  selectedClubs,
+} = storeToRefs(matrixConfigurationStore)
 
 onBeforeUnmount(async () => {
   await matrixConfigurationStore.synchronizeValues()
@@ -28,11 +34,14 @@ const handleClearCancel = () => {
   showClearConfirm.value = false
 }
 
-const clubs = ['LW', 'SW', 'GW', 'PW']
+const clubs = selectedClubs
 </script>
 
 <template>
   <div class="component-container">
+    <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
+      {{ syncError }}
+    </p>
     <table>
       <thead>
         <tr>
@@ -177,6 +186,13 @@ const clubs = ['LW', 'SW', 'GW', 'PW']
 </template>
 
 <style scoped>
+.error-message {
+  color: #818cf8;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
 table {
   width: 100%;
   border-radius: 8px;

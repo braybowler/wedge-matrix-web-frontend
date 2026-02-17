@@ -29,12 +29,26 @@ describe('WedgeMatrix Component', () => {
     })
 
     it('displays correct clubs (matrix rows)', () => {
-      const wrapper = mount(WedgeMatrix)
-      const clubs = ['LW', 'SW', 'GW', 'PW']
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      const { selectedClubs } = storeToRefs(matrixConfigurationStore)
 
-      clubs.forEach((club) => {
+      const wrapper = mount(WedgeMatrix)
+      selectedClubs.value.forEach((club) => {
         expect(wrapper.text()).toContain(club)
       })
+    })
+
+    it('updates rendered rows when selectedClubs changes', async () => {
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      const wrapper = mount(WedgeMatrix)
+
+      matrixConfigurationStore.setSelectedClubs(['LW', 'PW'])
+      await wrapper.vm.$nextTick()
+
+      expect(wrapper.text()).toContain('LW')
+      expect(wrapper.text()).toContain('PW')
+      expect(wrapper.text()).not.toContain('SW')
+      expect(wrapper.text()).not.toContain('GW')
     })
 
     it('displays correct column headers (matrix columns)', () => {

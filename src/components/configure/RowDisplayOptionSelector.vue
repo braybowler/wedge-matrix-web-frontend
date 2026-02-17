@@ -32,10 +32,6 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
 </template>
 
 <style scoped>
-.component-container {
-  margin-top: 8px;
-}
-
 .section-title {
   color: #f3f4f6;
   font-size: 16px;
@@ -83,5 +79,18 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
   color: #f3f4f6;
   cursor: pointer;
   transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .option-section {
+    margin-top: 4px;
+  }
+
+  .option-container,
+  .option-container:hover,
+  .option-container-active,
+  .option-container-active:hover {
+    padding: 6px 12px;
+  }
 }
 </style>
