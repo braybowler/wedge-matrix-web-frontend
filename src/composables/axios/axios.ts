@@ -86,6 +86,27 @@ export function useAxios() {
     }
   }
 
+  const patch = async <T = unknown>(
+    path: string,
+    requestBody?: unknown,
+  ): Promise<ApiResponse<T>> => {
+    startLoading()
+    try {
+      const response: AxiosResponse<T> = await axios.patch(
+        wedgeMatrixBasePath + path,
+        requestBody,
+        {
+          headers: authHeaders(),
+        },
+      )
+      return { data: response.data, status: response.status }
+    } catch (error) {
+      return handleError<T>(error)
+    } finally {
+      stopLoading()
+    }
+  }
+
   const del = async <T = unknown>(path: string): Promise<ApiResponse<T>> => {
     startLoading()
     try {
@@ -104,6 +125,7 @@ export function useAxios() {
     get,
     post,
     put,
+    patch,
     del,
   }
 }

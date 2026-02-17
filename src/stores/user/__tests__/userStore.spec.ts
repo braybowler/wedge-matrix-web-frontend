@@ -31,6 +31,7 @@ const mockUser: User = {
   email: 'test@example.com',
   email_verified_at: null,
   wedge_matrix: mockMatrix,
+  has_dismissed_tutorial: false,
 }
 
 beforeEach(() => {
