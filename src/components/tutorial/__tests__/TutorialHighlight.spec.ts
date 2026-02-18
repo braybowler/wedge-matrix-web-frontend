@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import TutorialHighlight from '@/components/configure/TutorialHighlight.vue'
+import TutorialHighlight from '@/components/tutorial/TutorialHighlight.vue'
 
 vi.mock('vue-router', () => ({
   useRouter: () => ({

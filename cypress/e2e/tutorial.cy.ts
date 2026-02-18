@@ -26,6 +26,11 @@ function setupApiIntercepts() {
     statusCode: 200,
     body: { wedge_matrix: userPayload.wedge_matrix },
   }).as('syncRequest')
+
+  cy.intercept('PATCH', '**/user', {
+    statusCode: 200,
+    body: { user: { ...userPayload, has_dismissed_tutorial: true } },
+  }).as('dismissTutorialRequest')
 }
 
 function login() {
@@ -85,7 +90,7 @@ describe('Tutorial Flow', () => {
       cy.url().should('include', '/configure')
     })
 
-    it('walks through all four tutorial steps', () => {
+    it('walks through all five tutorial steps', () => {
       login()
 
       cy.get('[data-test-id="tutorial-learn-more-button"]').click()
@@ -102,7 +107,7 @@ describe('Tutorial Flow', () => {
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
       // Step 3: Column header label input
-      cy.contains('Set custom column labels for each swing.').should('be.visible')
+      cy.contains('Set custom column labels.').should('be.visible')
       cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
@@ -118,6 +123,19 @@ describe('Tutorial Flow', () => {
 
       // Should navigate back to matrix page
       cy.url().should('include', '/matrix')
+
+      // Step 5: Matrix highlight
+      cy.contains(
+        'Enter your yardage values to build your personalized distance chart.',
+      ).should('be.visible')
+      cy.get('[data-test-id="tutorial-got-it-button"]').should(
+        'contain.text',
+        'Finish Tutorial',
+      )
+      cy.get('[data-test-id="tutorial-got-it-button"]').click()
+
+      // Tutorial highlight should be dismissed
+      cy.get('[data-test-id="tutorial-got-it-button"]').should('not.exist')
     })
   })
 })

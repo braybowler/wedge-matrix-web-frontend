@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import TutorialModal from '@/components/matrix/TutorialModal.vue'
+import TutorialModal from '@/components/tutorial/TutorialModal.vue'
 
 const mountOptions = {
   global: {

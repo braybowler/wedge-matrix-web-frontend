@@ -3,7 +3,7 @@ import ClubSelector from '@/components/configure/ClubSelector.vue'
 import SwingPercentageColumnSelector from '@/components/configure/SwingPercentageColumnSelector.vue'
 import ColumnHeaderLabelInput from '@/components/configure/ColumnHeaderLabelInput.vue'
 import RowDisplayOptionSelector from '@/components/configure/RowDisplayOptionSelector.vue'
-import TutorialHighlight from '@/components/configure/TutorialHighlight.vue'
+import TutorialHighlight from '@/components/tutorial/TutorialHighlight.vue'
 import { computed, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
@@ -24,8 +24,8 @@ function advanceStep() {
   tutorialStore.nextStep()
 }
 
-function finishTutorial() {
-  tutorialStore.endTutorial()
+function finishConfiguration() {
+  tutorialStore.nextStep()
   router.push('/matrix')
 }
 
@@ -69,7 +69,7 @@ onUnmounted(async () => {
         message="Choose whether to track carry distance, total distance, or both."
         button-label="Finish Configuration"
         tooltip-position="above"
-        @dismiss="finishTutorial"
+        @dismiss="finishConfiguration"
       >
         <RowDisplayOptionSelector />
       </TutorialHighlight>

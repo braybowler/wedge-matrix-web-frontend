@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
+import TutorialHighlight from '@/components/tutorial/TutorialHighlight.vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import { useTutorialStore } from '@/stores/tutorial/tutorialStore.ts'
 import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues } = matrixConfigurationStore
@@ -25,9 +27,10 @@ const handleClearMatrixButtonPress = () => {
   showClearConfirm.value = true
 }
 
-const handleClearConfirm = () => {
+const handleClearConfirm = async () => {
   clearYardageValues()
   showClearConfirm.value = false
+  await matrixConfigurationStore.synchronizeValues()
 }
 
 const handleClearCancel = () => {
@@ -35,6 +38,17 @@ const handleClearCancel = () => {
 }
 
 const clubs = selectedClubs
+
+const emit = defineEmits<{
+  finishTutorial: []
+}>()
+
+const tutorialStore = useTutorialStore()
+const showMatrixHighlight = computed(() => tutorialStore.tutorialStep === 5)
+
+function handleFinishTutorial() {
+  emit('finishTutorial')
+}
 </script>
 
 <template>
@@ -42,85 +56,46 @@ const clubs = selectedClubs
     <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
       {{ syncError }}
     </p>
-    <table>
-      <thead>
-        <tr>
-          <th>
-            <span class="column-header"> Club </span>
-          </th>
-          <template v-for="(numColumn, index) in matrixColumns" :key="numColumn">
-            <th>
-              <div data-test-id="swing-percentage-container" class="swing-percentage-container">
-                <span class="swing-percentage">
-                  {{ matrixColumnHeaders[index] }}
-                </span>
-                <template v-if="selectedRowDisplayOption != 'Both'">
-                  <span class="swing-percentage-subheader"> {{ selectedRowDisplayOption }} </span>
-                </template>
-                <template v-else>
-                  <span class="swing-percentage-subheader"> Carry </span>
-                  <span class="swing-percentage-subheader"> Total </span>
-                </template>
-              </div>
-            </th>
-          </template>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="(club, clubIndex) in clubs" :key="club">
+    <TutorialHighlight
+      :visible="showMatrixHighlight"
+      message="Enter your yardage values to build your personalized distance chart."
+      button-label="Finish Tutorial"
+      @dismiss="handleFinishTutorial"
+    >
+      <table>
+        <thead>
           <tr>
-            <td>
-              <span class="row-label">
-                {{ club }}
-              </span>
-            </td>
-            <template v-for="(numColumn, colIndex) in matrixColumns" :key="numColumn">
-              <td v-if="selectedRowDisplayOption === 'Carry'">
-                <input
-                  name="yardage-input"
-                  type="number"
-                  class="input"
-                  placeholder="C"
-                  data-test-id="carry-input"
-                  min="1"
-                  max="999"
-                  step="1"
-                  inputmode="numeric"
-                  :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
-                  @change="
-                    setYardageValue(
-                      'carry_value',
-                      ($event.target as HTMLInputElement).value,
-                      clubIndex,
-                      colIndex,
-                    )
-                  "
-                />
+            <th>
+              <span class="column-header"> Club </span>
+            </th>
+            <template v-for="(numColumn, index) in matrixColumns" :key="numColumn">
+              <th>
+                <div data-test-id="swing-percentage-container" class="swing-percentage-container">
+                  <span class="swing-percentage">
+                    {{ matrixColumnHeaders[index] }}
+                  </span>
+                  <template v-if="selectedRowDisplayOption != 'Both'">
+                    <span class="swing-percentage-subheader"> {{ selectedRowDisplayOption }} </span>
+                  </template>
+                  <template v-else>
+                    <span class="swing-percentage-subheader"> Carry </span>
+                    <span class="swing-percentage-subheader"> Total </span>
+                  </template>
+                </div>
+              </th>
+            </template>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="(club, clubIndex) in clubs" :key="club">
+            <tr>
+              <td>
+                <span class="row-label">
+                  {{ club }}
+                </span>
               </td>
-              <td v-else-if="selectedRowDisplayOption === 'Total'">
-                <input
-                  name="yardage-input"
-                  type="number"
-                  class="input"
-                  placeholder="T"
-                  data-test-id="total-input"
-                  min="1"
-                  max="999"
-                  step="1"
-                  inputmode="numeric"
-                  :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
-                  @change="
-                    setYardageValue(
-                      'total_value',
-                      ($event.target as HTMLInputElement).value,
-                      clubIndex,
-                      colIndex,
-                    )
-                  "
-                />
-              </td>
-              <td v-else>
-                <template class="input-pair-container">
+              <template v-for="(numColumn, colIndex) in matrixColumns" :key="numColumn">
+                <td v-if="selectedRowDisplayOption === 'Carry'">
                   <input
                     name="yardage-input"
                     type="number"
@@ -141,6 +116,8 @@ const clubs = selectedClubs
                       )
                     "
                   />
+                </td>
+                <td v-else-if="selectedRowDisplayOption === 'Total'">
                   <input
                     name="yardage-input"
                     type="number"
@@ -161,13 +138,57 @@ const clubs = selectedClubs
                       )
                     "
                   />
-                </template>
-              </td>
-            </template>
-          </tr>
-        </template>
-      </tbody>
-    </table>
+                </td>
+                <td v-else>
+                  <template class="input-pair-container">
+                    <input
+                      name="yardage-input"
+                      type="number"
+                      class="input"
+                      placeholder="C"
+                      data-test-id="carry-input"
+                      min="1"
+                      max="999"
+                      step="1"
+                      inputmode="numeric"
+                      :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
+                      @change="
+                        setYardageValue(
+                          'carry_value',
+                          ($event.target as HTMLInputElement).value,
+                          clubIndex,
+                          colIndex,
+                        )
+                      "
+                    />
+                    <input
+                      name="yardage-input"
+                      type="number"
+                      class="input"
+                      placeholder="T"
+                      data-test-id="total-input"
+                      min="1"
+                      max="999"
+                      step="1"
+                      inputmode="numeric"
+                      :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
+                      @change="
+                        setYardageValue(
+                          'total_value',
+                          ($event.target as HTMLInputElement).value,
+                          clubIndex,
+                          colIndex,
+                        )
+                      "
+                    />
+                  </template>
+                </td>
+              </template>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </TutorialHighlight>
 
     <ConfirmationModal
       :visible="showClearConfirm"

@@ -6,9 +6,10 @@ import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfiguration
 import type { RowDisplayOption } from '@/types/matrix'
 
 const mockUseAxiosComposable = vi.hoisted(() => ({
-  post: vi.fn(),
-  get: vi.fn(),
-  put: vi.fn(),
+  post: vi.fn().mockResolvedValue({}),
+  get: vi.fn().mockResolvedValue({}),
+  put: vi.fn().mockResolvedValue({}),
+  patch: vi.fn().mockResolvedValue({}),
 }))
 
 vi.mock('@/composables/axios/axios.ts', () => ({
@@ -18,6 +19,8 @@ vi.mock('@/composables/axios/axios.ts', () => ({
 describe('WedgeMatrix Component', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
+    mockUseAxiosComposable.put.mockResolvedValue({})
+    mockUseAxiosComposable.patch.mockResolvedValue({})
     setActivePinia(createPinia())
   })
 
