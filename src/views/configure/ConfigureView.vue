@@ -58,7 +58,7 @@ onUnmounted(async () => {
       </TutorialHighlight>
       <TutorialHighlight
         :visible="showLabelHighlight"
-        message="Set custom column labels for each swing."
+        message="Set custom column labels."
         button-label="Next"
         @dismiss="advanceStep"
       >
