@@ -42,7 +42,7 @@ onUnmounted(async () => {
       </p>
       <TutorialHighlight
         :visible="showClubHighlight"
-        message="Start by selecting which wedges are in your bag"
+        message="Start by selecting the wedges in your bag."
         button-label="Next"
         @dismiss="advanceStep"
       >
@@ -50,7 +50,7 @@ onUnmounted(async () => {
       </TutorialHighlight>
       <TutorialHighlight
         :visible="showSwingHighlight"
-        message="Select the number of partial or full shots you have, or would like to have, with each wedge"
+        message="Select the number of shots you have, or would like to have, with each wedge."
         button-label="Next"
         @dismiss="advanceStep"
       >
@@ -58,7 +58,7 @@ onUnmounted(async () => {
       </TutorialHighlight>
       <TutorialHighlight
         :visible="showLabelHighlight"
-        message="Set custom labels for each swing column to match the shots you want to track with each wedge"
+        message="Set custom column labels for each swing."
         button-label="Next"
         @dismiss="advanceStep"
       >
@@ -66,8 +66,9 @@ onUnmounted(async () => {
       </TutorialHighlight>
       <TutorialHighlight
         :visible="showRowDisplayHighlight"
-        message="Choose whether to track carry distance, total distance, or both for each yardage"
+        message="Choose whether to track carry distance, total distance, or both."
         button-label="Finish Configuration"
+        tooltip-position="above"
         @dismiss="finishTutorial"
       >
         <RowDisplayOptionSelector />

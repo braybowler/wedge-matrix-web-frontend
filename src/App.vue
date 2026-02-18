@@ -11,18 +11,21 @@ import { publicRoutes } from '@/router'
 <template>
   <LoadingBar />
   <template v-if="!publicRoutes.includes(router.currentRoute.value.name)">
-    <div class="mobile-layout">
-      <NavigationHeader />
-      <main class="mobile-content">
-        <RouterView />
-      </main>
-      <MobileFooter />
-    </div>
-    <div class="desktop-layout">
-      <SidebarNavigation />
-      <main class="main-content">
-        <RouterView />
-      </main>
+    <div class="authenticated-layout">
+      <div class="mobile-header">
+        <NavigationHeader />
+      </div>
+      <div class="main-body">
+        <div class="desktop-sidebar">
+          <SidebarNavigation />
+        </div>
+        <main class="page-content">
+          <RouterView />
+        </main>
+      </div>
+      <div class="mobile-footer">
+        <MobileFooter />
+      </div>
     </div>
   </template>
   <div v-else class="auth-layout">
@@ -31,15 +34,29 @@ import { publicRoutes } from '@/router'
 </template>
 
 <style scoped>
-.mobile-layout {
+.authenticated-layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
 
-.mobile-content {
+.main-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.page-content {
   flex: 1;
   overflow-y: auto;
+}
+
+.desktop-sidebar {
+  display: none;
+}
+
+.mobile-footer {
+  flex-shrink: 0;
 }
 
 .auth-layout {
@@ -49,29 +66,26 @@ import { publicRoutes } from '@/router'
   height: 100vh;
 }
 
-.desktop-layout {
-  display: none;
-}
-
 @media (min-width: 768px) {
-  .mobile-layout {
+  .mobile-header,
+  .mobile-footer {
     display: none;
   }
 
-  .desktop-layout {
-    display: flex;
-    height: 100vh;
+  .desktop-sidebar {
+    display: block;
+    width: 25%;
+    min-width: 180px;
+    flex-shrink: 0;
   }
 
-  .main-content {
-    flex: 1;
-    overflow-y: auto;
+  .page-content {
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .main-content :deep(> *) {
+  .page-content :deep(> *) {
     width: 60%;
     max-width: 480px;
   }
