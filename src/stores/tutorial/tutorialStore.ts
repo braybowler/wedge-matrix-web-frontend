@@ -49,12 +49,11 @@ export const useTutorialStore = defineStore('tutorial', () => {
     const response = await patch<{ user: User }>('/user', { has_dismissed_tutorial: true })
     if (!response.error && response.data) {
       user.value = response.data.user
+      showModal.value = false
     }
-    showModal.value = false
   }
 
   async function finishTutorial() {
-    endTutorial()
     const userStore = useUserStore()
     const { user } = storeToRefs(userStore)
     const { patch } = useAxios()
@@ -62,6 +61,7 @@ export const useTutorialStore = defineStore('tutorial', () => {
     const response = await patch<{ user: User }>('/user', { has_dismissed_tutorial: true })
     if (!response.error && response.data) {
       user.value = response.data.user
+      endTutorial()
     }
   }
 

@@ -25,6 +25,10 @@ export function useAxios() {
     const axiosError = error as AxiosError<{ message?: string }>
 
     if (axiosError.response) {
+      if (axiosError.response.status === 401) {
+        userStore.logout()
+      }
+
       const message =
         axiosError.response.data?.message || 'An error occurred processing your request'
       return {

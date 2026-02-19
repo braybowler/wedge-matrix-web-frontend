@@ -47,15 +47,14 @@ router.beforeEach(async (to, from, next) => {
 
   // If navigating to a protected route and we haven't verified auth yet
   if (to.meta.requiresAuth && !userStore.isAuthVerified && user) {
-    // Verify the token is still valid
     const isValid = await verifyAndRefreshAuth()
-    userStore.isAuthVerified = true
 
     if (!isValid) {
-      // Token invalid, redirect to login
       next({ name: 'login' })
       return
     }
+
+    userStore.isAuthVerified = true
   }
 
   // Standard auth check

@@ -114,7 +114,7 @@ describe('useTutorialStore', () => {
   })
 
   describe('dismissModalPermanently', () => {
-    it('patches the user and hides the modal', async () => {
+    it('patches the user and hides the modal on success', async () => {
       const dismissedUser = { id: 1, email: 'test@example.com', has_dismissed_tutorial: true }
       mockPatch.mockResolvedValueOnce({ data: { user: dismissedUser } })
 
@@ -127,10 +127,22 @@ describe('useTutorialStore', () => {
       expect(mockPatch).toHaveBeenCalledWith('/user', { has_dismissed_tutorial: true })
       expect(store.modalVisible).toBe(false)
     })
+
+    it('keeps the modal visible when the API call fails', async () => {
+      mockPatch.mockResolvedValueOnce({ error: 'Server error' })
+
+      const store = useTutorialStore()
+      const userStore = useUserStore()
+      userStore.user = { id: 1, email: 'test@example.com', has_dismissed_tutorial: false } as never
+
+      await store.dismissModalPermanently()
+
+      expect(store.modalVisible).toBe(true)
+    })
   })
 
   describe('finishTutorial', () => {
-    it('ends the tutorial and patches the user', async () => {
+    it('ends the tutorial and patches the user on success', async () => {
       const dismissedUser = { id: 1, email: 'test@example.com', has_dismissed_tutorial: true }
       mockPatch.mockResolvedValueOnce({ data: { user: dismissedUser } })
 
@@ -143,6 +155,17 @@ describe('useTutorialStore', () => {
 
       expect(store.tutorialStep).toBeNull()
       expect(mockPatch).toHaveBeenCalledWith('/user', { has_dismissed_tutorial: true })
+    })
+
+    it('keeps the tutorial active when the API call fails', async () => {
+      mockPatch.mockResolvedValueOnce({ error: 'Server error' })
+
+      const store = useTutorialStore()
+      store.startTutorial()
+
+      await store.finishTutorial()
+
+      expect(store.tutorialStep).toBe(1)
     })
   })
 })

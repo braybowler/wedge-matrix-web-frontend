@@ -111,6 +111,24 @@ describe('useAxios Composable', () => {
       expect(result).toEqual({ error: 'Not found', status: 404 })
     })
 
+    it('logs out the user on a 401 response', async () => {
+      const userStore = useUserStore()
+      userStore.accessToken = 'expired-token'
+
+      mockedAxios.get.mockRejectedValue({
+        response: {
+          data: { message: 'Unauthenticated' },
+          status: 401,
+        },
+      })
+
+      const { get } = useAxios()
+      await get('/protected')
+
+      expect(userStore.user).toBeNull()
+      expect(userStore.accessToken).toBeNull()
+    })
+
     it('returns a default message when server response has no message', async () => {
       mockedAxios.get.mockRejectedValue({
         response: {
