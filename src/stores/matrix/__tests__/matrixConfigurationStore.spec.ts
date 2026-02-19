@@ -284,5 +284,27 @@ describe('useMatrixConfigurationStore', () => {
 
       expect(putMock).not.toHaveBeenCalled()
     })
+
+    it('deduplicates concurrent calls', async () => {
+      let resolveRequest!: (value: { data: object; status: number }) => void
+      putMock.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveRequest = resolve
+          }),
+      )
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues(buildMatrix())
+      store.requiresSync = true
+
+      const first = store.synchronizeValues()
+      const second = store.synchronizeValues()
+
+      resolveRequest({ data: {}, status: 200 })
+      await first
+      await second
+
+      expect(putMock).toHaveBeenCalledTimes(1)
+    })
   })
 })

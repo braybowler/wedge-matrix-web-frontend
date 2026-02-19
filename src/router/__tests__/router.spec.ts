@@ -53,7 +53,7 @@ function createTestRouter() {
         return
       }
 
-      userStore.isAuthVerified = true
+      userStore.setAuthVerified(true)
     }
 
     if (to.meta.requiresAuth && !userStore.user) {
@@ -144,7 +144,7 @@ describe('Router Guard', () => {
     it('redirects from /login to /matrix', async () => {
       const userStore = useUserStore()
       userStore.initializeUserStoreValues(mockUser, 'valid-token')
-      userStore.isAuthVerified = true
+      userStore.setAuthVerified(true)
 
       const router = createTestRouter()
       await router.push('/login')
@@ -155,7 +155,7 @@ describe('Router Guard', () => {
     it('redirects from /register to /matrix', async () => {
       const userStore = useUserStore()
       userStore.initializeUserStoreValues(mockUser, 'valid-token')
-      userStore.isAuthVerified = true
+      userStore.setAuthVerified(true)
 
       const router = createTestRouter()
       await router.push('/register')

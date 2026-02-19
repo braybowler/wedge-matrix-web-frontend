@@ -63,7 +63,7 @@ describe('useUserStore', () => {
     it('clears user, accessToken, isAuthVerified, and localStorage', () => {
       const store = useUserStore()
       store.initializeUserStoreValues(mockUser, 'abc-token')
-      store.isAuthVerified = true
+      store.setAuthVerified(true)
 
       store.logout()
 

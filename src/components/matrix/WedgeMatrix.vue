@@ -4,7 +4,7 @@ import TutorialHighlight from '@/components/tutorial/TutorialHighlight.vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { useTutorialStore } from '@/stores/tutorial/tutorialStore.ts'
 import { storeToRefs } from 'pinia'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues } = matrixConfigurationStore
@@ -16,10 +16,6 @@ const {
   syncError,
   selectedClubs,
 } = storeToRefs(matrixConfigurationStore)
-
-onBeforeUnmount(async () => {
-  await matrixConfigurationStore.synchronizeValues()
-})
 
 const showClearConfirm = ref(false)
 

@@ -98,6 +98,10 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  function setAuthVerified(value: boolean) {
+    isAuthVerified.value = value
+  }
+
   return {
     user,
     accessToken,
@@ -105,5 +109,6 @@ export const useUserStore = defineStore('user', () => {
     initializeUserStoreValues,
     logout,
     verifyAndRefreshAuth,
+    setAuthVerified,
   }
 })

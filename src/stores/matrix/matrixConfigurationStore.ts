@@ -23,6 +23,7 @@ function createEmptyGrid(rows: number, columns: number): YardageGrid {
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
   const requiresSync = ref(false)
   const syncError = ref<string | null>(null)
+  let isSyncing = false
   const selectedMatrixId = ref<number | null>(null)
   const matrixColumns = ref<AllowableMatrixColumnNumber>(4)
   const matrixColumnHeaders = ref<Array<string>>(['', '', '', ''])
@@ -51,8 +52,11 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   }
 
   async function synchronizeValues() {
-    if (requiresSync.value) {
-      syncError.value = null
+    if (!requiresSync.value || isSyncing) return
+
+    isSyncing = true
+    syncError.value = null
+    try {
       const { put } = useAxios()
       const response = await put('/wedge-matrix/' + selectedMatrixId.value, {
         number_of_columns: matrixColumns.value,
@@ -67,6 +71,8 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
       } else {
         requiresSync.value = false
       }
+    } finally {
+      isSyncing = false
     }
   }
 

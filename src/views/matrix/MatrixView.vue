@@ -1,11 +1,18 @@
 <script setup lang="ts">
+import { onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import WedgeMatrix from '@/components/matrix/WedgeMatrix.vue'
 import TutorialModal from '@/components/tutorial/TutorialModal.vue'
+import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { useTutorialStore } from '@/stores/tutorial/tutorialStore.ts'
 
 const router = useRouter()
+const matrixConfigurationStore = useMatrixConfigurationStore()
 const tutorialStore = useTutorialStore()
+
+onBeforeUnmount(async () => {
+  await matrixConfigurationStore.synchronizeValues()
+})
 
 function handleLearnMore() {
   tutorialStore.dismissModal()

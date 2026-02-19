@@ -54,7 +54,7 @@ router.beforeEach(async (to, from, next) => {
       return
     }
 
-    userStore.isAuthVerified = true
+    userStore.setAuthVerified(true)
   }
 
   // Standard auth check

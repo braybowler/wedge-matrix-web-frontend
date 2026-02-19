@@ -4,7 +4,7 @@ import SwingPercentageColumnSelector from '@/components/configure/SwingPercentag
 import ColumnHeaderLabelInput from '@/components/configure/ColumnHeaderLabelInput.vue'
 import RowDisplayOptionSelector from '@/components/configure/RowDisplayOptionSelector.vue'
 import TutorialHighlight from '@/components/tutorial/TutorialHighlight.vue'
-import { computed, onUnmounted } from 'vue'
+import { computed, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { useTutorialStore } from '@/stores/tutorial/tutorialStore.ts'
@@ -29,7 +29,7 @@ function finishConfiguration() {
   router.push('/matrix')
 }
 
-onUnmounted(async () => {
+onBeforeUnmount(async () => {
   await matrixConfigurationStore.synchronizeValues()
 })
 </script>
