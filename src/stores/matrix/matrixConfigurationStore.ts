@@ -71,6 +71,8 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
       } else {
         requiresSync.value = false
       }
+    } catch {
+      syncError.value = 'An unexpected error occurred while saving. Please try again.'
     } finally {
       isSyncing = false
     }
