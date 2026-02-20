@@ -136,7 +136,7 @@ function handleFinishTutorial() {
                   />
                 </td>
                 <td v-else>
-                  <template class="input-pair-container">
+                  <div class="input-pair-container">
                     <input
                       name="yardage-input"
                       type="number"
@@ -177,7 +177,7 @@ function handleFinishTutorial() {
                         )
                       "
                     />
-                  </template>
+                  </div>
                 </td>
               </template>
             </tr>
