@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user/userStore.ts'
+import { routerGuard } from '@/router/index.ts'
 import type { User } from '@/types/user'
 import type { WedgeMatrix } from '@/types/matrix'
 
@@ -41,33 +42,7 @@ function createTestRouter() {
     ],
   })
 
-  router.beforeEach(async (to, from, next) => {
-    const userStore = useUserStore()
-    const { user, verifyAndRefreshAuth } = userStore
-
-    if (to.meta.requiresAuth && !userStore.isAuthVerified && user) {
-      const isValid = await verifyAndRefreshAuth()
-
-      if (!isValid) {
-        next({ name: 'login' })
-        return
-      }
-
-      userStore.setAuthVerified(true)
-    }
-
-    if (to.meta.requiresAuth && !userStore.user) {
-      next({ name: 'login' })
-    } else if (
-      !to.meta.requiresAuth &&
-      userStore.user &&
-      (to.name === 'login' || to.name === 'register')
-    ) {
-      next({ name: 'matrix' })
-    } else {
-      next()
-    }
-  })
+  router.beforeEach(routerGuard)
 
   return router
 }

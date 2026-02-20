@@ -41,7 +41,7 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to, from, next) => {
+export const routerGuard: Parameters<typeof router.beforeEach>[0] = async (to, from, next) => {
   const userStore = useUserStore()
   const { user, verifyAndRefreshAuth } = userStore
 
@@ -70,6 +70,8 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next()
   }
-})
+}
+
+router.beforeEach(routerGuard)
 
 export default router
