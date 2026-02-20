@@ -55,6 +55,11 @@ export const useUserStore = defineStore('user', () => {
     saveToStorage(newUser, newAccessToken)
   }
 
+  function setUser(newUser: User) {
+    user.value = newUser
+    saveToStorage(newUser, accessToken.value!)
+  }
+
   function logout() {
     user.value = null
     accessToken.value = null
@@ -107,6 +112,7 @@ export const useUserStore = defineStore('user', () => {
     accessToken,
     isAuthVerified,
     initializeUserStoreValues,
+    setUser,
     logout,
     verifyAndRefreshAuth,
     setAuthVerified,

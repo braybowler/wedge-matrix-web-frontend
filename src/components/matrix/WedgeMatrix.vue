@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
+import YardageInput from '@/components/matrix/YardageInput.vue'
 import TutorialHighlight from '@/components/tutorial/TutorialHighlight.vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { useTutorialStore } from '@/stores/tutorial/tutorialStore.ts'
@@ -92,90 +93,38 @@ function handleFinishTutorial() {
               </td>
               <template v-for="(numColumn, colIndex) in matrixColumns" :key="numColumn">
                 <td v-if="selectedRowDisplayOption === 'Carry'">
-                  <input
-                    name="yardage-input"
-                    type="number"
-                    class="input"
+                  <YardageInput
+                    field="carry_value"
                     placeholder="C"
                     data-test-id="carry-input"
-                    min="1"
-                    max="999"
-                    step="1"
-                    inputmode="numeric"
                     :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
-                    @change="
-                      setYardageValue(
-                        'carry_value',
-                        ($event.target as HTMLInputElement).value,
-                        clubIndex,
-                        colIndex,
-                      )
-                    "
+                    @change="setYardageValue($event[0], $event[1], clubIndex, colIndex)"
                   />
                 </td>
                 <td v-else-if="selectedRowDisplayOption === 'Total'">
-                  <input
-                    name="yardage-input"
-                    type="number"
-                    class="input"
+                  <YardageInput
+                    field="total_value"
                     placeholder="T"
                     data-test-id="total-input"
-                    min="1"
-                    max="999"
-                    step="1"
-                    inputmode="numeric"
                     :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
-                    @change="
-                      setYardageValue(
-                        'total_value',
-                        ($event.target as HTMLInputElement).value,
-                        clubIndex,
-                        colIndex,
-                      )
-                    "
+                    @change="setYardageValue($event[0], $event[1], clubIndex, colIndex)"
                   />
                 </td>
                 <td v-else>
                   <div class="input-pair-container">
-                    <input
-                      name="yardage-input"
-                      type="number"
-                      class="input"
+                    <YardageInput
+                      field="carry_value"
                       placeholder="C"
                       data-test-id="carry-input"
-                      min="1"
-                      max="999"
-                      step="1"
-                      inputmode="numeric"
                       :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
-                      @change="
-                        setYardageValue(
-                          'carry_value',
-                          ($event.target as HTMLInputElement).value,
-                          clubIndex,
-                          colIndex,
-                        )
-                      "
+                      @change="setYardageValue($event[0], $event[1], clubIndex, colIndex)"
                     />
-                    <input
-                      name="yardage-input"
-                      type="number"
-                      class="input"
+                    <YardageInput
+                      field="total_value"
                       placeholder="T"
                       data-test-id="total-input"
-                      min="1"
-                      max="999"
-                      step="1"
-                      inputmode="numeric"
                       :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
-                      @change="
-                        setYardageValue(
-                          'total_value',
-                          ($event.target as HTMLInputElement).value,
-                          clubIndex,
-                          colIndex,
-                        )
-                      "
+                      @change="setYardageValue($event[0], $event[1], clubIndex, colIndex)"
                     />
                   </div>
                 </td>
@@ -280,38 +229,6 @@ td:last-child {
   color: #f3f4f6;
   font-size: 16px;
   font-weight: 500;
-}
-
-.input {
-  background-color: #374151;
-  padding: 2px 0px;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-  max-width: 50px;
-}
-
-.input:nth-child(2) {
-  margin-top: 4px;
-}
-
-.input:focus {
-  background-color: #374151;
-  padding: 2px 0px;
-  color: #f3f4f6;
-  border: 1px solid #818cf8;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-  max-width: 50px;
-}
-
-.input:focus::placeholder {
-  color: transparent;
 }
 
 .input-pair-container {
