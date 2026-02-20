@@ -98,7 +98,7 @@ function handleFinishTutorial() {
                     placeholder="C"
                     data-test-id="carry-input"
                     :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
-                    @change="setYardageValue($event[0], $event[1], clubIndex, colIndex)"
+                    @change="(field, raw) => setYardageValue(field, raw, clubIndex, colIndex)"
                   />
                 </td>
                 <td v-else-if="selectedRowDisplayOption === 'Total'">
@@ -107,7 +107,7 @@ function handleFinishTutorial() {
                     placeholder="T"
                     data-test-id="total-input"
                     :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
-                    @change="setYardageValue($event[0], $event[1], clubIndex, colIndex)"
+                    @change="(field, raw) => setYardageValue(field, raw, clubIndex, colIndex)"
                   />
                 </td>
                 <td v-else>
@@ -117,14 +117,14 @@ function handleFinishTutorial() {
                       placeholder="C"
                       data-test-id="carry-input"
                       :value="yardageValues[clubIndex]?.[colIndex]?.carry_value ?? null"
-                      @change="setYardageValue($event[0], $event[1], clubIndex, colIndex)"
+                      @change="(field, raw) => setYardageValue(field, raw, clubIndex, colIndex)"
                     />
                     <YardageInput
                       field="total_value"
                       placeholder="T"
                       data-test-id="total-input"
                       :value="yardageValues[clubIndex]?.[colIndex]?.total_value ?? null"
-                      @change="setYardageValue($event[0], $event[1], clubIndex, colIndex)"
+                      @change="(field, raw) => setYardageValue(field, raw, clubIndex, colIndex)"
                     />
                   </div>
                 </td>

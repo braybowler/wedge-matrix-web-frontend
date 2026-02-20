@@ -61,7 +61,7 @@ describe('WedgeMatrix Component', () => {
 
       const wrapper = mount(WedgeMatrix)
 
-      matrixColumnHeaders.value.forEach((header, index) => {
+      matrixColumnHeaders.value.forEach((header) => {
         expect(wrapper.text()).toContain(header)
       })
     })
