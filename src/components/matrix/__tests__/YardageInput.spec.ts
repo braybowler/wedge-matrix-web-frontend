@@ -53,7 +53,12 @@ describe('YardageInput Component', () => {
 
   it('emits change with total_value field', async () => {
     const wrapper = mount(YardageInput, {
-      props: { ...defaultProps, field: 'total_value' as const, placeholder: 'T', dataTestId: 'total-input' },
+      props: {
+        ...defaultProps,
+        field: 'total_value' as const,
+        placeholder: 'T',
+        dataTestId: 'total-input',
+      },
     })
     const input = wrapper.find('input')
 
