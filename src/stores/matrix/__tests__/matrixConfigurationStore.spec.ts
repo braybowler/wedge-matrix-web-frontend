@@ -49,7 +49,7 @@ describe('useMatrixConfigurationStore', () => {
       const store = useMatrixConfigurationStore()
       const matrix = buildMatrix()
 
-      store.initializeMatrixValues(matrix)
+      store.initializeMatrixValues([matrix])
 
       expect(store.matrixColumns).toBe(3)
       expect(store.matrixColumnHeaders).toEqual(['100%', '75%', '50%'])
@@ -61,7 +61,7 @@ describe('useMatrixConfigurationStore', () => {
       const store = useMatrixConfigurationStore()
       const matrix = buildMatrix({ club_labels: ['LW', 'AW', 'PW'] })
 
-      store.initializeMatrixValues(matrix)
+      store.initializeMatrixValues([matrix])
 
       expect(store.selectedClubs).toEqual(['LW', 'AW', 'PW'])
     })
@@ -70,7 +70,7 @@ describe('useMatrixConfigurationStore', () => {
       const store = useMatrixConfigurationStore()
       const matrix = buildMatrix()
 
-      store.initializeMatrixValues(matrix)
+      store.initializeMatrixValues([matrix])
 
       expect(store.selectedClubs).toEqual(['LW', 'SW', 'GW', 'PW'])
     })
@@ -96,7 +96,7 @@ describe('useMatrixConfigurationStore', () => {
 
     it('sets cell to null for empty string', () => {
       const store = useMatrixConfigurationStore()
-      store.initializeMatrixValues(buildMatrix())
+      store.initializeMatrixValues([buildMatrix()])
 
       store.setYardageValue('carry_value', '', 0, 0)
 
@@ -129,7 +129,7 @@ describe('useMatrixConfigurationStore', () => {
   describe('clearYardageValues', () => {
     it('resets all cells to null and marks requiresSync', () => {
       const store = useMatrixConfigurationStore()
-      store.initializeMatrixValues(buildMatrix())
+      store.initializeMatrixValues([buildMatrix()])
 
       store.clearYardageValues()
 
@@ -189,7 +189,7 @@ describe('useMatrixConfigurationStore', () => {
 
     it('preserves existing row data when reordering or adding clubs', () => {
       const store = useMatrixConfigurationStore()
-      store.initializeMatrixValues(
+      store.initializeMatrixValues([
         buildMatrix({
           club_labels: ['LW', 'SW'],
           yardage_values: [
@@ -205,7 +205,7 @@ describe('useMatrixConfigurationStore', () => {
             ],
           ],
         }),
-      )
+      ])
 
       store.setSelectedClubs(['AW', 'SW', 'LW'])
 
@@ -224,7 +224,7 @@ describe('useMatrixConfigurationStore', () => {
     it('calls PUT and clears requiresSync and syncError on success', async () => {
       putMock.mockResolvedValue({ data: {}, status: 200 })
       const store = useMatrixConfigurationStore()
-      store.initializeMatrixValues(buildMatrix())
+      store.initializeMatrixValues([buildMatrix()])
       store.requiresSync = true
 
       await store.synchronizeValues()
@@ -237,7 +237,7 @@ describe('useMatrixConfigurationStore', () => {
     it('includes club_labels in the PUT body', async () => {
       putMock.mockResolvedValue({ data: {}, status: 200 })
       const store = useMatrixConfigurationStore()
-      store.initializeMatrixValues(buildMatrix({ club_labels: ['LW', 'AW'] }))
+      store.initializeMatrixValues([buildMatrix({ club_labels: ['LW', 'AW'] })])
       store.requiresSync = true
 
       await store.synchronizeValues()
@@ -251,7 +251,7 @@ describe('useMatrixConfigurationStore', () => {
     it('keeps requiresSync true and sets syncError when PUT returns an error', async () => {
       putMock.mockResolvedValue({ error: 'Server error', status: 500 })
       const store = useMatrixConfigurationStore()
-      store.initializeMatrixValues(buildMatrix())
+      store.initializeMatrixValues([buildMatrix()])
       store.requiresSync = true
 
       await store.synchronizeValues()
@@ -263,7 +263,7 @@ describe('useMatrixConfigurationStore', () => {
     it('clears syncError on next successful sync', async () => {
       putMock.mockResolvedValue({ error: 'Server error', status: 500 })
       const store = useMatrixConfigurationStore()
-      store.initializeMatrixValues(buildMatrix())
+      store.initializeMatrixValues([buildMatrix()])
       store.requiresSync = true
 
       await store.synchronizeValues()
@@ -294,7 +294,7 @@ describe('useMatrixConfigurationStore', () => {
           }),
       )
       const store = useMatrixConfigurationStore()
-      store.initializeMatrixValues(buildMatrix())
+      store.initializeMatrixValues([buildMatrix()])
       store.requiresSync = true
 
       const first = store.synchronizeValues()

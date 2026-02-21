@@ -2,13 +2,15 @@ const userPayload = {
   id: 1,
   email: 'test@example.com',
   has_dismissed_tutorial: false,
-  wedge_matrix: {
-    id: 1,
-    number_of_matrix_columns: 3,
-    selected_row_display_option: 'Carry',
-    matrix_column_headers: ['50%', '75%', '100%'],
-    yardage_values: [[], [], [], []],
-  },
+  wedge_matrices: [
+    {
+      id: 1,
+      number_of_matrix_columns: 3,
+      selected_row_display_option: 'Carry',
+      matrix_column_headers: ['50%', '75%', '100%'],
+      yardage_values: [[], [], [], []],
+    }
+  ],
 }
 
 function setupApiIntercepts() {
@@ -24,7 +26,7 @@ function setupApiIntercepts() {
 
   cy.intercept('PUT', '**/wedge-matrix', {
     statusCode: 200,
-    body: { wedge_matrix: userPayload.wedge_matrix },
+    body: { wedge_matrix: userPayload.wedge_matrices },
   }).as('syncRequest')
 
   cy.intercept('PATCH', '**/user', {

@@ -62,7 +62,7 @@ const mockUser: User = {
   id: 1,
   email: 'test@example.com',
   email_verified_at: null,
-  wedge_matrix: mockMatrix,
+  wedge_matrices: [mockMatrix],
   has_dismissed_tutorial: false,
 }
 

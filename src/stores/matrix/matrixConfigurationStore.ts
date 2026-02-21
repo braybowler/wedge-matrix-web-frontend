@@ -32,23 +32,26 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   const selectedClubs = ref<ClubLabel[]>([...DEFAULT_CLUBS])
   const yardageValues = ref<YardageGrid>(createEmptyGrid(DEFAULT_CLUBS.length, 4))
 
-  function initializeMatrixValues(initialMatrixValues: WedgeMatrix) {
-    selectedMatrixId.value = initialMatrixValues.id
-    matrixColumns.value = initialMatrixValues.number_of_columns
-    selectedRowDisplayOption.value = initialMatrixValues.selected_row_display_option
+  function initializeMatrixValues(wedgeMatrices: WedgeMatrix[]) {
+    const matrix = wedgeMatrices[0]
+    if (!matrix) return
 
-    if (initialMatrixValues.club_labels && initialMatrixValues.club_labels.length > 0) {
-      selectedClubs.value = initialMatrixValues.club_labels
+    selectedMatrixId.value = matrix.id
+    matrixColumns.value = matrix.number_of_columns
+    selectedRowDisplayOption.value = matrix.selected_row_display_option
+
+    if (matrix.club_labels && matrix.club_labels.length > 0) {
+      selectedClubs.value = matrix.club_labels
     } else {
       selectedClubs.value = [...DEFAULT_CLUBS]
     }
 
-    if (initialMatrixValues.column_headers) {
-      matrixColumnHeaders.value = initialMatrixValues.column_headers
+    if (matrix.column_headers) {
+      matrixColumnHeaders.value = matrix.column_headers
     }
 
-    if (initialMatrixValues.yardage_values) {
-      yardageValues.value = initialMatrixValues.yardage_values
+    if (matrix.yardage_values) {
+      yardageValues.value = matrix.yardage_values
     }
   }
 

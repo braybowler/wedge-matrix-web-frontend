@@ -75,7 +75,7 @@ const handleLoginSubmission = async () => {
 
 const initializeStoreValues = (user: User, accessToken: string) => {
   initializeUserStoreValues(user, accessToken)
-  initializeMatrixValues(user.wedge_matrix)
+  initializeMatrixValues(user.wedge_matrices)
 }
 </script>
 

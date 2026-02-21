@@ -90,9 +90,9 @@ export const useUserStore = defineStore('user', () => {
       saveToStorage(response.data.user, accessToken.value)
 
       // Initialize matrix configuration store if user has wedge_matrix data
-      if (response.data.user.wedge_matrix) {
+      if (response.data.user.wedge_matrices) {
         const matrixStore = useMatrixConfigurationStore()
-        matrixStore.initializeMatrixValues(response.data.user.wedge_matrix)
+        matrixStore.initializeMatrixValues(response.data.user.wedge_matrices)
       }
 
       return true

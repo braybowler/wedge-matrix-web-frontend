@@ -5,5 +5,5 @@ export interface User {
   email: string
   email_verified_at: string | null
   has_dismissed_tutorial: boolean
-  wedge_matrix: WedgeMatrix
+  wedge_matrices: Array<WedgeMatrix>
 }

@@ -45,13 +45,13 @@ describe('Login Page', () => {
           user: {
             id: 1,
             email: 'test@example.com',
-            wedge_matrix: {
+            wedge_matrices: [{
               id: 1,
               number_of_matrix_columns: 3,
               selected_row_display_option: 'Carry',
               matrix_column_headers: ['50%', '75%', '100%'],
               yardage_values: [[], [], [], []],
-            },
+            }],
           },
           access_token: 'fake-access-token',
         },
