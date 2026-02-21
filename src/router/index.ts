@@ -8,11 +8,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: { name: 'login' },
+      redirect: { name: 'matrix' },
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: { name: 'login' },
+      redirect: { name: 'matrix' },
     },
     {
       path: '/login',
