@@ -6,6 +6,7 @@ import { useUserStore } from '@/stores/user/userStore.ts'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import type { User } from '@/types/user'
 import { useValidation } from '@/composables/validation/validation.ts'
+import { useLoadingStore } from '@/stores/loading/loadingStore.ts'
 
 type LoginResponse = {
   user: User
@@ -20,6 +21,8 @@ const { validateEmail, validatePassword } = useValidation()
 
 const { initializeUserStoreValues } = useUserStore()
 const { initializeMatrixValues } = useMatrixConfigurationStore()
+
+const { isLoading } = useLoadingStore()
 
 const email = ref('')
 const showInvalidEmailErrorMessage = ref(false)
@@ -107,6 +110,7 @@ const initializeStoreValues = (user: User, accessToken: string) => {
       <button
         class="button"
         type="submit"
+        :disabled="isLoading"
         @click="handleLoginSubmission"
         data-test-id="login-button"
       >
@@ -181,7 +185,7 @@ input:focus {
 }
 
 .error-message {
-  color: #818cf8;
+  color: #ef4444;
   font-size: 12px;
   font-weight: 300;
 }
@@ -197,11 +201,16 @@ input:focus {
   transition: all 0.2s ease;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background-color: #4b5563;
   border-color: #818cf8;
   cursor: pointer;
   transform: translateY(-1px);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .login-link {

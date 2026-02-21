@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useRouter } from 'vue-router'
 import { useValidation } from '@/composables/validation/validation.ts'
+import { useLoadingStore } from '@/stores/loading/loadingStore.ts'
 import TosModal from '@/components/register/TosModal.vue'
 
 const router = useRouter()
@@ -10,6 +11,8 @@ const router = useRouter()
 const { post } = useAxios()
 
 const { validateEmail, validatePassword } = useValidation()
+
+const { isLoading } = useLoadingStore()
 
 const email = ref('')
 const showInvalidEmailErrorMessage = ref(false)
@@ -126,6 +129,7 @@ const handleRegisterSubmission = async () => {
       <button
         class="button"
         type="submit"
+        :disabled="isLoading"
         @click="handleRegisterSubmission"
         data-test-id="register-button"
       >
@@ -200,7 +204,7 @@ input:focus {
 }
 
 .error-message {
-  color: #818cf8;
+  color: #ef4444;
   font-size: 12px;
   font-weight: 300;
 }
@@ -215,11 +219,16 @@ input:focus {
   font-weight: 500;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background-color: #4b5563;
   border-color: #818cf8;
   cursor: pointer;
   transform: translateY(-1px);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .tos-container {
