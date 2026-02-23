@@ -152,4 +152,73 @@ describe('LoginForm Component', () => {
       })
     })
   })
+
+  describe('Error Handling', () => {
+    const submitLoginForm = async (wrapper: ReturnType<typeof mount>) => {
+      const emailInput = wrapper.find('[data-test-id="email-input"]')
+      const passwordInput = wrapper.find('[data-test-id="password-input"]')
+      const loginButton = wrapper.find('[data-test-id="login-button"]')
+
+      await emailInput.setValue('email@example.com')
+      await passwordInput.setValue('password')
+      await loginButton.trigger('click')
+      await flushPromises()
+    }
+
+    it('shows "Invalid credentials." for a 401 response', async () => {
+      mockUseAxiosComposable.post.mockResolvedValueOnce({
+        error: 'Unauthorized',
+        status: 401,
+      })
+
+      const wrapper = mount(LoginForm, { global: { plugins: [router] } })
+      await submitLoginForm(wrapper)
+
+      const errorMessage = wrapper.find('[data-test-id="login-error-message"]')
+      expect(errorMessage.exists()).toBe(true)
+      expect(errorMessage.text()).toBe('Invalid credentials.')
+    })
+
+    it('shows "Invalid credentials." for a 422 response', async () => {
+      mockUseAxiosComposable.post.mockResolvedValueOnce({
+        error: 'Validation failed',
+        status: 422,
+      })
+
+      const wrapper = mount(LoginForm, { global: { plugins: [router] } })
+      await submitLoginForm(wrapper)
+
+      const errorMessage = wrapper.find('[data-test-id="login-error-message"]')
+      expect(errorMessage.exists()).toBe(true)
+      expect(errorMessage.text()).toBe('Invalid credentials.')
+    })
+
+    it('shows a network error message when the server is unreachable', async () => {
+      mockUseAxiosComposable.post.mockResolvedValueOnce({
+        error: 'Unable to reach the server. Please check your connection.',
+        status: 0,
+      })
+
+      const wrapper = mount(LoginForm, { global: { plugins: [router] } })
+      await submitLoginForm(wrapper)
+
+      const errorMessage = wrapper.find('[data-test-id="login-error-message"]')
+      expect(errorMessage.exists()).toBe(true)
+      expect(errorMessage.text()).toBe('Unable to reach the server. Please check your connection.')
+    })
+
+    it('shows a generic error message for a 500 response', async () => {
+      mockUseAxiosComposable.post.mockResolvedValueOnce({
+        error: 'Internal Server Error',
+        status: 500,
+      })
+
+      const wrapper = mount(LoginForm, { global: { plugins: [router] } })
+      await submitLoginForm(wrapper)
+
+      const errorMessage = wrapper.find('[data-test-id="login-error-message"]')
+      expect(errorMessage.exists()).toBe(true)
+      expect(errorMessage.text()).toBe('Something went wrong. Please try again later.')
+    })
+  })
 })

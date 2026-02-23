@@ -32,12 +32,13 @@ const password = ref('')
 const showInvalidPasswordErrorMessage = ref(false)
 const invalidPasswordErrorMessage = ref('')
 
-const showInvalidCredentialsErrorMessage = ref(false)
+const showLoginErrorMessage = ref(false)
+const loginErrorMessage = ref('')
 
 const handleLoginSubmission = async () => {
   showInvalidEmailErrorMessage.value = false
   showInvalidPasswordErrorMessage.value = false
-  showInvalidCredentialsErrorMessage.value = false
+  showLoginErrorMessage.value = false
 
   const validEmail = validateEmail(email.value)
   if (!validEmail.isEmailValid) {
@@ -61,7 +62,14 @@ const handleLoginSubmission = async () => {
   })
 
   if (response?.error) {
-    showInvalidCredentialsErrorMessage.value = true
+    if (response.status === 401 || response.status === 422) {
+      loginErrorMessage.value = 'Invalid credentials.'
+    } else if (response.status === 0) {
+      loginErrorMessage.value = 'Unable to reach the server. Please check your connection.'
+    } else {
+      loginErrorMessage.value = 'Something went wrong. Please try again later.'
+    }
+    showLoginErrorMessage.value = true
     return
   }
 
@@ -87,7 +95,7 @@ const initializeStoreValues = (user: User, accessToken: string) => {
     <section class="input-container">
       <input
         class="input"
-        type="text"
+        type="email"
         placeholder="Email"
         v-model="email"
         data-test-id="email-input"
@@ -106,7 +114,9 @@ const initializeStoreValues = (user: User, accessToken: string) => {
       <p v-if="showInvalidPasswordErrorMessage" class="error-message">
         {{ invalidPasswordErrorMessage }}
       </p>
-      <p v-if="showInvalidCredentialsErrorMessage" class="error-message">Invalid credentials.</p>
+      <p v-if="showLoginErrorMessage" class="error-message" data-test-id="login-error-message">
+        {{ loginErrorMessage }}
+      </p>
       <button
         class="button"
         type="submit"

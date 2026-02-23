@@ -80,7 +80,7 @@ const handleRegisterSubmission = async () => {
     <section class="input-container">
       <input
         class="input"
-        type="text"
+        type="email"
         placeholder="Email"
         v-model="email"
         data-test-id="email-input"
