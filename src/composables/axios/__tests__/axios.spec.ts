@@ -96,6 +96,39 @@ describe('useAxios Composable', () => {
     })
   })
 
+  describe('HTTP GET Blob', () => {
+    it('sends a GET request with responseType blob and returns data and status', async () => {
+      const blob = new Blob(['pdf-content'], { type: 'application/pdf' })
+      mockedAxios.get.mockResolvedValue({ data: blob, status: 200 })
+
+      const { getBlob } = useAxios()
+      const result = await getBlob('/download')
+
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        expect.stringContaining('/download'),
+        expect.objectContaining({
+          headers: expect.any(Object),
+          responseType: 'blob',
+        }),
+      )
+      expect(result).toEqual({ data: blob, status: 200 })
+    })
+
+    it('handles errors the same as other methods', async () => {
+      mockedAxios.get.mockRejectedValue({
+        response: {
+          data: { message: 'Not found' },
+          status: 404,
+        },
+      })
+
+      const { getBlob } = useAxios()
+      const result = await getBlob('/missing')
+
+      expect(result).toEqual({ error: 'Not found', status: 404 })
+    })
+  })
+
   describe('Error Handling', () => {
     it('returns error message and status from a server error response', async () => {
       mockedAxios.get.mockRejectedValue({

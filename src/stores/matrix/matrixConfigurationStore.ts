@@ -21,7 +21,7 @@ function createEmptyGrid(rows: number, columns: number): YardageGrid {
 }
 
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
-  const { put } = useAxios()
+  const { put, getBlob } = useAxios()
   const requiresSync = ref(false)
   const syncError = ref<string | null>(null)
   let isSyncing = false
@@ -129,6 +129,27 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     selectedRowDisplayOption.value = newVal
   }
 
+  async function downloadMatrix() {
+    await synchronizeValues()
+    if (syncError.value) return
+
+    const response = await getBlob('/wedge-matrix/' + selectedMatrixId.value + '/download')
+
+    if (response.error) {
+      syncError.value = response.error
+      return
+    }
+
+    if (response.data) {
+      const url = URL.createObjectURL(response.data)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'wedge-matrix.pdf'
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+  }
+
   function setSelectedClubs(clubs: ClubLabel[]) {
     requiresSync.value = true
 
@@ -159,5 +180,6 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     setSelectedClubs,
     setSelectedRowDisplayOption,
     synchronizeValues,
+    downloadMatrix,
   }
 })

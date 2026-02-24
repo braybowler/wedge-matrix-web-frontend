@@ -111,6 +111,21 @@ export function useAxios() {
     }
   }
 
+  const getBlob = async (path: string): Promise<ApiResponse<Blob>> => {
+    startLoading()
+    try {
+      const response: AxiosResponse<Blob> = await axios.get(wedgeMatrixBasePath + path, {
+        headers: authHeaders(),
+        responseType: 'blob',
+      })
+      return { data: response.data, status: response.status }
+    } catch (error) {
+      return handleError<Blob>(error)
+    } finally {
+      stopLoading()
+    }
+  }
+
   const del = async <T = unknown>(path: string): Promise<ApiResponse<T>> => {
     startLoading()
     try {
@@ -127,6 +142,7 @@ export function useAxios() {
 
   return {
     get,
+    getBlob,
     post,
     put,
     patch,

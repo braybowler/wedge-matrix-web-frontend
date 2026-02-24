@@ -8,7 +8,7 @@ import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
-const { setYardageValue, clearYardageValues } = matrixConfigurationStore
+const { setYardageValue, clearYardageValues, downloadMatrix } = matrixConfigurationStore
 const {
   matrixColumns,
   matrixColumnHeaders,
@@ -32,6 +32,10 @@ const handleClearConfirm = async () => {
 
 const handleClearCancel = () => {
   showClearConfirm.value = false
+}
+
+const handleDownload = async () => {
+  await downloadMatrix()
 }
 
 const clubs = selectedClubs
@@ -146,6 +150,9 @@ function handleFinishTutorial() {
     <div class="button-container">
       <button @click="handleClearMatrixButtonPress" class="button" data-test-id="clear-all-button">
         Clear Matrix
+      </button>
+      <button @click="handleDownload" class="button" data-test-id="download-pdf-button">
+        Download PDF
       </button>
     </div>
   </div>

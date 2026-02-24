@@ -8,6 +8,7 @@ import type { RowDisplayOption } from '@/types/matrix'
 const mockUseAxiosComposable = vi.hoisted(() => ({
   post: vi.fn().mockResolvedValue({}),
   get: vi.fn().mockResolvedValue({}),
+  getBlob: vi.fn().mockResolvedValue({}),
   put: vi.fn().mockResolvedValue({}),
   patch: vi.fn().mockResolvedValue({}),
 }))
@@ -108,6 +109,21 @@ describe('WedgeMatrix Component', () => {
       await inputs[0]?.trigger('input')
 
       expect((inputs[0]?.element as HTMLInputElement).value).toBe('50')
+    })
+
+    it('renders the download PDF button and calls downloadMatrix on click', async () => {
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      const downloadSpy = vi.spyOn(matrixConfigurationStore, 'downloadMatrix').mockResolvedValue()
+
+      const wrapper = mount(WedgeMatrix)
+
+      const downloadButton = wrapper.find('[data-test-id="download-pdf-button"]')
+      expect(downloadButton.exists()).toBe(true)
+      expect(downloadButton.text()).toBe('Download PDF')
+
+      await downloadButton.trigger('click')
+
+      expect(downloadSpy).toHaveBeenCalled()
     })
 
     it('clears the matrix values on clear matrix button press', async () => {
