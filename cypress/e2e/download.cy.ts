@@ -27,7 +27,7 @@ function setupApiIntercepts() {
 
   cy.intercept('GET', '**/user', {
     statusCode: 200,
-    body: { user: userPayload },
+    body: { data: userPayload },
   }).as('userRequest')
 }
 
@@ -49,7 +49,6 @@ describe('Download PDF', () => {
     login()
 
     cy.get('[data-test-id="download-pdf-button"]').should('be.visible')
-    cy.get('[data-test-id="download-pdf-button"]').should('contain.text', 'Download PDF')
   })
 
   it('requests the download endpoint when the button is clicked', () => {

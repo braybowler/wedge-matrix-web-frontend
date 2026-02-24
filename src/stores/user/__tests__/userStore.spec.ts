@@ -98,7 +98,7 @@ describe('useUserStore', () => {
 
     it('returns true and updates user when API succeeds', async () => {
       const updatedUser = { ...mockUser, email: 'updated@example.com' }
-      mockGet.mockResolvedValue({ data: { user: updatedUser } })
+      mockGet.mockResolvedValue({ data: { data: updatedUser } })
       const store = useUserStore()
       store.initializeUserStoreValues(mockUser, 'good-token')
 

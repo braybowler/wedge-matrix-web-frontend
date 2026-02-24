@@ -60,16 +60,18 @@ describe('Login Page', () => {
       cy.intercept('GET', '**/user', {
         statusCode: 200,
         body: {
-          user: {
+          data: {
             id: 1,
             email: 'test@example.com',
-            wedge_matrix: {
-              id: 1,
-              number_of_matrix_columns: 3,
-              selected_row_display_option: 'Carry',
-              matrix_column_headers: ['50%', '75%', '100%'],
-              yardage_values: [[], [], [], []],
-            },
+            wedge_matrices: [
+              {
+                id: 1,
+                number_of_matrix_columns: 3,
+                selected_row_display_option: 'Carry',
+                matrix_column_headers: ['50%', '75%', '100%'],
+                yardage_values: [[], [], [], []],
+              },
+            ],
           },
         },
       }).as('userRequest')

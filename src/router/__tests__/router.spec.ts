@@ -139,7 +139,7 @@ describe('Router Guard', () => {
     })
 
     it('allows access to /matrix', async () => {
-      mockGet.mockResolvedValue({ data: { user: mockUser } })
+      mockGet.mockResolvedValue({ data: { data: mockUser } })
       const userStore = useUserStore()
       userStore.initializeUserStoreValues(mockUser, 'valid-token')
 
@@ -150,7 +150,7 @@ describe('Router Guard', () => {
     })
 
     it('allows access to /configure', async () => {
-      mockGet.mockResolvedValue({ data: { user: mockUser } })
+      mockGet.mockResolvedValue({ data: { data: mockUser } })
       const userStore = useUserStore()
       userStore.initializeUserStoreValues(mockUser, 'valid-token')
 
@@ -163,7 +163,7 @@ describe('Router Guard', () => {
 
   describe('token verification', () => {
     it('verifies token on first protected route navigation', async () => {
-      mockGet.mockResolvedValue({ data: { user: mockUser } })
+      mockGet.mockResolvedValue({ data: { data: mockUser } })
       const userStore = useUserStore()
       userStore.initializeUserStoreValues(mockUser, 'valid-token')
 
@@ -175,7 +175,7 @@ describe('Router Guard', () => {
     })
 
     it('skips verification on subsequent navigations after successful verify', async () => {
-      mockGet.mockResolvedValue({ data: { user: mockUser } })
+      mockGet.mockResolvedValue({ data: { data: mockUser } })
       const userStore = useUserStore()
       userStore.initializeUserStoreValues(mockUser, 'valid-token')
 

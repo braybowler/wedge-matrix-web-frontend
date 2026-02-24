@@ -77,7 +77,7 @@ export const useUserStore = defineStore('user', () => {
     // Token exists, attempt to verify it by fetching user data
     try {
       const { get } = useAxios()
-      const response = await get<{ user: User }>('/user')
+      const response = await get<{ data: User }>('/user')
 
       if (response.error || !response.data) {
         // Token is invalid, clear storage
@@ -85,14 +85,16 @@ export const useUserStore = defineStore('user', () => {
         return false
       }
 
+      const verifiedUser = response.data.data
+
       // Token is valid, update user data and initialize matrix configuration
-      user.value = response.data.user
-      saveToStorage(response.data.user, accessToken.value)
+      user.value = verifiedUser
+      saveToStorage(verifiedUser, accessToken.value)
 
       // Initialize matrix configuration store if user has wedge_matrix data
-      if (response.data.user.wedge_matrices) {
+      if (verifiedUser.wedge_matrices) {
         const matrixStore = useMatrixConfigurationStore()
-        matrixStore.initializeMatrixValues(response.data.user.wedge_matrices)
+        matrixStore.initializeMatrixValues(verifiedUser.wedge_matrices)
       }
 
       return true

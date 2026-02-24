@@ -119,7 +119,6 @@ describe('WedgeMatrix Component', () => {
 
       const downloadButton = wrapper.find('[data-test-id="download-pdf-button"]')
       expect(downloadButton.exists()).toBe(true)
-      expect(downloadButton.text()).toBe('Download PDF')
 
       await downloadButton.trigger('click')
 

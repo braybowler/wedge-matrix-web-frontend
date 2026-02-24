@@ -21,7 +21,7 @@ function setupApiIntercepts() {
 
   cy.intercept('GET', '**/user', {
     statusCode: 200,
-    body: { user: userPayload },
+    body: { data: userPayload },
   }).as('userRequest')
 
   cy.intercept('PUT', '**/wedge-matrix', {
@@ -70,7 +70,7 @@ describe('Tutorial Flow', () => {
 
       cy.intercept('GET', '**/user', {
         statusCode: 200,
-        body: { user: dismissedUser },
+        body: { data: dismissedUser },
       }).as('userRequest')
 
       cy.intercept('POST', '**/login', {

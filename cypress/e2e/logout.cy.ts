@@ -23,7 +23,7 @@ describe('Logout Flow', () => {
     cy.intercept('GET', '**/user', {
       statusCode: 200,
       body: {
-        user: {
+        data: {
           id: 1,
           email: 'test@example.com',
           wedge_matrices: [
