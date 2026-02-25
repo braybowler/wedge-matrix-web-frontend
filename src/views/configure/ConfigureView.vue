@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MatrixSelector from '@/components/matrix/MatrixSelector.vue'
 import ClubSelector from '@/components/configure/ClubSelector.vue'
 import SwingPercentageColumnSelector from '@/components/configure/SwingPercentageColumnSelector.vue'
 import ColumnHeaderLabelInput from '@/components/configure/ColumnHeaderLabelInput.vue'
@@ -37,6 +38,7 @@ onBeforeUnmount(async () => {
 <template>
   <main class="configure-wrapper">
     <div class="configure-container">
+      <MatrixSelector :readonly="true" label="Current Matrix" />
       <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
         {{ syncError }}
       </p>

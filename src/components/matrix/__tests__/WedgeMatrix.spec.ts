@@ -11,6 +11,7 @@ const mockUseAxiosComposable = vi.hoisted(() => ({
   getBlob: vi.fn().mockResolvedValue({}),
   put: vi.fn().mockResolvedValue({}),
   patch: vi.fn().mockResolvedValue({}),
+  del: vi.fn().mockResolvedValue({}),
 }))
 
 vi.mock('@/composables/axios/axios.ts', () => ({

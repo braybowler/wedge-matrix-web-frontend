@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
+import MatrixSelector from '@/components/matrix/MatrixSelector.vue'
 import YardageInput from '@/components/matrix/YardageInput.vue'
 import TutorialHighlight from '@/components/tutorial/TutorialHighlight.vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
@@ -54,6 +55,7 @@ function handleFinishTutorial() {
 
 <template>
   <div class="component-container">
+    <MatrixSelector />
     <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
       {{ syncError }}
     </p>
@@ -162,7 +164,7 @@ function handleFinishTutorial() {
           >
             <path
               fill-rule="evenodd"
-              d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.519.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+              d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H4.28a.75.75 0 0 0-.75.75v3.952a.75.75 0 0 0 1.5 0v-2.146l.312.311a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.384Zm.074-4.024a.75.75 0 0 0 .75-.75V2.698a.75.75 0 0 0-1.5 0v2.146l-.312-.311a7 7 0 0 0-11.712 3.138.75.75 0 0 0 1.449.384 5.5 5.5 0 0 1 9.201-2.466l.312.311H11.14a.75.75 0 1 0 0 1.5h3.952Z"
               clip-rule="evenodd"
             />
           </svg>
@@ -200,6 +202,7 @@ function handleFinishTutorial() {
 }
 
 table {
+  margin-top: 8px;
   width: 100%;
   border-radius: 8px;
   border-collapse: collapse;

@@ -5,24 +5,42 @@ import type { WedgeMatrix } from '@/types/matrix'
 
 vi.mock('@/composables/axios/axios.ts', () => {
   const putMock = vi.fn()
+  const postMock = vi.fn()
+  const delMock = vi.fn()
   return {
     useAxios: () => ({
       put: putMock,
       get: vi.fn(),
-      post: vi.fn(),
-      del: vi.fn(),
+      post: postMock,
+      del: delMock,
+      getBlob: vi.fn(),
     }),
     __putMock: putMock,
+    __postMock: postMock,
+    __delMock: delMock,
   }
 })
 
+type MockMap = {
+  __putMock: ReturnType<typeof vi.fn>
+  __postMock: ReturnType<typeof vi.fn>
+  __delMock: ReturnType<typeof vi.fn>
+}
+
 let putMock: ReturnType<typeof vi.fn>
+let postMock: ReturnType<typeof vi.fn>
+let delMock: ReturnType<typeof vi.fn>
 
 beforeEach(async () => {
   setActivePinia(createPinia())
   const mod = await import('@/composables/axios/axios.ts')
-  putMock = (mod as unknown as { __putMock: ReturnType<typeof vi.fn> }).__putMock
+  const mocks = mod as unknown as MockMap
+  putMock = mocks.__putMock
+  postMock = mocks.__postMock
+  delMock = mocks.__delMock
   putMock.mockReset()
+  postMock.mockReset()
+  delMock.mockReset()
 })
 
 const buildMatrix = (overrides: Partial<WedgeMatrix> = {}): WedgeMatrix => ({
@@ -305,6 +323,128 @@ describe('useMatrixConfigurationStore', () => {
       await second
 
       expect(putMock).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('initializeMatrixValues with matrixId', () => {
+    it('loads the matrix matching the given matrixId', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix1 = buildMatrix({ id: 10, label: 'First' })
+      const matrix2 = buildMatrix({ id: 20, label: 'Second', number_of_columns: 2 })
+
+      store.initializeMatrixValues([matrix1, matrix2], 20)
+
+      expect(store.selectedMatrixId).toBe(20)
+      expect(store.matrixLabel).toBe('Second')
+      expect(store.matrixColumns).toBe(2)
+    })
+
+    it('sets matrixLabel from the matrix', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix({ label: 'My Wedges' })
+
+      store.initializeMatrixValues([matrix])
+
+      expect(store.matrixLabel).toBe('My Wedges')
+    })
+
+    it('sets matrixLabel to null when label is null', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix({ label: null })
+
+      store.initializeMatrixValues([matrix])
+
+      expect(store.matrixLabel).toBeNull()
+    })
+  })
+
+  describe('switchMatrix', () => {
+    it('syncs current values then loads the new matrix', async () => {
+      putMock.mockResolvedValue({ data: {}, status: 200 })
+      const store = useMatrixConfigurationStore()
+      const matrix1 = buildMatrix({ id: 10, label: 'First' })
+      const matrix2 = buildMatrix({ id: 20, label: 'Second', number_of_columns: 2 })
+      store.initializeMatrixValues([matrix1, matrix2])
+      store.requiresSync = true
+
+      await store.switchMatrix(20, [matrix1, matrix2])
+
+      expect(putMock).toHaveBeenCalled()
+      expect(store.selectedMatrixId).toBe(20)
+      expect(store.matrixLabel).toBe('Second')
+    })
+  })
+
+  describe('createMatrix', () => {
+    it('calls POST /wedge-matrix and returns the new matrix', async () => {
+      const newMatrix = buildMatrix({ id: 99, label: 'Matrix 2' })
+      postMock.mockResolvedValue({ data: { data: newMatrix }, status: 201 })
+      const store = useMatrixConfigurationStore()
+
+      const result = await store.createMatrix('Matrix 2')
+
+      expect(postMock).toHaveBeenCalledWith('/wedge-matrix', { label: 'Matrix 2' })
+      expect(result).toEqual(newMatrix)
+    })
+
+    it('returns null and sets syncError on failure', async () => {
+      postMock.mockResolvedValue({ error: 'Server error' })
+      const store = useMatrixConfigurationStore()
+
+      const result = await store.createMatrix('Matrix 2')
+
+      expect(result).toBeNull()
+      expect(store.syncError).toBe('Server error')
+    })
+  })
+
+  describe('deleteMatrix', () => {
+    it('calls DELETE /wedge-matrix/{id} and returns true on success', async () => {
+      delMock.mockResolvedValue({ data: {}, status: 200 })
+      const store = useMatrixConfigurationStore()
+
+      const result = await store.deleteMatrix(10)
+
+      expect(delMock).toHaveBeenCalledWith('/wedge-matrix/10')
+      expect(result).toBe(true)
+    })
+
+    it('returns false and sets syncError on failure', async () => {
+      delMock.mockResolvedValue({ error: 'Not found' })
+      const store = useMatrixConfigurationStore()
+
+      const result = await store.deleteMatrix(10)
+
+      expect(result).toBe(false)
+      expect(store.syncError).toBe('Not found')
+    })
+  })
+
+  describe('renameMatrix', () => {
+    it('calls PUT with label in payload and updates matrixLabel', async () => {
+      putMock.mockResolvedValue({ data: {}, status: 200 })
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([buildMatrix()])
+
+      const result = await store.renameMatrix(10, 'New Name')
+
+      expect(putMock).toHaveBeenCalledWith(
+        '/wedge-matrix/10',
+        expect.objectContaining({ label: 'New Name' }),
+      )
+      expect(result).toBe(true)
+      expect(store.matrixLabel).toBe('New Name')
+    })
+
+    it('returns false and sets syncError on failure', async () => {
+      putMock.mockResolvedValue({ error: 'Server error' })
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([buildMatrix()])
+
+      const result = await store.renameMatrix(10, 'New Name')
+
+      expect(result).toBe(false)
+      expect(store.syncError).toBe('Server error')
     })
   })
 })

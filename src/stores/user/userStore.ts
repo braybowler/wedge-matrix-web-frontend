@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { User } from '@/types/user'
+import type { WedgeMatrix } from '@/types/matrix'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 
@@ -105,6 +106,36 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  function addWedgeMatrix(matrix: WedgeMatrix) {
+    if (!user.value) return
+    user.value.wedge_matrices.push(matrix)
+    saveToStorage(user.value, accessToken.value!)
+  }
+
+  function removeWedgeMatrix(matrixId: number) {
+    if (!user.value) return
+    user.value.wedge_matrices = user.value.wedge_matrices.filter((m) => m.id !== matrixId)
+    saveToStorage(user.value, accessToken.value!)
+  }
+
+  function updateWedgeMatrixLabel(matrixId: number, label: string) {
+    if (!user.value) return
+    const matrix = user.value.wedge_matrices.find((m) => m.id === matrixId)
+    if (matrix) {
+      matrix.label = label
+      saveToStorage(user.value, accessToken.value!)
+    }
+  }
+
+  function updateWedgeMatrix(matrixId: number, updates: Partial<WedgeMatrix>) {
+    if (!user.value) return
+    const matrix = user.value.wedge_matrices.find((m) => m.id === matrixId)
+    if (matrix) {
+      Object.assign(matrix, updates)
+      saveToStorage(user.value, accessToken.value!)
+    }
+  }
+
   function setAuthVerified(value: boolean) {
     isAuthVerified.value = value
   }
@@ -118,5 +149,9 @@ export const useUserStore = defineStore('user', () => {
     logout,
     verifyAndRefreshAuth,
     setAuthVerified,
+    addWedgeMatrix,
+    removeWedgeMatrix,
+    updateWedgeMatrixLabel,
+    updateWedgeMatrix,
   }
 })

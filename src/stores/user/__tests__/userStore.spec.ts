@@ -108,4 +108,48 @@ describe('useUserStore', () => {
       expect(store.user?.email).toBe('updated@example.com')
     })
   })
+
+  describe('addWedgeMatrix', () => {
+    it('appends the matrix and persists to localStorage', () => {
+      const store = useUserStore()
+      store.initializeUserStoreValues(mockUser, 'abc-token')
+      const newMatrix: WedgeMatrix = { ...mockMatrix, id: 2, label: 'Second' }
+
+      store.addWedgeMatrix(newMatrix)
+
+      expect(store.user!.wedge_matrices).toHaveLength(2)
+      expect(store.user!.wedge_matrices[1]!.id).toBe(2)
+      const stored = JSON.parse(localStorage.getItem('wedge_matrix_user')!)
+      expect(stored.wedge_matrices).toHaveLength(2)
+    })
+  })
+
+  describe('removeWedgeMatrix', () => {
+    it('filters out the matrix by ID and persists to localStorage', () => {
+      const store = useUserStore()
+      const matrix2: WedgeMatrix = { ...mockMatrix, id: 2, label: 'Second' }
+      const userWith2 = { ...mockUser, wedge_matrices: [mockMatrix, matrix2] }
+      store.initializeUserStoreValues(userWith2, 'abc-token')
+
+      store.removeWedgeMatrix(1)
+
+      expect(store.user!.wedge_matrices).toHaveLength(1)
+      expect(store.user!.wedge_matrices[0]!.id).toBe(2)
+      const stored = JSON.parse(localStorage.getItem('wedge_matrix_user')!)
+      expect(stored.wedge_matrices).toHaveLength(1)
+    })
+  })
+
+  describe('updateWedgeMatrixLabel', () => {
+    it('updates the label in-place and persists to localStorage', () => {
+      const store = useUserStore()
+      store.initializeUserStoreValues(mockUser, 'abc-token')
+
+      store.updateWedgeMatrixLabel(1, 'Renamed')
+
+      expect(store.user!.wedge_matrices[0]!.label).toBe('Renamed')
+      const stored = JSON.parse(localStorage.getItem('wedge_matrix_user')!)
+      expect(stored.wedge_matrices[0].label).toBe('Renamed')
+    })
+  })
 })

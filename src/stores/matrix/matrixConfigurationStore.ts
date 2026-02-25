@@ -9,6 +9,7 @@ import type {
   YardageGrid,
 } from '@/types/matrix'
 import { useAxios } from '@/composables/axios/axios.ts'
+import { useUserStore } from '@/stores/user/userStore.ts'
 
 const DEFAULT_CLUBS: ClubLabel[] = ['LW', 'SW', 'GW', 'PW']
 
@@ -21,38 +22,83 @@ function createEmptyGrid(rows: number, columns: number): YardageGrid {
 }
 
 export const useMatrixConfigurationStore = defineStore('matrixConfiguration', () => {
-  const { put, getBlob } = useAxios()
+  const { put, post, del, getBlob } = useAxios()
   const requiresSync = ref(false)
   const syncError = ref<string | null>(null)
   let isSyncing = false
   const selectedMatrixId = ref<number | null>(null)
+  const matrixLabel = ref<string | null>(null)
   const matrixColumns = ref<AllowableMatrixColumnNumber>(4)
   const matrixColumnHeaders = ref<Array<string>>(['', '', '', ''])
   const selectedRowDisplayOption = ref<RowDisplayOption>('Carry')
   const selectedClubs = ref<ClubLabel[]>([...DEFAULT_CLUBS])
   const yardageValues = ref<YardageGrid>(createEmptyGrid(DEFAULT_CLUBS.length, 4))
 
-  function initializeMatrixValues(wedgeMatrices: WedgeMatrix[]) {
-    const matrix = wedgeMatrices[0]
+  function initializeMatrixValues(wedgeMatrices: WedgeMatrix[], matrixId?: number) {
+    const matrix = matrixId ? wedgeMatrices.find((m) => m.id === matrixId) : wedgeMatrices[0]
     if (!matrix) return
 
     selectedMatrixId.value = matrix.id
-    matrixColumns.value = matrix.number_of_columns
-    selectedRowDisplayOption.value = matrix.selected_row_display_option
+    matrixLabel.value = matrix.label
+    matrixColumns.value = matrix.number_of_columns ?? 4
+    selectedRowDisplayOption.value = matrix.selected_row_display_option ?? 'Both'
 
-    if (matrix.club_labels && matrix.club_labels.length > 0) {
-      selectedClubs.value = matrix.club_labels
-    } else {
-      selectedClubs.value = [...DEFAULT_CLUBS]
-    }
+    selectedClubs.value =
+      matrix.club_labels && matrix.club_labels.length > 0
+        ? [...matrix.club_labels]
+        : [...DEFAULT_CLUBS]
 
-    if (matrix.column_headers) {
-      matrixColumnHeaders.value = matrix.column_headers
-    }
+    const cols = matrixColumns.value
+    matrixColumnHeaders.value = matrix.column_headers
+      ? [...matrix.column_headers]
+      : Array.from({ length: cols }, () => '')
 
-    if (matrix.yardage_values) {
-      yardageValues.value = matrix.yardage_values
+    const clubs = selectedClubs.value
+    yardageValues.value = matrix.yardage_values
+      ? matrix.yardage_values.map((row) => row.map((cell) => ({ ...cell })))
+      : createEmptyGrid(clubs.length, cols)
+  }
+
+  async function switchMatrix(matrixId: number, wedgeMatrices: WedgeMatrix[]) {
+    await synchronizeValues()
+    initializeMatrixValues(wedgeMatrices, matrixId)
+    requiresSync.value = false
+  }
+
+  async function createMatrix(label: string): Promise<WedgeMatrix | null> {
+    const response = await post<{ data: WedgeMatrix }>('/wedge-matrix', { label })
+    if (response.error || !response.data) {
+      syncError.value = response.error ?? 'Failed to create matrix'
+      return null
     }
+    return response.data.data
+  }
+
+  async function deleteMatrix(matrixId: number): Promise<boolean> {
+    const response = await del('/wedge-matrix/' + matrixId)
+    if (response.error) {
+      syncError.value = response.error
+      return false
+    }
+    return true
+  }
+
+  async function renameMatrix(matrixId: number, label: string): Promise<boolean> {
+    const response = await put('/wedge-matrix/' + matrixId, {
+      label,
+      number_of_columns: matrixColumns.value,
+      column_headers: matrixColumnHeaders.value,
+      selected_row_display_option: selectedRowDisplayOption.value,
+      yardage_values: yardageValues.value,
+      club_labels: selectedClubs.value,
+    })
+    if (response.error) {
+      syncError.value = response.error
+      return false
+    }
+    matrixLabel.value = label
+    requiresSync.value = false
+    return true
   }
 
   async function synchronizeValues() {
@@ -73,6 +119,13 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
         syncError.value = response.error
       } else {
         requiresSync.value = false
+        useUserStore().updateWedgeMatrix(selectedMatrixId.value!, {
+          number_of_columns: matrixColumns.value,
+          column_headers: [...matrixColumnHeaders.value],
+          selected_row_display_option: selectedRowDisplayOption.value,
+          yardage_values: yardageValues.value.map((row) => row.map((cell) => ({ ...cell }))),
+          club_labels: [...selectedClubs.value],
+        })
       }
     } catch {
       syncError.value = 'An unexpected error occurred while saving. Please try again.'
@@ -171,7 +224,13 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     selectedRowDisplayOption,
     requiresSync,
     syncError,
+    selectedMatrixId,
+    matrixLabel,
     initializeMatrixValues,
+    switchMatrix,
+    createMatrix,
+    deleteMatrix,
+    renameMatrix,
     setYardageValue,
     clearYardageValues,
     setMatrixColumnHeader,

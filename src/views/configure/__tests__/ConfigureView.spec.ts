@@ -13,6 +13,7 @@ vi.mock('@/composables/axios/axios.ts', () => ({
     put: vi.fn(),
     patch: vi.fn(),
     del: vi.fn(),
+    getBlob: vi.fn(),
   }),
 }))
 
@@ -38,6 +39,20 @@ describe('ConfigureView', () => {
       const wrapper = mount(ConfigureView, { global: { plugins: [router] } })
 
       expect(wrapper.exists()).toBe(true)
+    })
+
+    it('renders the matrix selector', () => {
+      const wrapper = mount(ConfigureView, { global: { plugins: [router] } })
+
+      expect(wrapper.find('[data-test-id="matrix-selector"]').exists()).toBe(true)
+    })
+
+    it('renders the matrix selector without action buttons', () => {
+      const wrapper = mount(ConfigureView, { global: { plugins: [router] } })
+
+      expect(wrapper.find('[data-test-id="create-matrix-button"]').exists()).toBe(false)
+      expect(wrapper.find('[data-test-id="rename-matrix-button"]').exists()).toBe(false)
+      expect(wrapper.find('[data-test-id="delete-matrix-button"]').exists()).toBe(false)
     })
 
     it('displays sync error message when syncError is set', async () => {
