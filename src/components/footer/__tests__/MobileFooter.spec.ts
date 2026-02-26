@@ -26,6 +26,14 @@ describe('MobileFooter Component', () => {
       expect(wrapper.exists()).toBe(true)
     })
 
+    it('displays an account settings button', () => {
+      const wrapper = mount(MobileFooter, { global: { plugins: [router] } })
+
+      const button = wrapper.find('[data-test-id="account-settings-button"]')
+
+      expect(button.exists()).toBe(true)
+    })
+
     it('displays a logout button', () => {
       const wrapper = mount(MobileFooter, { global: { plugins: [router] } })
 

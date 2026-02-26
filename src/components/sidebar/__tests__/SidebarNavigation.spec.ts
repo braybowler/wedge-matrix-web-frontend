@@ -45,6 +45,14 @@ describe('SidebarNavigation Component', () => {
       expect(link.text()).toBe('Configure')
     })
 
+    it('displays an account settings button', () => {
+      const wrapper = mount(SidebarNavigation, { global: { plugins: [router] } })
+
+      const button = wrapper.find('[data-test-id="account-settings-button"]')
+
+      expect(button.exists()).toBe(true)
+    })
+
     it('displays a logout button', () => {
       const wrapper = mount(SidebarNavigation, { global: { plugins: [router] } })
 
