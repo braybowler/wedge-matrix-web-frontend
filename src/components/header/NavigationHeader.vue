@@ -5,6 +5,7 @@
     <nav class="navigation-container">
       <RouterLink active-class="active-link" class="link" to="/matrix"> Wedge Matrix </RouterLink>
       <RouterLink active-class="active-link" class="link" to="/configure"> Configure </RouterLink>
+      <RouterLink active-class="active-link" class="link" to="/calibrate"> Calibrate </RouterLink>
     </nav>
   </header>
 </template>

@@ -20,6 +20,7 @@ const handleLogout = async () => {
     <nav class="nav-links">
       <RouterLink active-class="active-link" class="link" to="/matrix">Wedge Matrix</RouterLink>
       <RouterLink active-class="active-link" class="link" to="/configure">Configure</RouterLink>
+      <RouterLink active-class="active-link" class="link" to="/calibrate">Calibrate</RouterLink>
     </nav>
     <div class="logout-container">
       <button @click="handleLogout" class="logout-button" data-test-id="logout-button">

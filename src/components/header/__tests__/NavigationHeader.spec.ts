@@ -8,6 +8,7 @@ const router = createRouter({
   routes: [
     { path: '/matrix', name: 'matrix', component: { template: '<div />' } },
     { path: '/configure', name: 'configure', component: { template: '<div />' } },
+    { path: '/calibrate', name: 'calibrate', component: { template: '<div />' } },
   ],
 })
 
@@ -39,6 +40,15 @@ describe('NavigationHeader Component', () => {
 
       expect(link.exists()).toBe(true)
       expect(link.text()).toBe('Configure')
+    })
+
+    it('displays Calibrate link', () => {
+      const wrapper = mount(NavigationHeader, { global: { plugins: [router] } })
+
+      const link = wrapper.find('a[href="/calibrate"]')
+
+      expect(link.exists()).toBe(true)
+      expect(link.text()).toBe('Calibrate')
     })
   })
 })

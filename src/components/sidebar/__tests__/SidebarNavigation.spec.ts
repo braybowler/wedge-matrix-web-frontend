@@ -11,6 +11,7 @@ const router = createRouter({
     { path: '/login', name: 'login', component: { template: '<div />' } },
     { path: '/matrix', name: 'matrix', component: { template: '<div />' } },
     { path: '/configure', name: 'configure', component: { template: '<div />' } },
+    { path: '/calibrate', name: 'calibrate', component: { template: '<div />' } },
   ],
 })
 
@@ -43,6 +44,15 @@ describe('SidebarNavigation Component', () => {
 
       expect(link.exists()).toBe(true)
       expect(link.text()).toBe('Configure')
+    })
+
+    it('displays Calibrate link', () => {
+      const wrapper = mount(SidebarNavigation, { global: { plugins: [router] } })
+
+      const link = wrapper.find('a[href="/calibrate"]')
+
+      expect(link.exists()).toBe(true)
+      expect(link.text()).toBe('Calibrate')
     })
 
     it('displays an account settings button', () => {

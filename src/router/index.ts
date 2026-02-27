@@ -38,6 +38,12 @@ const router = createRouter({
       component: () => import('../views/configure/ConfigureView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/calibrate',
+      name: 'calibrate',
+      component: () => import('../views/calibrate/CalibrateView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 })
 
