@@ -16,7 +16,7 @@ const emit = defineEmits<{
       <div
         v-for="count in shotCounts"
         :key="count"
-        class="tile"
+        class="tile shot-tile"
         :data-test-id="`shot-count-${count}`"
         @click="emit('select', count)"
       >
@@ -39,6 +39,11 @@ const emit = defineEmits<{
   flex-direction: row;
   justify-content: space-around;
   margin-top: 8px;
+}
+
+.shot-tile {
+  min-width: 90px;
+  text-align: center;
 }
 
 @media (max-width: 480px) {

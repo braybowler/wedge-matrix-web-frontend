@@ -1,14 +1,16 @@
 import { createRouter, createWebHistory, type RouteRecordNameGeneric } from 'vue-router'
 import { useUserStore } from '@/stores/user/userStore.ts'
 
-export const publicRoutes: Array<RouteRecordNameGeneric> = ['login', 'register']
+export const publicRoutes: Array<RouteRecordNameGeneric> = ['landing', 'login', 'register']
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect: { name: 'matrix' },
+      name: 'landing',
+      component: () => import('../views/landing/LandingView.vue'),
+      meta: { requiresAuth: false },
     },
     {
       path: '/login',
@@ -42,7 +44,7 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: { name: 'matrix' },
+      redirect: { name: 'landing' },
     },
   ],
 })
@@ -69,7 +71,7 @@ export const routerGuard: Parameters<typeof router.beforeEach>[0] = async (to, f
   } else if (
     !to.meta.requiresAuth &&
     userStore.user &&
-    (to.name === 'login' || to.name === 'register')
+    (to.name === 'landing' || to.name === 'login' || to.name === 'register')
   ) {
     // If logged in and trying to access login/register, redirect to matrix
     next({ name: 'matrix' })

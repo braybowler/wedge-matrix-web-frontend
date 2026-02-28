@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterView } from 'vue-router'
 import SidebarNavigation from '@/components/sidebar/SidebarNavigation.vue'
 import NavigationHeader from '@/components/header/NavigationHeader.vue'
@@ -6,11 +7,14 @@ import MobileFooter from '@/components/footer/MobileFooter.vue'
 import LoadingBar from '@/components/loading/LoadingBar.vue'
 import router from '@/router'
 import { publicRoutes } from '@/router'
+
+const isLandingPage = computed(() => router.currentRoute.value.name === 'landing')
+const isPublicRoute = computed(() => publicRoutes.includes(router.currentRoute.value.name))
 </script>
 
 <template>
   <LoadingBar />
-  <template v-if="!publicRoutes.includes(router.currentRoute.value.name)">
+  <template v-if="!isPublicRoute">
     <div class="authenticated-layout">
       <div class="mobile-header">
         <NavigationHeader />
@@ -28,6 +32,9 @@ import { publicRoutes } from '@/router'
       </div>
     </div>
   </template>
+  <div v-else-if="isLandingPage" class="landing-layout">
+    <RouterView />
+  </div>
   <div v-else class="auth-layout">
     <RouterView />
   </div>
@@ -57,6 +64,10 @@ import { publicRoutes } from '@/router'
 
 .mobile-footer {
   flex-shrink: 0;
+}
+
+.landing-layout {
+  min-height: 100vh;
 }
 
 .auth-layout {

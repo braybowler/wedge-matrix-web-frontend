@@ -48,7 +48,9 @@ const toggleClub = (club: (typeof CLUB_LABELS)[number]) => {
 .selector-section {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
   margin-top: 8px;
 }
 

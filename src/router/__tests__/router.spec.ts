@@ -24,7 +24,7 @@ function createTestRouter() {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [
-      { path: '/', redirect: { name: 'login' } },
+      { path: '/', name: 'landing', component: stubComponent, meta: { requiresAuth: false } },
       { path: '/login', name: 'login', component: stubComponent, meta: { requiresAuth: false } },
       {
         path: '/register',
@@ -106,16 +106,27 @@ describe('Router Guard', () => {
       expect(router.currentRoute.value.name).toBe('login')
     })
 
-    it('redirects root path to /login', async () => {
+    it('allows access to landing page at /', async () => {
       const router = createTestRouter()
 
       await router.push('/')
 
-      expect(router.currentRoute.value.name).toBe('login')
+      expect(router.currentRoute.value.name).toBe('landing')
     })
   })
 
   describe('authenticated users', () => {
+    it('redirects from / to /matrix', async () => {
+      const userStore = useUserStore()
+      userStore.initializeUserStoreValues(mockUser, 'valid-token')
+      userStore.setAuthVerified(true)
+
+      const router = createTestRouter()
+      await router.push('/')
+
+      expect(router.currentRoute.value.name).toBe('matrix')
+    })
+
     it('redirects from /login to /matrix', async () => {
       const userStore = useUserStore()
       userStore.initializeUserStoreValues(mockUser, 'valid-token')
