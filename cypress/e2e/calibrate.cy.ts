@@ -181,7 +181,7 @@ describe('Calibrate Flow', () => {
     cy.get('[data-test-id="progress-label"]').should('contain.text', 'Step 2 of 4')
 
     // Navigate away
-    cy.get('a[href="/matrix"]:visible').first().click()
+    cy.get('a[href="/matrix"]:visible').click()
     cy.url().should('include', '/matrix')
 
     // Come back

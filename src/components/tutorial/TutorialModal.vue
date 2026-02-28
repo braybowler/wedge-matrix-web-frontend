@@ -30,7 +30,7 @@ function handleDismiss() {
       data-test-id="tutorial-modal-overlay"
       @click.self="handleDismiss"
     >
-      <div class="modal">
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Welcome to Wedge Matrix">
         <h2 class="modal-title">Welcome to Wedge Matrix!</h2>
         <p class="modal-message">
           Would you like to learn how to use Wedge Matrix to track and optimize your wedge yardages?

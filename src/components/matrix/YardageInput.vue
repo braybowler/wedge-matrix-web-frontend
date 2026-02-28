@@ -45,15 +45,7 @@ const emit = defineEmits<{
 }
 
 .input:focus {
-  background-color: #374151;
-  padding: 2px 0px;
-  color: #f3f4f6;
-  border: 1px solid #818cf8;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-  max-width: 50px;
+  border-color: #818cf8;
 }
 
 .input:focus::placeholder {

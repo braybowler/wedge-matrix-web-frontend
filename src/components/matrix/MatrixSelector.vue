@@ -101,12 +101,18 @@ function cancelRename() {
 
       <div v-if="!props.readonly" class="action-buttons">
         <div class="tooltip-wrapper">
-          <button class="icon-button" data-test-id="create-matrix-button" @click="handleCreate">
+          <button
+            class="icon-button"
+            aria-label="New Matrix"
+            data-test-id="create-matrix-button"
+            @click="handleCreate"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
               class="icon"
+              aria-hidden="true"
             >
               <path
                 d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
@@ -117,12 +123,18 @@ function cancelRename() {
         </div>
 
         <div class="tooltip-wrapper">
-          <button class="icon-button" data-test-id="rename-matrix-button" @click="startRename">
+          <button
+            class="icon-button"
+            aria-label="Rename"
+            data-test-id="rename-matrix-button"
+            @click="startRename"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
               class="icon"
+              aria-hidden="true"
             >
               <path
                 d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
@@ -140,6 +152,7 @@ function cancelRename() {
             class="icon-button"
             :class="{ disabled: !canDelete }"
             :disabled="!canDelete"
+            aria-label="Delete Matrix"
             data-test-id="delete-matrix-button"
             @click="handleDeleteClick"
           >
@@ -148,6 +161,7 @@ function cancelRename() {
               viewBox="0 0 20 20"
               fill="currentColor"
               class="icon"
+              aria-hidden="true"
             >
               <path
                 fill-rule="evenodd"
@@ -234,18 +248,6 @@ function cancelRename() {
   gap: 12px;
 }
 
-.icon-button {
-  background-color: #374151;
-  color: #9ca3af;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
 .icon-button:hover:not(.disabled) {
   background-color: #4b5563;
   border-color: #818cf8;
@@ -262,31 +264,6 @@ function cancelRename() {
 .icon {
   width: 20px;
   height: 20px;
-}
-
-.tooltip-wrapper {
-  position: relative;
-}
-
-.tooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #1f2937;
-  color: #d1d5db;
-  font-size: 12px;
-  font-weight: 400;
-  padding: 4px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.tooltip-wrapper:hover .tooltip {
-  opacity: 1;
 }
 
 .rename-row {

@@ -5,13 +5,38 @@ import { useAxios } from '@/composables/axios/axios.ts'
 import { useLoadingStore } from '@/stores/loading/loadingStore.ts'
 import { useUserStore } from '@/stores/user/userStore.ts'
 
-vi.mock('axios')
+vi.mock('axios', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('axios')>()
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn(),
+      isAxiosError: actual.default.isAxiosError,
+    },
+  }
+})
 
 const mockedAxios = axios as unknown as {
   get: Mock
   post: Mock
   put: Mock
   delete: Mock
+}
+
+function createAxiosError(config: { response?: unknown; request?: unknown }) {
+  const error = new Error('Axios error') as Error & {
+    isAxiosError: boolean
+    response?: unknown
+    request?: unknown
+  }
+  error.isAxiosError = true
+  if (config.response) error.response = config.response
+  if (config.request) error.request = config.request
+  return error
 }
 
 beforeEach(() => {
@@ -115,12 +140,14 @@ describe('useAxios Composable', () => {
     })
 
     it('handles errors the same as other methods', async () => {
-      mockedAxios.get.mockRejectedValue({
-        response: {
-          data: { message: 'Not found' },
-          status: 404,
-        },
-      })
+      mockedAxios.get.mockRejectedValue(
+        createAxiosError({
+          response: {
+            data: { message: 'Not found' },
+            status: 404,
+          },
+        }),
+      )
 
       const { getBlob } = useAxios()
       const result = await getBlob('/missing')
@@ -131,12 +158,14 @@ describe('useAxios Composable', () => {
 
   describe('Error Handling', () => {
     it('returns error message and status from a server error response', async () => {
-      mockedAxios.get.mockRejectedValue({
-        response: {
-          data: { message: 'Not found' },
-          status: 404,
-        },
-      })
+      mockedAxios.get.mockRejectedValue(
+        createAxiosError({
+          response: {
+            data: { message: 'Not found' },
+            status: 404,
+          },
+        }),
+      )
 
       const { get } = useAxios()
       const result = await get('/missing')
@@ -148,12 +177,14 @@ describe('useAxios Composable', () => {
       const userStore = useUserStore()
       userStore.accessToken = 'expired-token'
 
-      mockedAxios.get.mockRejectedValue({
-        response: {
-          data: { message: 'Unauthenticated' },
-          status: 401,
-        },
-      })
+      mockedAxios.get.mockRejectedValue(
+        createAxiosError({
+          response: {
+            data: { message: 'Unauthenticated' },
+            status: 401,
+          },
+        }),
+      )
 
       const { get } = useAxios()
       await get('/protected')
@@ -163,12 +194,14 @@ describe('useAxios Composable', () => {
     })
 
     it('returns a default message when server response has no message', async () => {
-      mockedAxios.get.mockRejectedValue({
-        response: {
-          data: {},
-          status: 500,
-        },
-      })
+      mockedAxios.get.mockRejectedValue(
+        createAxiosError({
+          response: {
+            data: {},
+            status: 500,
+          },
+        }),
+      )
 
       const { get } = useAxios()
       const result = await get('/fail')
@@ -180,9 +213,11 @@ describe('useAxios Composable', () => {
     })
 
     it('returns a network error when request was made but no response received', async () => {
-      mockedAxios.get.mockRejectedValue({
-        request: {},
-      })
+      mockedAxios.get.mockRejectedValue(
+        createAxiosError({
+          request: {},
+        }),
+      )
 
       const { get } = useAxios()
       const result = await get('/timeout')
@@ -221,7 +256,7 @@ describe('useAxios Composable', () => {
 
     it('stops loading even when the request fails', async () => {
       const loadingStore = useLoadingStore()
-      mockedAxios.post.mockRejectedValue({ response: { data: {}, status: 500 } })
+      mockedAxios.post.mockRejectedValue(createAxiosError({ response: { data: {}, status: 500 } }))
 
       const { post } = useAxios()
       await post('/fail', {})

@@ -18,6 +18,14 @@ const emit = defineEmits<{
   back: []
   quit: []
 }>()
+
+function handleShotChange(
+  shotIndex: number,
+  field: 'carry_value' | 'total_value',
+  rawValue: string,
+) {
+  emit('updateShot', shotIndex, field, rawValue)
+}
 </script>
 
 <template>
@@ -32,10 +40,7 @@ const emit = defineEmits<{
         :carry-value="shot.carry_value"
         :total-value="shot.total_value"
         :display-option="displayOption"
-        @change="
-          (si: number, f: 'carry_value' | 'total_value', rv: string) =>
-            emit('updateShot', si, f, rv)
-        "
+        @change="handleShotChange"
       />
     </div>
 

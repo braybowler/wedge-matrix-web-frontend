@@ -14,7 +14,7 @@ defineEmits<{
 <template>
   <Teleport to="body">
     <div v-if="visible" class="overlay" data-test-id="modal-overlay" @click.self="$emit('cancel')">
-      <div class="modal">
+      <div class="modal" role="dialog" aria-modal="true" :aria-label="title">
         <h2 class="modal-title">{{ title }}</h2>
         <p class="modal-message">{{ message }}</p>
         <div class="button-row">

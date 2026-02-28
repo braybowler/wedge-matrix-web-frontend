@@ -87,7 +87,7 @@ onBeforeUnmount(async () => {
 }
 
 .error-message {
-  color: #818cf8;
+  color: #ef4444;
   font-size: 14px;
   text-align: center;
   margin-bottom: 12px;

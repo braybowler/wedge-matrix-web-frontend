@@ -29,7 +29,8 @@ const handleLogout = async () => {
       <div class="tooltip-wrapper">
         <button
           @click="showAccountSettings = true"
-          class="settings-button"
+          class="icon-button settings-button"
+          aria-label="Account Settings"
           data-test-id="account-settings-button"
         >
           <svg
@@ -37,6 +38,7 @@ const handleLogout = async () => {
             viewBox="0 0 20 20"
             fill="currentColor"
             class="icon"
+            aria-hidden="true"
           >
             <path
               fill-rule="evenodd"
@@ -99,53 +101,12 @@ const handleLogout = async () => {
 }
 
 .settings-button {
-  background-color: #374151;
-  color: #9ca3af;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
   cursor: pointer;
-}
-
-.settings-button:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
-  color: #f3f4f6;
-  transform: translateY(-1px);
 }
 
 .icon {
   width: 16px;
   height: 16px;
-}
-
-.tooltip-wrapper {
-  position: relative;
-}
-
-.tooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #1f2937;
-  color: #d1d5db;
-  font-size: 12px;
-  font-weight: 400;
-  padding: 4px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.tooltip-wrapper:hover .tooltip {
-  opacity: 1;
 }
 
 .logout-button {

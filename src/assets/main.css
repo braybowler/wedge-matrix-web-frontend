@@ -1,1 +1,78 @@
 @import 'tailwindcss';
+
+/* Shared selector tile styles */
+.tile {
+  background-color: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tile:hover {
+  background-color: #4b5563;
+  border-color: #818cf8;
+  transform: translateY(-1px);
+}
+
+.tile-active {
+  background-color: #818cf8;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #f3f4f6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tile-active:hover {
+  transform: translateY(-1px);
+}
+
+/* Shared icon button + tooltip styles */
+.icon-button {
+  background-color: #374151;
+  color: #9ca3af;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.icon-button:hover {
+  background-color: #4b5563;
+  border-color: #818cf8;
+  color: #f3f4f6;
+  cursor: pointer;
+  transform: translateY(-1px);
+}
+
+.tooltip-wrapper {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1f2937;
+  color: #d1d5db;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.tooltip-wrapper:hover .tooltip {
+  opacity: 1;
+}

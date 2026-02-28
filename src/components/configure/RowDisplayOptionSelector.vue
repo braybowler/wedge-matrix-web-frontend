@@ -19,9 +19,7 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
       <div
         v-for="option in matrixRowDisplayOptions"
         :key="option"
-        :class="
-          selectedRowDisplayOption === option ? `option-container-active` : `option-container`
-        "
+        :class="selectedRowDisplayOption === option ? 'tile-active' : 'tile'"
         @click="setSelectedRowDisplayOption(option)"
         data-test-id="option"
       >
@@ -45,52 +43,9 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
   margin-top: 8px;
 }
 
-.option-container {
-  background-color: #374151;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #9ca3af;
-}
-
-.option-container:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #9ca3af;
-  cursor: pointer;
-  transform: translateY(-1px);
-}
-
-.option-container-active {
-  background-color: #818cf8;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #f3f4f6;
-}
-
-.option-container-active:hover {
-  background-color: #818cf8;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #f3f4f6;
-  cursor: pointer;
-  transform: translateY(-1px);
-}
-
 @media (max-width: 480px) {
   .option-section {
     margin-top: 4px;
-  }
-
-  .option-container,
-  .option-container:hover,
-  .option-container-active,
-  .option-container-active:hover {
-    padding: 6px 12px;
   }
 }
 </style>

@@ -40,7 +40,7 @@ function formatValue(val: number | null): string {
         </thead>
         <tbody>
           <tr v-for="(club, clubIdx) in clubs" :key="club">
-            <td class="cell club-cell">{{ club }}</td>
+            <th scope="row" class="cell club-cell">{{ club }}</th>
             <td v-for="colIdx in columns" :key="colIdx" class="cell value-cell">
               <template v-if="displayOption === 'Carry' || displayOption === 'Both'">
                 <span class="old-value">{{

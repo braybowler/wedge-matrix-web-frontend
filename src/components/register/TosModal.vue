@@ -18,7 +18,7 @@ defineEmits<{
       data-test-id="tos-modal-overlay"
       @click.self="$emit('close')"
     >
-      <div class="modal">
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Terms of Service">
         <div class="modal-header">
           <h2 class="modal-title">Terms of Service</h2>
           <button class="close-icon" data-test-id="tos-close-icon" @click="$emit('close')">

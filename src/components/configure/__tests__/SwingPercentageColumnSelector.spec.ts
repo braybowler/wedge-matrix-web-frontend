@@ -42,13 +42,13 @@ describe('SwingPercentageColumnSelector Component', () => {
 
       const selectors = wrapper.findAll('[data-test-id="selector"]')
 
-      expect(selectors[0]?.classes()).not.toContain('selector-container-active')
-      expect(selectors[0]?.classes()).toContain('selector-container')
+      expect(selectors[0]?.classes()).not.toContain('tile-active')
+      expect(selectors[0]?.classes()).toContain('tile')
 
       await selectors[0]?.trigger('click')
 
-      expect(selectors[0]?.classes()).toContain('selector-container-active')
-      expect(selectors[0]?.classes()).not.toContain('selector-container')
+      expect(selectors[0]?.classes()).toContain('tile-active')
+      expect(selectors[0]?.classes()).not.toContain('tile')
     })
   })
 
@@ -61,7 +61,7 @@ describe('SwingPercentageColumnSelector Component', () => {
 
       const selectors = wrapper.findAll('[data-test-id="selector"]')
 
-      expect(selectors[matrixColumns.value - 1]?.classes()).toContain('selector-container-active')
+      expect(selectors[matrixColumns.value - 1]?.classes()).toContain('tile-active')
     })
 
     it('updates store values when a user makes a selection', async () => {

@@ -42,13 +42,13 @@ describe('RowDisplayOptionSelector Component', () => {
 
       const options = wrapper.findAll('[data-test-id="option"]')
 
-      expect(options[2]?.classes()).not.toContain('options-container-active')
-      expect(options[2]?.classes()).toContain('option-container')
+      expect(options[2]?.classes()).not.toContain('tile-active')
+      expect(options[2]?.classes()).toContain('tile')
 
       await options[2]?.trigger('click')
 
-      expect(options[2]?.classes()).toContain('option-container-active')
-      expect(options[2]?.classes()).not.toContain('option-container')
+      expect(options[2]?.classes()).toContain('tile-active')
+      expect(options[2]?.classes()).not.toContain('tile')
     })
   })
 
@@ -61,7 +61,7 @@ describe('RowDisplayOptionSelector Component', () => {
       const options = wrapper.findAll('[data-test-id="option"]')
 
       expect(options.length).toBe(3)
-      expect(options[2]?.classes()).toContain('option-container-active')
+      expect(options[2]?.classes()).toContain('tile-active')
     })
 
     it('updates store values when a user makes a selection', async () => {

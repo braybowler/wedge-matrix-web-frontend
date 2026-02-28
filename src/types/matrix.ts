@@ -5,6 +5,8 @@ export type ClubLabel = (typeof CLUB_LABELS)[number]
 
 export type RowDisplayOption = 'Carry' | 'Total' | 'Both'
 
+export const MAX_YARDAGE = 999
+
 export type YardageCell = { carry_value: number | null; total_value: number | null }
 export type YardageGrid = YardageCell[][]
 

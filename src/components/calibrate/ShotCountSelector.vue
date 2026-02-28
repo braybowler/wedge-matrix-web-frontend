@@ -16,7 +16,7 @@ const emit = defineEmits<{
       <div
         v-for="count in shotCounts"
         :key="count"
-        class="option-container"
+        class="tile"
         :data-test-id="`shot-count-${count}`"
         @click="emit('select', count)"
       >
@@ -41,36 +41,11 @@ const emit = defineEmits<{
   margin-top: 8px;
 }
 
-.option-container {
-  background-color: #374151;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #9ca3af;
-}
-
-.option-container:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #9ca3af;
-  cursor: pointer;
-  transform: translateY(-1px);
-}
-
 @media (max-width: 480px) {
   .option-section {
     flex-direction: column;
     align-items: center;
     gap: 8px;
-  }
-
-  .option-container,
-  .option-container:hover {
-    padding: 6px 12px;
-    width: 100%;
-    text-align: center;
   }
 }
 </style>

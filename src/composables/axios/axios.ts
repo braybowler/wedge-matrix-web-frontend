@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type AxiosResponse } from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import { useLoadingStore } from '@/stores/loading/loadingStore.ts'
 import { useUserStore } from '@/stores/user/userStore.ts'
 import { storeToRefs } from 'pinia'
@@ -22,29 +22,28 @@ export function useAxios() {
     accessToken.value ? { Authorization: `Bearer ${accessToken.value}` } : {}
 
   const handleError = <T = unknown>(error: unknown): ApiResponse<T> => {
-    const axiosError = error as AxiosError<{ message?: string }>
+    if (axios.isAxiosError<{ message?: string }>(error)) {
+      if (error.response) {
+        if (error.response.status === 401) {
+          userStore.logout()
+        }
 
-    if (axiosError.response) {
-      if (axiosError.response.status === 401) {
-        userStore.logout()
+        const message = error.response.data?.message || 'An error occurred processing your request'
+        return {
+          error: message,
+          status: error.response.status,
+        }
+      } else if (error.request) {
+        return {
+          error: 'Unable to reach the server. Please check your connection.',
+          status: 0,
+        }
       }
+    }
 
-      const message =
-        axiosError.response.data?.message || 'An error occurred processing your request'
-      return {
-        error: message,
-        status: axiosError.response.status,
-      }
-    } else if (axiosError.request) {
-      return {
-        error: 'Unable to reach the server. Please check your connection.',
-        status: 0,
-      }
-    } else {
-      return {
-        error: 'An unexpected error occurred',
-        status: 0,
-      }
+    return {
+      error: 'An unexpected error occurred',
+      status: 0,
     }
   }
 

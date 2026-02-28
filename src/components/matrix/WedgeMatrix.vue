@@ -39,8 +39,6 @@ const handleDownload = async () => {
   await downloadMatrix()
 }
 
-const clubs = selectedClubs
-
 const emit = defineEmits<{
   finishTutorial: []
 }>()
@@ -90,7 +88,7 @@ function handleFinishTutorial() {
           </tr>
         </thead>
         <tbody>
-          <template v-for="(club, clubIndex) in clubs" :key="club">
+          <template v-for="(club, clubIndex) in selectedClubs" :key="club">
             <tr>
               <td>
                 <span class="row-label">
@@ -154,6 +152,7 @@ function handleFinishTutorial() {
         <button
           @click="handleClearMatrixButtonPress"
           class="icon-button"
+          aria-label="Clear Matrix"
           data-test-id="clear-all-button"
         >
           <svg
@@ -161,6 +160,7 @@ function handleFinishTutorial() {
             viewBox="0 0 20 20"
             fill="currentColor"
             class="icon"
+            aria-hidden="true"
           >
             <path
               fill-rule="evenodd"
@@ -172,12 +172,18 @@ function handleFinishTutorial() {
         <span class="tooltip">Clear Matrix</span>
       </div>
       <div class="tooltip-wrapper">
-        <button @click="handleDownload" class="icon-button" data-test-id="download-pdf-button">
+        <button
+          @click="handleDownload"
+          class="icon-button"
+          aria-label="Download PDF"
+          data-test-id="download-pdf-button"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
             class="icon"
+            aria-hidden="true"
           >
             <path
               d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"
@@ -195,7 +201,7 @@ function handleFinishTutorial() {
 
 <style scoped>
 .error-message {
-  color: #818cf8;
+  color: #ef4444;
   font-size: 14px;
   text-align: center;
   margin-bottom: 12px;
@@ -290,53 +296,8 @@ td:last-child {
   margin-top: 12px;
 }
 
-.icon-button {
-  background-color: #374151;
-  color: #9ca3af;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.icon-button:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
-  color: #f3f4f6;
-  cursor: pointer;
-  transform: translateY(-1px);
-}
-
 .icon {
   width: 20px;
   height: 20px;
-}
-
-.tooltip-wrapper {
-  position: relative;
-}
-
-.tooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #1f2937;
-  color: #d1d5db;
-  font-size: 12px;
-  font-weight: 400;
-  padding: 4px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.tooltip-wrapper:hover .tooltip {
-  opacity: 1;
 }
 </style>

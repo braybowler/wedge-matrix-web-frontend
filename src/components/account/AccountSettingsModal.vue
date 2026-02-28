@@ -51,7 +51,7 @@ const handleCancelDelete = () => {
       data-test-id="account-settings-overlay"
       @click.self="emit('close')"
     >
-      <div class="modal">
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Account Settings">
         <div class="modal-header">
           <h2 class="modal-title">Account Settings</h2>
           <button

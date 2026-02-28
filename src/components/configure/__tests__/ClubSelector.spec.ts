@@ -39,7 +39,7 @@ describe('ClubSelector Component', () => {
       const wrapper = mount(ClubSelector)
 
       const selectors = wrapper.findAll('[data-test-id="club-selector"]')
-      const active = selectors.filter((s) => s.classes().includes('selector-container-active'))
+      const active = selectors.filter((s) => s.classes().includes('tile-active'))
 
       expect(active.length).toEqual(4)
     })
@@ -53,11 +53,11 @@ describe('ClubSelector Component', () => {
       // AW is at index 3, inactive by default
       const awTile = selectors[3]!
 
-      expect(awTile.classes()).toContain('selector-container')
+      expect(awTile.classes()).toContain('tile')
 
       await awTile.trigger('click')
 
-      expect(awTile.classes()).toContain('selector-container-active')
+      expect(awTile.classes()).toContain('tile-active')
     })
 
     it('clicking an active club removes it', async () => {
@@ -67,11 +67,11 @@ describe('ClubSelector Component', () => {
       // LW is at index 0, active by default
       const lwTile = selectors[0]!
 
-      expect(lwTile.classes()).toContain('selector-container-active')
+      expect(lwTile.classes()).toContain('tile-active')
 
       await lwTile.trigger('click')
 
-      expect(lwTile.classes()).toContain('selector-container')
+      expect(lwTile.classes()).toContain('tile')
     })
   })
 
@@ -83,7 +83,7 @@ describe('ClubSelector Component', () => {
       const wrapper = mount(ClubSelector)
 
       const selectors = wrapper.findAll('[data-test-id="club-selector"]')
-      const active = selectors.filter((s) => s.classes().includes('selector-container-active'))
+      const active = selectors.filter((s) => s.classes().includes('tile-active'))
 
       expect(active.length).toEqual(2)
       expect(active[0]!.text()).toBe('LW')
@@ -114,7 +114,7 @@ describe('ClubSelector Component', () => {
 
       await lwTile.trigger('click')
 
-      expect(lwTile.classes()).toContain('selector-container-active')
+      expect(lwTile.classes()).toContain('tile-active')
       expect(store.selectedClubs).toEqual(['LW'])
     })
   })

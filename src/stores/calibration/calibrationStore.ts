@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { YardageGrid } from '@/types/matrix'
+import { MAX_YARDAGE, type YardageGrid } from '@/types/matrix'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 
 export type ShotCount = 5 | 10 | 15
@@ -93,7 +93,7 @@ export const useCalibrationStore = defineStore('calibration', () => {
     }
 
     const parsed = Number(trimmed)
-    const isValid = Number.isFinite(parsed) && parsed > 0 && parsed < 1000
+    const isValid = Number.isFinite(parsed) && parsed > 0 && parsed <= MAX_YARDAGE
     shot[field] = isValid ? Math.round(parsed * 10) / 10 : null
     persist()
   }

@@ -18,7 +18,7 @@ const { matrixColumns } = storeToRefs(matrixConfigurationStore)
       <div
         v-for="selector in allowMatrixColumnNumbers"
         :key="selector"
-        :class="matrixColumns === selector ? `selector-container-active` : `selector-container`"
+        :class="matrixColumns === selector ? 'tile-active' : 'tile'"
         @click="setNumberOfMatrixColumns(selector)"
         data-test-id="selector"
       >
@@ -42,52 +42,9 @@ const { matrixColumns } = storeToRefs(matrixConfigurationStore)
   margin-top: 8px;
 }
 
-.selector-container {
-  background-color: #374151;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #9ca3af;
-}
-
-.selector-container:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #9ca3af;
-  cursor: pointer;
-  transform: translateY(-1px);
-}
-
-.selector-container-active {
-  background-color: #818cf8;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #f3f4f6;
-}
-
-.selector-container-active:hover {
-  background-color: #818cf8;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #f3f4f6;
-  cursor: pointer;
-  transform: translateY(-1px);
-}
-
 @media (max-width: 480px) {
   .selector-section {
     margin-top: 4px;
-  }
-
-  .selector-container,
-  .selector-container:hover,
-  .selector-container-active,
-  .selector-container-active:hover {
-    padding: 6px 12px;
   }
 }
 </style>

@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type {
-  AllowableMatrixColumnNumber,
-  ClubLabel,
-  RowDisplayOption,
-  WedgeMatrix,
-  YardageCell,
-  YardageGrid,
+import {
+  MAX_YARDAGE,
+  type AllowableMatrixColumnNumber,
+  type ClubLabel,
+  type RowDisplayOption,
+  type WedgeMatrix,
+  type YardageCell,
+  type YardageGrid,
 } from '@/types/matrix'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useUserStore } from '@/stores/user/userStore.ts'
@@ -152,7 +153,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     }
 
     const parsed = Number(trimmed)
-    const isValid = Number.isFinite(parsed) && parsed > 0 && parsed < 1000
+    const isValid = Number.isFinite(parsed) && parsed > 0 && parsed <= MAX_YARDAGE
 
     cell[field] = isValid ? parsed : null
   }

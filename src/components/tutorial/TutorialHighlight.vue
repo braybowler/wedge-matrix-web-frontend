@@ -61,6 +61,8 @@ const emit = defineEmits<{
   text-align: center;
   max-width: 360px;
   width: max-content;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .tooltip-below {

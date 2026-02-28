@@ -11,10 +11,6 @@ const router = createRouter({
       redirect: { name: 'matrix' },
     },
     {
-      path: '/:pathMatch(.*)*',
-      redirect: { name: 'matrix' },
-    },
-    {
       path: '/login',
       name: 'login',
       component: () => import('../views/login/LoginView.vue'),
@@ -43,6 +39,10 @@ const router = createRouter({
       name: 'calibrate',
       component: () => import('../views/calibrate/CalibrateView.vue'),
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: { name: 'matrix' },
     },
   ],
 })
