@@ -61,7 +61,8 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background-color: #1f2937;
+  background-color: #374151;
+  border: 1px solid #4b5563;
   color: #d1d5db;
   font-size: 12px;
   font-weight: 400;

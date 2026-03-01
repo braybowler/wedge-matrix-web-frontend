@@ -63,6 +63,17 @@ describe('SidebarNavigation Component', () => {
       expect(button.exists()).toBe(true)
     })
 
+    it('displays a Buy Me A Coffee link that opens in a new tab', () => {
+      const wrapper = mount(SidebarNavigation, { global: { plugins: [router] } })
+
+      const link = wrapper.find('[data-test-id="buy-me-a-coffee-link"]')
+
+      expect(link.exists()).toBe(true)
+      expect(link.attributes('href')).toBe('https://buymeacoffee.com/wedgematrix')
+      expect(link.attributes('target')).toBe('_blank')
+      expect(link.attributes('rel')).toBe('noopener noreferrer')
+    })
+
     it('displays a logout button', () => {
       const wrapper = mount(SidebarNavigation, { global: { plugins: [router] } })
 

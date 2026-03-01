@@ -23,6 +23,31 @@ const handleLogout = async () => {
       <RouterLink active-class="active-link" class="link" to="/calibrate">Calibrate</RouterLink>
     </nav>
     <div class="logout-container">
+      <div class="tooltip-wrapper">
+        <a
+          href="https://buymeacoffee.com/wedgematrix"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="icon-button"
+          aria-label="Support WedgeMatrix"
+          data-test-id="buy-me-a-coffee-link"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            class="icon"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M2 4.5A1.5 1.5 0 0 1 3.5 3h11A1.5 1.5 0 0 1 16 4.5v.5h.5A2.5 2.5 0 0 1 19 7.5v1A2.5 2.5 0 0 1 16.5 11H16v.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 2 11.5v-7Zm14 2v3h.5a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H16ZM2 15.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+        <span class="tooltip tooltip-left">Support WedgeMatrix</span>
+      </div>
       <button @click="handleLogout" class="logout-button" data-test-id="logout-button">
         Logout
       </button>
@@ -47,7 +72,7 @@ const handleLogout = async () => {
             />
           </svg>
         </button>
-        <span class="tooltip">Account Settings</span>
+        <span class="tooltip tooltip-right">Account Settings</span>
       </div>
     </div>
   </aside>
@@ -126,5 +151,15 @@ const handleLogout = async () => {
   background-color: #4b5563;
   border-color: #818cf8;
   transform: translateY(-1px);
+}
+.tooltip-left {
+  left: 0;
+  transform: none;
+}
+
+.tooltip-right {
+  left: auto;
+  right: 0;
+  transform: none;
 }
 </style>
