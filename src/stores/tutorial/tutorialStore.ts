@@ -33,6 +33,12 @@ export const useTutorialStore = defineStore('tutorial', () => {
     }
   }
 
+  function previousStep() {
+    if (tutorialStep.value !== null && tutorialStep.value > 1) {
+      tutorialStep.value--
+    }
+  }
+
   function endTutorial() {
     tutorialStep.value = null
   }
@@ -66,6 +72,7 @@ export const useTutorialStore = defineStore('tutorial', () => {
     modalVisible,
     startTutorial,
     nextStep,
+    previousStep,
     endTutorial,
     dismissModal,
     dismissModalPermanently,

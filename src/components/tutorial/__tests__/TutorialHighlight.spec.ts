@@ -38,7 +38,7 @@ describe('TutorialHighlight Component', () => {
         slots: { default: '<div>Slot</div>' },
       })
 
-      expect(wrapper.find('.tooltip').exists()).toBe(false)
+      expect(wrapper.find('.tutorial-tooltip').exists()).toBe(false)
     })
 
     it('shows tooltip with correct message when visible', () => {
@@ -47,8 +47,8 @@ describe('TutorialHighlight Component', () => {
         slots: { default: '<div>Slot</div>' },
       })
 
-      expect(wrapper.find('.tooltip').exists()).toBe(true)
-      expect(wrapper.find('.tooltip-message').text()).toBe('Select your clubs')
+      expect(wrapper.find('.tutorial-tooltip').exists()).toBe(true)
+      expect(wrapper.find('.tutorial-tooltip-message').text()).toBe('Select your clubs')
     })
 
     it('uses default button label of "Got it"', () => {
@@ -93,16 +93,48 @@ describe('TutorialHighlight Component', () => {
         slots: { default: '<div>Slot</div>' },
       })
 
-      expect(wrapper.find('.tooltip').classes()).toContain('tooltip-below')
+      expect(wrapper.find('.tutorial-tooltip').classes()).toContain('tutorial-tooltip-below')
     })
 
-    it('applies tooltip-above class when tooltipPosition is above', () => {
+    it('applies tutorial-tooltip-above class when tooltipPosition is above', () => {
       const wrapper = mount(TutorialHighlight, {
         props: { visible: true, message: 'Test message', tooltipPosition: 'above' as const },
         slots: { default: '<div>Slot</div>' },
       })
 
-      expect(wrapper.find('.tooltip').classes()).toContain('tooltip-above')
+      expect(wrapper.find('.tutorial-tooltip').classes()).toContain('tutorial-tooltip-above')
+    })
+  })
+
+  describe('Back button', () => {
+    it('does not show back button by default', () => {
+      const wrapper = mount(TutorialHighlight, {
+        props: { visible: true, message: 'Test message' },
+        slots: { default: '<div>Slot</div>' },
+      })
+
+      expect(wrapper.find('[data-test-id="tutorial-back-button"]').exists()).toBe(false)
+    })
+
+    it('shows back button when showBack is true', () => {
+      const wrapper = mount(TutorialHighlight, {
+        props: { visible: true, message: 'Test message', showBack: true },
+        slots: { default: '<div>Slot</div>' },
+      })
+
+      expect(wrapper.find('[data-test-id="tutorial-back-button"]').exists()).toBe(true)
+      expect(wrapper.find('[data-test-id="tutorial-back-button"]').text()).toBe('Back')
+    })
+
+    it('emits back when back button is clicked', async () => {
+      const wrapper = mount(TutorialHighlight, {
+        props: { visible: true, message: 'Test message', showBack: true },
+        slots: { default: '<div>Slot</div>' },
+      })
+
+      await wrapper.find('[data-test-id="tutorial-back-button"]').trigger('click')
+
+      expect(wrapper.emitted('back')).toHaveLength(1)
     })
   })
 

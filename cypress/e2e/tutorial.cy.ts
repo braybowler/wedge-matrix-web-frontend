@@ -92,7 +92,7 @@ describe('Tutorial Flow', () => {
       cy.url().should('include', '/configure')
     })
 
-    it('walks through all five tutorial steps', () => {
+    it('walks through all six tutorial steps', () => {
       login()
 
       cy.get('[data-test-id="tutorial-learn-more-button"]').click()
@@ -108,8 +108,10 @@ describe('Tutorial Flow', () => {
       cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
-      // Step 3: Column header label input
-      cy.contains('Set custom column labels.').should('be.visible')
+      // Step 3: Column header label input (with swing feel system)
+      cy.contains('Choose between the Percentage system for swing effort levels').should(
+        'be.visible',
+      )
       cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
@@ -126,7 +128,12 @@ describe('Tutorial Flow', () => {
       // Should navigate back to matrix page
       cy.url().should('include', '/matrix')
 
-      // Step 5: Matrix highlight
+      // Step 5: Multi-matrix support
+      cy.contains('Create multiple matrices to track different setups').should('be.visible')
+      cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
+      cy.get('[data-test-id="tutorial-got-it-button"]').click()
+
+      // Step 6: Matrix highlight
       cy.contains(
         'Enter your yardage values to build your personalized distance chart.',
       ).should('be.visible')
@@ -138,6 +145,37 @@ describe('Tutorial Flow', () => {
 
       // Tutorial highlight should be dismissed
       cy.get('[data-test-id="tutorial-got-it-button"]').should('not.exist')
+    })
+
+    it('does not show back button on step 1', () => {
+      login()
+
+      cy.get('[data-test-id="tutorial-learn-more-button"]').click()
+      cy.url().should('include', '/configure')
+
+      // Step 1: no back button
+      cy.contains('Start by selecting the wedges in your bag.').should('be.visible')
+      cy.get('[data-test-id="tutorial-back-button"]').should('not.exist')
+    })
+
+    it('navigates back from step 2 to step 1', () => {
+      login()
+
+      cy.get('[data-test-id="tutorial-learn-more-button"]').click()
+      cy.url().should('include', '/configure')
+
+      // Step 1
+      cy.contains('Start by selecting the wedges in your bag.').should('be.visible')
+      cy.get('[data-test-id="tutorial-got-it-button"]').click()
+
+      // Step 2
+      cy.contains('Select the number of shots you have, or would like to have, with each wedge.').should('be.visible')
+      cy.get('[data-test-id="tutorial-back-button"]').should('be.visible')
+      cy.get('[data-test-id="tutorial-back-button"]').click()
+
+      // Back to step 1
+      cy.contains('Start by selecting the wedges in your bag.').should('be.visible')
+      cy.get('[data-test-id="tutorial-back-button"]').should('not.exist')
     })
   })
 })

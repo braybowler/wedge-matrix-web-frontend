@@ -58,6 +58,28 @@ describe('useTutorialStore', () => {
       store.endTutorial()
       expect(store.tutorialStep).toBeNull()
     })
+
+    it('decrements tutorialStep after previousStep', () => {
+      const store = useTutorialStore()
+      store.startTutorial()
+      store.nextStep()
+      store.nextStep()
+      store.previousStep()
+      expect(store.tutorialStep).toBe(2)
+    })
+
+    it('does not decrement below 1 with previousStep', () => {
+      const store = useTutorialStore()
+      store.startTutorial()
+      store.previousStep()
+      expect(store.tutorialStep).toBe(1)
+    })
+
+    it('does nothing when tutorialStep is null with previousStep', () => {
+      const store = useTutorialStore()
+      store.previousStep()
+      expect(store.tutorialStep).toBeNull()
+    })
   })
 
   describe('modal visibility', () => {

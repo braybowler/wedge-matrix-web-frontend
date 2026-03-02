@@ -7,7 +7,9 @@ import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfiguration
 import { useTutorialStore } from '@/stores/tutorial/tutorialStore.ts'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setYardageValue, clearYardageValues, downloadMatrix } = matrixConfigurationStore
 const {
@@ -44,7 +46,13 @@ const emit = defineEmits<{
 }>()
 
 const tutorialStore = useTutorialStore()
-const showMatrixHighlight = computed(() => tutorialStore.tutorialStep === 5)
+const showMultiMatrixHighlight = computed(() => tutorialStore.tutorialStep === 5)
+const showMatrixHighlight = computed(() => tutorialStore.tutorialStep === 6)
+
+function handleStepFiveBack() {
+  tutorialStore.previousStep()
+  router.push('/configure')
+}
 
 function handleFinishTutorial() {
   emit('finishTutorial')
@@ -53,7 +61,16 @@ function handleFinishTutorial() {
 
 <template>
   <div class="component-container">
-    <MatrixSelector />
+    <TutorialHighlight
+      :visible="showMultiMatrixHighlight"
+      message="Create multiple matrices to track different setups. Use the buttons to add, rename, or delete matrices."
+      button-label="Next"
+      show-back
+      @dismiss="tutorialStore.nextStep()"
+      @back="handleStepFiveBack"
+    >
+      <MatrixSelector />
+    </TutorialHighlight>
     <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
       {{ syncError }}
     </p>
@@ -61,7 +78,9 @@ function handleFinishTutorial() {
       :visible="showMatrixHighlight"
       message="Enter your yardage values to build your personalized distance chart."
       button-label="Finish Tutorial"
+      show-back
       @dismiss="handleFinishTutorial"
+      @back="tutorialStore.previousStep()"
     >
       <table>
         <thead>

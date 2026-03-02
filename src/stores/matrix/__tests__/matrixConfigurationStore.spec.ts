@@ -447,4 +447,70 @@ describe('useMatrixConfigurationStore', () => {
       expect(store.syncError).toBe('Server error')
     })
   })
+
+  describe('setSwingFeelSystem', () => {
+    it('updates swingFeelSystem ref and marks requiresSync', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([buildMatrix()])
+      expect(store.swingFeelSystem).toBe('Percentage')
+
+      store.setSwingFeelSystem('Clock')
+
+      expect(store.swingFeelSystem).toBe('Clock')
+      expect(store.requiresSync).toBe(true)
+    })
+
+    it('restores previously saved headers when switching back', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([buildMatrix({ column_headers: ['100%', '75%', '50%'] })])
+
+      store.setSwingFeelSystem('Clock')
+      store.setMatrixColumnHeader('9:00', 0)
+      store.setMatrixColumnHeader('10:00', 1)
+
+      store.setSwingFeelSystem('Percentage')
+      expect(store.matrixColumnHeaders).toEqual(['100%', '75%', '50%'])
+
+      store.setSwingFeelSystem('Clock')
+      expect(store.matrixColumnHeaders).toEqual(['9:00', '10:00', ''])
+    })
+
+    it('shows empty headers when switching to a system with no prior selections', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([buildMatrix({ column_headers: ['100%', '75%', '50%'] })])
+
+      store.setSwingFeelSystem('Clock')
+
+      expect(store.matrixColumnHeaders).toEqual(['', '', ''])
+    })
+  })
+
+  describe('initializeMatrixValues swing feel system inference', () => {
+    it('infers Clock system from loaded headers', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix({ column_headers: ['9:00', '10:00', '12:00'] })
+
+      store.initializeMatrixValues([matrix])
+
+      expect(store.swingFeelSystem).toBe('Clock')
+    })
+
+    it('infers Percentage system from loaded headers', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix({ column_headers: ['100%', '75%', '50%'] })
+
+      store.initializeMatrixValues([matrix])
+
+      expect(store.swingFeelSystem).toBe('Percentage')
+    })
+
+    it('defaults to Percentage when headers are empty strings', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix({ column_headers: ['', '', ''] })
+
+      store.initializeMatrixValues([matrix])
+
+      expect(store.swingFeelSystem).toBe('Percentage')
+    })
+  })
 })

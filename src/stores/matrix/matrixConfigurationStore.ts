@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import {
+  CLOCK_OPTIONS,
   MAX_YARDAGE,
   type AllowableMatrixColumnNumber,
   type ClubLabel,
   type RowDisplayOption,
+  type SwingFeelSystem,
   type WedgeMatrix,
   type YardageCell,
   type YardageGrid,
@@ -32,6 +34,9 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   const matrixColumns = ref<AllowableMatrixColumnNumber>(4)
   const matrixColumnHeaders = ref<Array<string>>(['', '', '', ''])
   const selectedRowDisplayOption = ref<RowDisplayOption>('Carry')
+  const swingFeelSystem = ref<SwingFeelSystem>('Percentage')
+  const savedPercentageHeaders = ref<string[]>(['', '', '', ''])
+  const savedClockHeaders = ref<string[]>(['', '', '', ''])
   const selectedClubs = ref<ClubLabel[]>([...DEFAULT_CLUBS])
   const yardageValues = ref<YardageGrid>(createEmptyGrid(DEFAULT_CLUBS.length, 4))
 
@@ -53,6 +58,20 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     matrixColumnHeaders.value = matrix.column_headers
       ? [...matrix.column_headers]
       : Array.from({ length: cols }, () => '')
+
+    const clockValues: readonly string[] = CLOCK_OPTIONS
+    swingFeelSystem.value = matrixColumnHeaders.value.some((h) => clockValues.includes(h))
+      ? 'Clock'
+      : 'Percentage'
+
+    const emptyHeaders = Array.from({ length: cols }, () => '')
+    if (swingFeelSystem.value === 'Clock') {
+      savedClockHeaders.value = [...matrixColumnHeaders.value]
+      savedPercentageHeaders.value = emptyHeaders
+    } else {
+      savedPercentageHeaders.value = [...matrixColumnHeaders.value]
+      savedClockHeaders.value = emptyHeaders
+    }
 
     const clubs = selectedClubs.value
     yardageValues.value = matrix.yardage_values
@@ -168,6 +187,21 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     }
   }
 
+  function setSwingFeelSystem(system: SwingFeelSystem) {
+    if (swingFeelSystem.value === 'Percentage') {
+      savedPercentageHeaders.value = [...matrixColumnHeaders.value]
+    } else {
+      savedClockHeaders.value = [...matrixColumnHeaders.value]
+    }
+
+    swingFeelSystem.value = system
+
+    matrixColumnHeaders.value =
+      system === 'Percentage' ? [...savedPercentageHeaders.value] : [...savedClockHeaders.value]
+
+    requiresSync.value = true
+  }
+
   function setMatrixColumnHeader(newVal: string, index: number) {
     requiresSync.value = true
     matrixColumnHeaders.value[index] = newVal
@@ -227,6 +261,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     syncError,
     selectedMatrixId,
     matrixLabel,
+    swingFeelSystem,
     initializeMatrixValues,
     switchMatrix,
     createMatrix,
@@ -234,6 +269,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     renameMatrix,
     setYardageValue,
     clearYardageValues,
+    setSwingFeelSystem,
     setMatrixColumnHeader,
     selectedClubs,
     setNumberOfMatrixColumns,

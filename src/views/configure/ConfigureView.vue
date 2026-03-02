@@ -54,15 +54,19 @@ onBeforeUnmount(async () => {
         :visible="showSwingHighlight"
         message="Select the number of shots you have, or would like to have, with each wedge."
         button-label="Next"
+        show-back
         @dismiss="advanceStep"
+        @back="tutorialStore.previousStep()"
       >
         <SwingPercentageColumnSelector />
       </TutorialHighlight>
       <TutorialHighlight
         :visible="showLabelHighlight"
-        message="Set custom column labels."
+        message="Choose between the Percentage system for swing effort levels (25%–100%) or the Clock system for backswing positions (7:00–12:00), then set your column labels."
         button-label="Next"
+        show-back
         @dismiss="advanceStep"
+        @back="tutorialStore.previousStep()"
       >
         <ColumnHeaderLabelInput />
       </TutorialHighlight>
@@ -71,7 +75,9 @@ onBeforeUnmount(async () => {
         message="Choose whether to track carry distance, total distance, or both."
         button-label="Finish Configuration"
         tooltip-position="above"
+        show-back
         @dismiss="finishConfiguration"
+        @back="tutorialStore.previousStep()"
       >
         <RowDisplayOptionSelector />
       </TutorialHighlight>

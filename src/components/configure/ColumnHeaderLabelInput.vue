@@ -1,15 +1,34 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { storeToRefs } from 'pinia'
+import { SWING_FEEL_SYSTEMS, PERCENTAGE_OPTIONS, CLOCK_OPTIONS } from '@/types/matrix'
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
-const { setMatrixColumnHeader } = matrixConfigurationStore
-const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationStore)
+const { setMatrixColumnHeader, setSwingFeelSystem } = matrixConfigurationStore
+const { matrixColumns, matrixColumnHeaders, swingFeelSystem } =
+  storeToRefs(matrixConfigurationStore)
+
+const headerOptions = computed(() =>
+  swingFeelSystem.value === 'Clock' ? CLOCK_OPTIONS : PERCENTAGE_OPTIONS,
+)
 </script>
 
 <template>
   <section class="component-container">
     <h2 class="section-title">Column Header Labels</h2>
+
+    <section class="system-selector">
+      <div
+        v-for="system in SWING_FEEL_SYSTEMS"
+        :key="system"
+        :class="swingFeelSystem === system ? 'tile-active' : 'tile'"
+        @click="setSwingFeelSystem(system)"
+        data-test-id="swing-feel-system-option"
+      >
+        {{ system }}
+      </div>
+    </section>
 
     <section class="input-container">
       <div
@@ -30,13 +49,9 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
           @change="setMatrixColumnHeader(($event.target as HTMLSelectElement).value, index)"
           data-test-id="column-header-selector"
         >
-          <option value="25%">25%</option>
-          <option value="33%">33%</option>
-          <option value="50%">50%</option>
-          <option value="66%">66%</option>
-          <option value="75%">75%</option>
-          <option value="90%">90%</option>
-          <option value="100%">100%</option>
+          <option v-for="opt in headerOptions" :key="opt" :value="opt">
+            {{ opt }}
+          </option>
         </select>
       </div>
     </section>
@@ -52,6 +67,13 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
   color: #f3f4f6;
   font-size: 16px;
   font-weight: 700;
+}
+
+.system-selector {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 8px;
 }
 
 .input-container {
@@ -86,6 +108,10 @@ const { matrixColumns, matrixColumnHeaders } = storeToRefs(matrixConfigurationSt
 @media (max-width: 480px) {
   .component-container {
     min-height: auto;
+  }
+
+  .system-selector {
+    margin-top: 4px;
   }
 
   .input-container {
