@@ -79,7 +79,7 @@ describe('MatrixSelector', () => {
     const wrapper = mount(MatrixSelector, { attachTo: document.body })
     const options = wrapper.findAll('option')
 
-    expect(options[0]!.text()).toBe('Matrix 5')
+    expect(options[0]!.text()).toBe('Matrix 1')
   })
 
   it('has current matrix selected by default', () => {

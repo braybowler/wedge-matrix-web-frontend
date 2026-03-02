@@ -21,8 +21,8 @@ const isRenaming = ref(false)
 const renameInput = ref('')
 const showDeleteConfirm = ref(false)
 
-function matrixDisplayLabel(matrix: { id: number; label: string | null }) {
-  return matrix.label ?? 'Matrix ' + matrix.id
+function matrixDisplayLabel(matrix: { id: number; label: string | null }, index: number) {
+  return matrix.label ?? 'Matrix ' + (index + 1)
 }
 
 async function handleMatrixChange(event: Event) {
@@ -94,8 +94,8 @@ function cancelRename() {
         data-test-id="matrix-dropdown"
         @change="handleMatrixChange"
       >
-        <option v-for="matrix in matrices" :key="matrix.id" :value="matrix.id">
-          {{ matrixDisplayLabel(matrix) }}
+        <option v-for="(matrix, index) in matrices" :key="matrix.id" :value="matrix.id">
+          {{ matrixDisplayLabel(matrix, index) }}
         </option>
       </select>
 
