@@ -151,7 +151,7 @@ describe('ColumnHeaderLabelInput Component', () => {
 
       const tiles = wrapper.findAll('[data-test-id="swing-feel-system-option"]')
       await tiles[1]!.trigger('click')
-      expect(matrixColumnHeaders.value).toEqual(['', '', '', ''])
+      expect(matrixColumnHeaders.value).toEqual(['9:00', '10:00', '11:00', '12:00'])
 
       await tiles[0]!.trigger('click')
       expect(matrixColumnHeaders.value[0]).toBe('25%')

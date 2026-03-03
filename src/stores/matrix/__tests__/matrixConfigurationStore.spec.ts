@@ -465,23 +465,37 @@ describe('useMatrixConfigurationStore', () => {
       store.initializeMatrixValues([buildMatrix({ column_headers: ['100%', '75%', '50%'] })])
 
       store.setSwingFeelSystem('Clock')
-      store.setMatrixColumnHeader('9:00', 0)
+      store.setMatrixColumnHeader('8:00', 0)
       store.setMatrixColumnHeader('10:00', 1)
 
       store.setSwingFeelSystem('Percentage')
       expect(store.matrixColumnHeaders).toEqual(['100%', '75%', '50%'])
 
       store.setSwingFeelSystem('Clock')
-      expect(store.matrixColumnHeaders).toEqual(['9:00', '10:00', ''])
+      expect(store.matrixColumnHeaders).toEqual(['8:00', '10:00', '11:00'])
     })
 
-    it('shows empty headers when switching to a system with no prior selections', () => {
+    it('shows default clock headers when switching to Clock with no prior selections', () => {
       const store = useMatrixConfigurationStore()
       store.initializeMatrixValues([buildMatrix({ column_headers: ['100%', '75%', '50%'] })])
 
       store.setSwingFeelSystem('Clock')
 
-      expect(store.matrixColumnHeaders).toEqual(['', '', ''])
+      expect(store.matrixColumnHeaders).toEqual(['9:00', '10:00', '11:00'])
+    })
+
+    it('preserves partial clock headers when switching back to Clock', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([buildMatrix({ column_headers: ['100%', '75%', '50%'] })])
+
+      store.setSwingFeelSystem('Clock')
+      store.setMatrixColumnHeader('11:00', 0)
+      store.setMatrixColumnHeader('', 1)
+
+      store.setSwingFeelSystem('Percentage')
+      store.setSwingFeelSystem('Clock')
+
+      expect(store.matrixColumnHeaders).toEqual(['11:00', '', '11:00'])
     })
   })
 

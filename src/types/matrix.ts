@@ -10,6 +10,7 @@ export type SwingFeelSystem = (typeof SWING_FEEL_SYSTEMS)[number]
 
 export const PERCENTAGE_OPTIONS = ['25%', '33%', '50%', '66%', '75%', '90%', '100%'] as const
 export const CLOCK_OPTIONS = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00'] as const
+export const DEFAULT_CLOCK_HEADERS: readonly string[] = ['9:00', '10:00', '11:00', '12:00']
 
 export const MAX_YARDAGE = 999
 

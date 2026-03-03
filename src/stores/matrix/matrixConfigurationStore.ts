@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import {
   CLOCK_OPTIONS,
+  DEFAULT_CLOCK_HEADERS,
   MAX_YARDAGE,
   type AllowableMatrixColumnNumber,
   type ClubLabel,
@@ -196,8 +197,16 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
 
     swingFeelSystem.value = system
 
-    matrixColumnHeaders.value =
-      system === 'Percentage' ? [...savedPercentageHeaders.value] : [...savedClockHeaders.value]
+    const savedHeaders =
+      system === 'Percentage' ? savedPercentageHeaders.value : savedClockHeaders.value
+
+    if (system === 'Clock' && savedHeaders.every((h) => h === '')) {
+      const defaults = DEFAULT_CLOCK_HEADERS.slice(0, matrixColumns.value)
+      matrixColumnHeaders.value = [...defaults]
+      savedClockHeaders.value = [...defaults]
+    } else {
+      matrixColumnHeaders.value = [...savedHeaders]
+    }
 
     requiresSync.value = true
   }
