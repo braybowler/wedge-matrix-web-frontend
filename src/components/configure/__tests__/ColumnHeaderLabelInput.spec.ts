@@ -65,7 +65,7 @@ describe('ColumnHeaderLabelInput Component', () => {
     it('renders the two swing feel system tiles', () => {
       const wrapper = mount(ColumnHeaderLabelInput)
 
-      const tiles = wrapper.findAll('[data-test-id="swing-feel-system-option"]')
+      const tiles = wrapper.findAll('[data-test-id^="swing-feel-system-"]')
 
       expect(tiles).toHaveLength(2)
       expect(tiles[0]!.text()).toBe('Percentage')
@@ -75,7 +75,7 @@ describe('ColumnHeaderLabelInput Component', () => {
     it('defaults to Percentage system with percentage options in dropdowns', () => {
       const wrapper = mount(ColumnHeaderLabelInput)
 
-      const tiles = wrapper.findAll('[data-test-id="swing-feel-system-option"]')
+      const tiles = wrapper.findAll('[data-test-id^="swing-feel-system-"]')
       expect(tiles[0]!.classes()).toContain('tile-active')
       expect(tiles[1]!.classes()).toContain('tile')
 
@@ -89,7 +89,7 @@ describe('ColumnHeaderLabelInput Component', () => {
     it('switching to Clock system shows clock options in dropdowns', async () => {
       const wrapper = mount(ColumnHeaderLabelInput)
 
-      const tiles = wrapper.findAll('[data-test-id="swing-feel-system-option"]')
+      const tiles = wrapper.findAll('[data-test-id^="swing-feel-system-"]')
       await tiles[1]!.trigger('click')
 
       const selects = wrapper.findAll('[data-test-id="column-header-selector"]')
@@ -149,7 +149,7 @@ describe('ColumnHeaderLabelInput Component', () => {
       await inputs[0]?.setValue('25%')
       expect(matrixColumnHeaders.value[0]).toBe('25%')
 
-      const tiles = wrapper.findAll('[data-test-id="swing-feel-system-option"]')
+      const tiles = wrapper.findAll('[data-test-id^="swing-feel-system-"]')
       await tiles[1]!.trigger('click')
       expect(matrixColumnHeaders.value).toEqual(['9:00', '10:00', '11:00', '12:00'])
 
@@ -163,7 +163,7 @@ describe('ColumnHeaderLabelInput Component', () => {
 
       expect(store.swingFeelSystem).toBe('Percentage')
 
-      const tiles = wrapper.findAll('[data-test-id="swing-feel-system-option"]')
+      const tiles = wrapper.findAll('[data-test-id^="swing-feel-system-"]')
       await tiles[1]!.trigger('click')
 
       expect(store.swingFeelSystem).toBe('Clock')

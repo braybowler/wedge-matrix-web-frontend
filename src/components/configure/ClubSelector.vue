@@ -29,7 +29,7 @@ const toggleClub = (club: (typeof CLUB_LABELS)[number]) => {
         v-for="club in CLUB_LABELS"
         :key="club"
         :class="selectedClubs.includes(club) ? 'tile-active' : 'tile'"
-        data-test-id="club-selector"
+        :data-test-id="'club-selector-' + club"
         @click="toggleClub(club)"
       >
         <div>{{ club }}</div>

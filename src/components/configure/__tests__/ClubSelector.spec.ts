@@ -30,7 +30,7 @@ describe('ClubSelector Component', () => {
     it('renders all 6 club tiles', () => {
       const wrapper = mount(ClubSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="club-selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="club-selector-"]')
 
       expect(selectors.length).toEqual(6)
     })
@@ -38,7 +38,7 @@ describe('ClubSelector Component', () => {
     it('has 4 default active clubs', () => {
       const wrapper = mount(ClubSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="club-selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="club-selector-"]')
       const active = selectors.filter((s) => s.classes().includes('tile-active'))
 
       expect(active.length).toEqual(4)
@@ -49,7 +49,7 @@ describe('ClubSelector Component', () => {
     it('clicking an inactive club adds it', async () => {
       const wrapper = mount(ClubSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="club-selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="club-selector-"]')
       // AW is at index 3, inactive by default
       const awTile = selectors[3]!
 
@@ -63,7 +63,7 @@ describe('ClubSelector Component', () => {
     it('clicking an active club removes it', async () => {
       const wrapper = mount(ClubSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="club-selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="club-selector-"]')
       // LW is at index 0, active by default
       const lwTile = selectors[0]!
 
@@ -82,7 +82,7 @@ describe('ClubSelector Component', () => {
 
       const wrapper = mount(ClubSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="club-selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="club-selector-"]')
       const active = selectors.filter((s) => s.classes().includes('tile-active'))
 
       expect(active.length).toEqual(2)
@@ -96,7 +96,7 @@ describe('ClubSelector Component', () => {
 
       const wrapper = mount(ClubSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="club-selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="club-selector-"]')
       // Click AW (index 3) to add it
       await selectors[3]!.trigger('click')
 
@@ -109,7 +109,7 @@ describe('ClubSelector Component', () => {
 
       const wrapper = mount(ClubSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="club-selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="club-selector-"]')
       const lwTile = selectors[0]!
 
       await lwTile.trigger('click')

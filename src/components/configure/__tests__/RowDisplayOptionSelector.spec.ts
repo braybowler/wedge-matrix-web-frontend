@@ -30,7 +30,7 @@ describe('RowDisplayOptionSelector Component', () => {
     it('renders all row display options', () => {
       const wrapper = mount(RowDisplayOptionSelector)
 
-      const options = wrapper.findAll('[data-test-id="option"]')
+      const options = wrapper.findAll('[data-test-id^="row-display-option-"]')
 
       expect(options.length).toEqual(3)
     })
@@ -40,7 +40,7 @@ describe('RowDisplayOptionSelector Component', () => {
     it('allows a user to select the row types to display', async () => {
       const wrapper = mount(RowDisplayOptionSelector)
 
-      const options = wrapper.findAll('[data-test-id="option"]')
+      const options = wrapper.findAll('[data-test-id^="row-display-option-"]')
 
       expect(options[2]?.classes()).not.toContain('tile-active')
       expect(options[2]?.classes()).toContain('tile')
@@ -58,7 +58,7 @@ describe('RowDisplayOptionSelector Component', () => {
       matrixConfigurationStore.selectedRowDisplayOption = 'Both'
       const wrapper = mount(RowDisplayOptionSelector)
 
-      const options = wrapper.findAll('[data-test-id="option"]')
+      const options = wrapper.findAll('[data-test-id^="row-display-option-"]')
 
       expect(options.length).toBe(3)
       expect(options[2]?.classes()).toContain('tile-active')
@@ -69,7 +69,7 @@ describe('RowDisplayOptionSelector Component', () => {
       const { selectedRowDisplayOption } = storeToRefs(store)
       const wrapper = mount(RowDisplayOptionSelector)
 
-      const options = wrapper.findAll('[data-test-id="option"]')
+      const options = wrapper.findAll('[data-test-id^="row-display-option-"]')
 
       expect(selectedRowDisplayOption.value).toBe('Carry')
 

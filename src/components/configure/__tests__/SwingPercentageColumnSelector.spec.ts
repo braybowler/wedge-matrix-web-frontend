@@ -30,7 +30,7 @@ describe('SwingPercentageColumnSelector Component', () => {
     it('renders four options for the number of swing columns a user may configure', () => {
       const wrapper = mount(SwingPercentageColumnSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="column-count-"]')
 
       expect(selectors.length).toEqual(4)
     })
@@ -40,7 +40,7 @@ describe('SwingPercentageColumnSelector Component', () => {
     it('allows a user to select the number of swing columns', async () => {
       const wrapper = mount(SwingPercentageColumnSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="column-count-"]')
 
       expect(selectors[0]?.classes()).not.toContain('tile-active')
       expect(selectors[0]?.classes()).toContain('tile')
@@ -59,7 +59,7 @@ describe('SwingPercentageColumnSelector Component', () => {
       matrixColumns.value = 4
       const wrapper = mount(SwingPercentageColumnSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="column-count-"]')
 
       expect(selectors[matrixColumns.value - 1]?.classes()).toContain('tile-active')
     })
@@ -70,7 +70,7 @@ describe('SwingPercentageColumnSelector Component', () => {
 
       const wrapper = mount(SwingPercentageColumnSelector)
 
-      const selectors = wrapper.findAll('[data-test-id="selector"]')
+      const selectors = wrapper.findAll('[data-test-id^="column-count-"]')
 
       expect(matrixColumns.value).toBe(4)
 

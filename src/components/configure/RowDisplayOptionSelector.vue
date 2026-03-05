@@ -21,7 +21,7 @@ const { selectedRowDisplayOption } = storeToRefs(matrixConfigurationStore)
         :key="option"
         :class="selectedRowDisplayOption === option ? 'tile-active' : 'tile'"
         @click="setSelectedRowDisplayOption(option)"
-        data-test-id="option"
+        :data-test-id="'row-display-option-' + option"
       >
         <div>{{ option }}</div>
       </div>

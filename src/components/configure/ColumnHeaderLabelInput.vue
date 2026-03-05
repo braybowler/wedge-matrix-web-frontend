@@ -24,7 +24,7 @@ const headerOptions = computed(() =>
         :key="system"
         :class="swingFeelSystem === system ? 'tile-active' : 'tile'"
         @click="setSwingFeelSystem(system)"
-        data-test-id="swing-feel-system-option"
+        :data-test-id="'swing-feel-system-' + system"
       >
         {{ system }}
       </div>

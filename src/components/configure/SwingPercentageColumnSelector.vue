@@ -20,7 +20,7 @@ const { matrixColumns } = storeToRefs(matrixConfigurationStore)
         :key="selector"
         :class="matrixColumns === selector ? 'tile-active' : 'tile'"
         @click="setNumberOfMatrixColumns(selector)"
-        data-test-id="selector"
+        :data-test-id="'column-count-' + selector"
       >
         <div>{{ selector }}</div>
       </div>
