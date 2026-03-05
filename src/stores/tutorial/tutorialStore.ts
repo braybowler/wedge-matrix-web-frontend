@@ -50,9 +50,9 @@ export const useTutorialStore = defineStore('tutorial', () => {
   async function dismissModalPermanently() {
     const userStore = useUserStore()
 
-    const response = await patch<{ user: User }>('/user', { has_dismissed_tutorial: true })
+    const response = await patch<{ data: User }>('/user', { has_dismissed_tutorial: true })
     if (!response.error && response.data) {
-      userStore.setUser(response.data.user)
+      userStore.setUser(response.data.data)
       showModal.value = false
     }
   }
@@ -60,9 +60,9 @@ export const useTutorialStore = defineStore('tutorial', () => {
   async function finishTutorial() {
     const userStore = useUserStore()
 
-    const response = await patch<{ user: User }>('/user', { has_dismissed_tutorial: true })
+    const response = await patch<{ data: User }>('/user', { has_dismissed_tutorial: true })
     if (!response.error && response.data) {
-      userStore.setUser(response.data.user)
+      userStore.setUser(response.data.data)
       endTutorial()
     }
   }
