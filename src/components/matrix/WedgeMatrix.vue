@@ -19,6 +19,7 @@ const {
   yardageValues,
   syncError,
   selectedClubs,
+  displayLabels,
 } = storeToRefs(matrixConfigurationStore)
 
 const showClearConfirm = ref(false)
@@ -111,7 +112,7 @@ function handleFinishTutorial() {
             <tr>
               <td>
                 <span class="row-label">
-                  {{ club }}
+                  {{ displayLabels[clubIndex] }}
                 </span>
               </td>
               <template v-for="(numColumn, colIndex) in matrixColumns" :key="numColumn">

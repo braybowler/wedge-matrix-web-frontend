@@ -25,8 +25,13 @@ const {
   currentStep,
   progressPercent,
 } = storeToRefs(calibrationStore)
-const { selectedClubs, matrixColumnHeaders, matrixColumns, selectedRowDisplayOption } =
-  storeToRefs(matrixConfigurationStore)
+const {
+  selectedClubs,
+  matrixColumnHeaders,
+  matrixColumns,
+  selectedRowDisplayOption,
+  displayLabels,
+} = storeToRefs(matrixConfigurationStore)
 
 function handleSelectShotCount(shotCount: ShotCount) {
   calibrationStore.startCalibration(shotCount)
@@ -66,7 +71,9 @@ function handleCancel() {
           :percent="progressPercent"
         />
         <ShotEntryStep
-          :club-label="selectedClubs[currentStep.clubIndex] ?? ''"
+          :club-label="
+            displayLabels[currentStep.clubIndex] ?? selectedClubs[currentStep.clubIndex] ?? ''
+          "
           :swing-label="
             matrixColumnHeaders[currentStep.columnIndex] ?? `Col ${currentStep.columnIndex + 1}`
           "
@@ -90,6 +97,7 @@ function handleCancel() {
         :column-headers="matrixColumnHeaders"
         :columns="matrixColumns"
         :display-option="selectedRowDisplayOption"
+        :display-labels="displayLabels"
         @apply="handleApply"
         @cancel="handleCancel"
       />

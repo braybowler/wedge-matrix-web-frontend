@@ -92,6 +92,29 @@ describe('useMatrixConfigurationStore', () => {
 
       expect(store.selectedClubs).toEqual(['LW', 'SW', 'GW', 'PW'])
     })
+
+    it('loads club_lofts and club_label_display_mode from matrix', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix({
+        club_lofts: [60, 56, 52, 46],
+        club_label_display_mode: 'loft',
+      })
+
+      store.initializeMatrixValues([matrix])
+
+      expect(store.clubLofts).toEqual([60, 56, 52, 46])
+      expect(store.clubLabelDisplayMode).toBe('loft')
+    })
+
+    it('defaults club_lofts and club_label_display_mode when absent', () => {
+      const store = useMatrixConfigurationStore()
+      const matrix = buildMatrix()
+
+      store.initializeMatrixValues([matrix])
+
+      expect(store.clubLofts).toEqual([null, null, null, null])
+      expect(store.clubLabelDisplayMode).toBe('title')
+    })
   })
 
   describe('setYardageValue', () => {
@@ -238,6 +261,93 @@ describe('useMatrixConfigurationStore', () => {
     })
   })
 
+  describe('displayLabels', () => {
+    it('returns club names in title mode', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([
+        buildMatrix({ club_labels: ['LW', 'SW'], club_label_display_mode: 'title' }),
+      ])
+
+      expect(store.displayLabels).toEqual(['LW', 'SW'])
+    })
+
+    it('returns loft degrees in loft mode when lofts are set', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([
+        buildMatrix({
+          club_labels: ['LW', 'SW'],
+          club_lofts: [60, 56],
+          club_label_display_mode: 'loft',
+        }),
+      ])
+
+      expect(store.displayLabels).toEqual(['60\u00B0', '56\u00B0'])
+    })
+
+    it('falls back to club name in loft mode when loft is null', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([
+        buildMatrix({
+          club_labels: ['LW', 'SW'],
+          club_lofts: [60, null],
+          club_label_display_mode: 'loft',
+        }),
+      ])
+
+      expect(store.displayLabels).toEqual(['60\u00B0', 'SW'])
+    })
+  })
+
+  describe('setClubLoft and setClubLabelDisplayMode', () => {
+    it('sets a club loft and marks requiresSync', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setClubLoft(0, 60)
+
+      expect(store.clubLofts[0]).toBe(60)
+      expect(store.requiresSync).toBe(true)
+    })
+
+    it('sets club label display mode and marks requiresSync', () => {
+      const store = useMatrixConfigurationStore()
+
+      store.setClubLabelDisplayMode('loft')
+
+      expect(store.clubLabelDisplayMode).toBe('loft')
+      expect(store.requiresSync).toBe(true)
+    })
+  })
+
+  describe('setSelectedClubs remaps lofts', () => {
+    it('preserves loft values when reordering clubs', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([
+        buildMatrix({
+          club_labels: ['LW', 'SW'],
+          club_lofts: [60, 56],
+        }),
+      ])
+
+      store.setSelectedClubs(['SW', 'LW'])
+
+      expect(store.clubLofts).toEqual([56, 60])
+    })
+
+    it('sets null loft for newly added clubs', () => {
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([
+        buildMatrix({
+          club_labels: ['LW', 'SW'],
+          club_lofts: [60, 56],
+        }),
+      ])
+
+      store.setSelectedClubs(['LW', 'SW', 'AW'])
+
+      expect(store.clubLofts).toEqual([60, 56, null])
+    })
+  })
+
   describe('synchronizeValues', () => {
     it('calls PUT and clears requiresSync and syncError on success', async () => {
       putMock.mockResolvedValue({ data: {}, status: 200 })
@@ -263,6 +373,28 @@ describe('useMatrixConfigurationStore', () => {
       expect(putMock).toHaveBeenCalledWith(
         '/wedge-matrix/10',
         expect.objectContaining({ club_labels: ['LW', 'AW'] }),
+      )
+    })
+
+    it('includes club_lofts and club_label_display_mode in the PUT body', async () => {
+      putMock.mockResolvedValue({ data: {}, status: 200 })
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([
+        buildMatrix({
+          club_lofts: [60, 56, 52, 46],
+          club_label_display_mode: 'loft',
+        }),
+      ])
+      store.requiresSync = true
+
+      await store.synchronizeValues()
+
+      expect(putMock).toHaveBeenCalledWith(
+        '/wedge-matrix/10',
+        expect.objectContaining({
+          club_lofts: [60, 56, 52, 46],
+          club_label_display_mode: 'loft',
+        }),
       )
     })
 

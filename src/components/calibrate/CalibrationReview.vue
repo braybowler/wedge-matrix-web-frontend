@@ -8,6 +8,7 @@ defineProps<{
   columnHeaders: string[]
   columns: number
   displayOption: RowDisplayOption
+  displayLabels?: string[]
 }>()
 
 const emit = defineEmits<{
@@ -40,7 +41,7 @@ function formatValue(val: number | null): string {
         </thead>
         <tbody>
           <tr v-for="(club, clubIdx) in clubs" :key="club">
-            <th scope="row" class="cell club-cell">{{ club }}</th>
+            <th scope="row" class="cell club-cell">{{ displayLabels?.[clubIdx] ?? club }}</th>
             <td v-for="colIdx in columns" :key="colIdx" class="cell value-cell">
               <template v-if="displayOption === 'Carry' || displayOption === 'Both'">
                 <span class="old-value">{{

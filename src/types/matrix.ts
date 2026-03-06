@@ -5,6 +5,9 @@ export type ClubLabel = (typeof CLUB_LABELS)[number]
 
 export type RowDisplayOption = 'Carry' | 'Total' | 'Both'
 
+export const CLUB_LABEL_DISPLAY_MODES = ['title', 'loft'] as const
+export type ClubLabelDisplayMode = (typeof CLUB_LABEL_DISPLAY_MODES)[number]
+
 export const SWING_FEEL_SYSTEMS = ['Percentage', 'Clock'] as const
 export type SwingFeelSystem = (typeof SWING_FEEL_SYSTEMS)[number]
 
@@ -27,4 +30,6 @@ export type WedgeMatrix = {
   selected_row_display_option: RowDisplayOption
   yardage_values: YardageGrid
   club_labels?: ClubLabel[]
+  club_lofts?: (number | null)[]
+  club_label_display_mode?: ClubLabelDisplayMode
 }

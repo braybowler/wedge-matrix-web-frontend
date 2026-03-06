@@ -43,6 +43,18 @@ describe('WedgeMatrix Component', () => {
       })
     })
 
+    it('displays loft degrees when display mode is loft', async () => {
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      matrixConfigurationStore.setClubLoft(0, 60)
+      matrixConfigurationStore.setClubLoft(1, 56)
+      matrixConfigurationStore.setClubLabelDisplayMode('loft')
+
+      const wrapper = mount(WedgeMatrix)
+
+      expect(wrapper.text()).toContain('60\u00B0')
+      expect(wrapper.text()).toContain('56\u00B0')
+    })
+
     it('updates rendered rows when selectedClubs changes', async () => {
       const matrixConfigurationStore = useMatrixConfigurationStore()
       const wrapper = mount(WedgeMatrix)

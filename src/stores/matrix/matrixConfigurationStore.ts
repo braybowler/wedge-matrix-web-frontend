@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import {
   CLOCK_OPTIONS,
   DEFAULT_CLOCK_HEADERS,
   MAX_YARDAGE,
   type AllowableMatrixColumnNumber,
   type ClubLabel,
+  type ClubLabelDisplayMode,
   type RowDisplayOption,
   type SwingFeelSystem,
   type WedgeMatrix,
@@ -39,7 +40,19 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   const savedPercentageHeaders = ref<string[]>(['', '', '', ''])
   const savedClockHeaders = ref<string[]>(['', '', '', ''])
   const selectedClubs = ref<ClubLabel[]>([...DEFAULT_CLUBS])
+  const clubLofts = ref<(number | null)[]>(Array(DEFAULT_CLUBS.length).fill(null))
+  const clubLabelDisplayMode = ref<ClubLabelDisplayMode>('title')
   const yardageValues = ref<YardageGrid>(createEmptyGrid(DEFAULT_CLUBS.length, 4))
+
+  const displayLabels = computed<string[]>(() =>
+    selectedClubs.value.map((club, i) => {
+      if (clubLabelDisplayMode.value === 'loft') {
+        const loft = clubLofts.value[i]
+        return loft != null ? `${loft}\u00B0` : club
+      }
+      return club
+    }),
+  )
 
   function initializeMatrixValues(wedgeMatrices: WedgeMatrix[], matrixId?: number) {
     const matrix = matrixId ? wedgeMatrices.find((m) => m.id === matrixId) : wedgeMatrices[0]
@@ -54,6 +67,11 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
       matrix.club_labels && matrix.club_labels.length > 0
         ? [...matrix.club_labels]
         : [...DEFAULT_CLUBS]
+
+    clubLofts.value = matrix.club_lofts
+      ? [...matrix.club_lofts]
+      : Array(selectedClubs.value.length).fill(null)
+    clubLabelDisplayMode.value = matrix.club_label_display_mode ?? 'title'
 
     const cols = matrixColumns.value
     matrixColumnHeaders.value = matrix.column_headers
@@ -112,6 +130,8 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
       selected_row_display_option: selectedRowDisplayOption.value,
       yardage_values: yardageValues.value,
       club_labels: selectedClubs.value,
+      club_lofts: clubLofts.value,
+      club_label_display_mode: clubLabelDisplayMode.value,
     })
     if (response.error) {
       syncError.value = response.error
@@ -134,6 +154,8 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
         selected_row_display_option: selectedRowDisplayOption.value,
         yardage_values: yardageValues.value,
         club_labels: selectedClubs.value,
+        club_lofts: clubLofts.value,
+        club_label_display_mode: clubLabelDisplayMode.value,
       })
 
       if (response.error) {
@@ -146,6 +168,8 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
           selected_row_display_option: selectedRowDisplayOption.value,
           yardage_values: yardageValues.value.map((row) => row.map((cell) => ({ ...cell }))),
           club_labels: [...selectedClubs.value],
+          club_lofts: [...clubLofts.value],
+          club_label_display_mode: clubLabelDisplayMode.value,
         })
       }
     } catch {
@@ -247,17 +271,30 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     }
   }
 
+  function setClubLoft(index: number, value: number | null) {
+    requiresSync.value = true
+    clubLofts.value[index] = value
+  }
+
+  function setClubLabelDisplayMode(mode: ClubLabelDisplayMode) {
+    requiresSync.value = true
+    clubLabelDisplayMode.value = mode
+  }
+
   function setSelectedClubs(clubs: ClubLabel[]) {
     requiresSync.value = true
 
     const clubRowMap = new Map<ClubLabel, YardageCell[]>()
+    const clubLoftMap = new Map<ClubLabel, number | null>()
     selectedClubs.value.forEach((club, index) => {
       const row = yardageValues.value[index]
       if (row) clubRowMap.set(club, row)
+      clubLoftMap.set(club, clubLofts.value[index] ?? null)
     })
 
     const cols = matrixColumns.value
     yardageValues.value = clubs.map((club) => clubRowMap.get(club) ?? createEmptyRow(cols))
+    clubLofts.value = clubs.map((club) => clubLoftMap.get(club) ?? null)
     selectedClubs.value = clubs
   }
 
@@ -281,8 +318,13 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     setSwingFeelSystem,
     setMatrixColumnHeader,
     selectedClubs,
+    clubLofts,
+    clubLabelDisplayMode,
+    displayLabels,
     setNumberOfMatrixColumns,
     setSelectedClubs,
+    setClubLoft,
+    setClubLabelDisplayMode,
     setSelectedRowDisplayOption,
     synchronizeValues,
     downloadMatrix,

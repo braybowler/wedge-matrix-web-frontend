@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import MatrixSelector from '@/components/matrix/MatrixSelector.vue'
 import ClubSelector from '@/components/configure/ClubSelector.vue'
+import ClubDisplaySettings from '@/components/configure/ClubDisplaySettings.vue'
 import SwingPercentageColumnSelector from '@/components/configure/SwingPercentageColumnSelector.vue'
 import ColumnHeaderLabelInput from '@/components/configure/ColumnHeaderLabelInput.vue'
 import RowDisplayOptionSelector from '@/components/configure/RowDisplayOptionSelector.vue'
@@ -50,6 +51,7 @@ onBeforeUnmount(async () => {
       >
         <ClubSelector />
       </TutorialHighlight>
+      <ClubDisplaySettings />
       <TutorialHighlight
         :visible="showSwingHighlight"
         message="Select the number of shots you have, or would like to have, with each wedge."
