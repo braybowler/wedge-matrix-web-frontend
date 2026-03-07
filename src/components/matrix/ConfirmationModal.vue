@@ -56,6 +56,7 @@ defineEmits<{
   padding: 24px;
   max-width: 400px;
   width: 100%;
+  margin: 0 16px;
 }
 
 .modal-title {

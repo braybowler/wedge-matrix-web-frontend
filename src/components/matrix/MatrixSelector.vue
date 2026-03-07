@@ -85,7 +85,7 @@ function cancelRename() {
 </script>
 
 <template>
-  <div data-test-id="matrix-selector">
+  <div class="matrix-selector-root" data-test-id="matrix-selector">
     <label v-if="props.label" class="selector-label">{{ props.label }}</label>
     <div class="selector-row">
       <select
@@ -315,5 +315,45 @@ function cancelRename() {
 
 .cancel-button:hover {
   background-color: #4b5563;
+}
+
+@media (max-width: 360px) {
+  .matrix-selector-root {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .selector-label {
+    margin-bottom: 0;
+  }
+
+  .selector-row {
+    display: contents;
+  }
+
+  .matrix-select {
+    order: 1;
+  }
+
+  .rename-row {
+    order: 2;
+    margin-top: 0;
+    flex-wrap: wrap;
+  }
+
+  .rename-input {
+    flex-basis: 100%;
+  }
+
+  .rename-action-button {
+    flex: 1;
+  }
+
+  .action-buttons {
+    order: 3;
+    justify-content: center;
+    gap: 8px;
+  }
 }
 </style>

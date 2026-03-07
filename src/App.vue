@@ -100,5 +100,11 @@ const isPublicRoute = computed(() => publicRoutes.includes(router.currentRoute.v
     width: 60%;
     max-width: 480px;
   }
+
+  .page-content :deep(> .wide-page-content) {
+    width: 80%;
+    max-width: 700px;
+    align-self: flex-start;
+  }
 }
 </style>

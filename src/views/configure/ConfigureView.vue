@@ -37,41 +37,45 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <main class="configure-wrapper">
+  <main class="configure-wrapper wide-page-content">
     <div class="configure-container">
       <MatrixSelector :readonly="true" label="Current Matrix" />
       <p v-if="syncError" class="error-message" data-test-id="sync-error-message">
         {{ syncError }}
       </p>
-      <TutorialHighlight
-        :visible="showClubHighlight"
-        message="Start by selecting the wedges in your bag."
-        button-label="Next"
-        @dismiss="advanceStep"
-      >
-        <ClubSelector />
-      </TutorialHighlight>
-      <ClubDisplaySettings />
-      <TutorialHighlight
-        :visible="showSwingHighlight"
-        message="Select the number of shots you have, or would like to have, with each wedge."
-        button-label="Next"
-        show-back
-        @dismiss="advanceStep"
-        @back="tutorialStore.previousStep()"
-      >
-        <SwingPercentageColumnSelector />
-      </TutorialHighlight>
-      <TutorialHighlight
-        :visible="showLabelHighlight"
-        message="Choose between the Percentage system for swing effort levels (25%–100%) or the Clock system for backswing positions (7:00–12:00), then set your column labels."
-        button-label="Next"
-        show-back
-        @dismiss="advanceStep"
-        @back="tutorialStore.previousStep()"
-      >
-        <ColumnHeaderLabelInput />
-      </TutorialHighlight>
+      <div class="settings-group">
+        <TutorialHighlight
+          :visible="showClubHighlight"
+          message="Start by selecting the wedges in your bag."
+          button-label="Next"
+          @dismiss="advanceStep"
+        >
+          <ClubSelector />
+        </TutorialHighlight>
+        <ClubDisplaySettings />
+      </div>
+      <div class="settings-group">
+        <TutorialHighlight
+          :visible="showSwingHighlight"
+          message="Select the number of shots you have, or would like to have, with each wedge."
+          button-label="Next"
+          show-back
+          @dismiss="advanceStep"
+          @back="tutorialStore.previousStep()"
+        >
+          <SwingPercentageColumnSelector />
+        </TutorialHighlight>
+        <TutorialHighlight
+          :visible="showLabelHighlight"
+          message="Choose between the Percentage system for swing effort levels (25%–100%) or the Clock system for backswing positions (7:00–12:00), then set your column labels."
+          button-label="Next"
+          show-back
+          @dismiss="advanceStep"
+          @back="tutorialStore.previousStep()"
+        >
+          <ColumnHeaderLabelInput />
+        </TutorialHighlight>
+      </div>
       <TutorialHighlight
         :visible="showRowDisplayHighlight"
         message="Choose whether to track carry distance, total distance, or both."
@@ -110,10 +114,25 @@ onBeforeUnmount(async () => {
   border-radius: 8px;
 }
 
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  background-color: #111827;
+}
+
 @media (max-width: 480px) {
   .configure-container {
     gap: 10px;
     padding: 12px;
+  }
+
+  .settings-group {
+    padding: 12px;
+    gap: 10px;
   }
 }
 </style>

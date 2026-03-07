@@ -65,7 +65,7 @@ describe('Configure Page', () => {
       cy.contains('Clubs').should('be.visible')
       cy.contains('Number of Swing Columns').should('be.visible')
       cy.contains('Column Header Labels').should('be.visible')
-      cy.contains('Row Display Options').should('be.visible')
+      cy.contains('Row Display Options').scrollIntoView().should('be.visible')
     })
   })
 
