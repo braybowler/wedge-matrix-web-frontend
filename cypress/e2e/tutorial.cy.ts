@@ -41,6 +41,7 @@ function login() {
   cy.get('[data-test-id="password-input"]').type('Password1!')
   cy.get('[data-test-id="login-button"]').click()
   cy.wait('@loginRequest')
+  cy.wait('@userRequest')
   cy.url().should('include', '/matrix')
 }
 
