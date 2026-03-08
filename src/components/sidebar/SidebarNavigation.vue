@@ -18,9 +18,12 @@ const handleLogout = async () => {
 <template>
   <aside class="sidebar">
     <nav class="nav-links">
+      <span class="nav-category">Matrix</span>
       <RouterLink active-class="active-link" class="link" to="/matrix">Wedge Matrix</RouterLink>
       <RouterLink active-class="active-link" class="link" to="/configure">Configure</RouterLink>
       <RouterLink active-class="active-link" class="link" to="/calibrate">Calibrate</RouterLink>
+
+      <span class="nav-category">Practice</span>
     </nav>
     <div class="logout-container">
       <div class="tooltip-wrapper">
@@ -98,6 +101,20 @@ const handleLogout = async () => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.nav-category {
+  color: #6b7280;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 12px 8px;
+  border-bottom: 1px solid #818cf8;
+}
+
+.nav-category:not(:first-child) {
+  margin-top: 16px;
 }
 
 .link {
