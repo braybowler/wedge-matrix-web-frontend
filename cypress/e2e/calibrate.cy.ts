@@ -57,6 +57,13 @@ const loginAndSetup = () => {
   cy.url().should('include', '/matrix')
 }
 
+const navigateSetupSteps = () => {
+  // Club selection: click Next (all selected by default)
+  cy.get('[data-test-id="club-next-button"]').click()
+  // Swing type selection: click Next (all selected by default)
+  cy.get('[data-test-id="swing-next-button"]').click()
+}
+
 describe('Calibrate Flow', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -66,12 +73,33 @@ describe('Calibrate Flow', () => {
   it('navigates to calibrate page from sidebar', () => {
     cy.get('a[href="/calibrate"]:visible').click()
     cy.url().should('include', '/calibrate')
+    cy.get('[data-test-id="club-select-all"]').should('be.visible')
+  })
+
+  it('navigates through club and swing type selection to shot count', () => {
+    cy.visit('/calibrate')
+    cy.wait('@userRequest')
+
+    // Club selection
+    cy.get('[data-test-id="club-select-all"]').should('be.visible')
+    cy.get('[data-test-id="club-select-0"]').should('be.visible')
+    cy.get('[data-test-id="club-select-1"]').should('be.visible')
+    cy.get('[data-test-id="club-next-button"]').click()
+
+    // Swing type selection
+    cy.get('[data-test-id="swing-select-all"]').should('be.visible')
+    cy.get('[data-test-id="swing-select-0"]').should('be.visible')
+    cy.get('[data-test-id="swing-select-1"]').should('be.visible')
+    cy.get('[data-test-id="swing-next-button"]').click()
+
+    // Shot count selection
     cy.get('[data-test-id="shot-count-5"]').should('be.visible')
   })
 
   it('selects shot count and shows first step', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
+    navigateSetupSteps()
     cy.get('[data-test-id="shot-count-5"]').click()
     cy.get('[data-test-id="progress-label"]').should('contain.text', 'Step 1 of 4')
     cy.get('[data-test-id="step-header"]').should('contain.text', 'LW @ 50%')
@@ -80,6 +108,7 @@ describe('Calibrate Flow', () => {
   it('enters shots and advances through all steps', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
+    navigateSetupSteps()
     cy.get('[data-test-id="shot-count-5"]').click()
 
     // Step 1: LW @ 50%
@@ -116,6 +145,7 @@ describe('Calibrate Flow', () => {
   it('applies calibration and redirects to matrix', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
+    navigateSetupSteps()
     cy.get('[data-test-id="shot-count-5"]').click()
 
     // Advance through all 4 steps
@@ -134,6 +164,7 @@ describe('Calibrate Flow', () => {
   it('back button is hidden on step 1 and visible on step 2+', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
+    navigateSetupSteps()
     cy.get('[data-test-id="shot-count-5"]').click()
 
     // Step 1: back button should not exist
@@ -149,6 +180,7 @@ describe('Calibrate Flow', () => {
   it('back button navigates to previous step', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
+    navigateSetupSteps()
     cy.get('[data-test-id="shot-count-5"]').click()
 
     cy.get('[data-test-id="step-next-button"]').click()
@@ -161,6 +193,7 @@ describe('Calibrate Flow', () => {
   it('cancel from review redirects to matrix', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
+    navigateSetupSteps()
     cy.get('[data-test-id="shot-count-5"]').click()
 
     // Advance through all steps
@@ -175,6 +208,7 @@ describe('Calibrate Flow', () => {
   it('persists session and resumes on return', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
+    navigateSetupSteps()
     cy.get('[data-test-id="shot-count-5"]').click()
 
     // Advance to step 2
@@ -191,5 +225,24 @@ describe('Calibrate Flow', () => {
 
     // Should resume at step 2
     cy.get('[data-test-id="progress-label"]').should('contain.text', 'Step 2 of 4')
+  })
+
+  it('back button on swing type selector returns to club selector', () => {
+    cy.visit('/calibrate')
+    cy.wait('@userRequest')
+
+    cy.get('[data-test-id="club-next-button"]').click()
+    cy.get('[data-test-id="swing-back-button"]').click()
+
+    cy.get('[data-test-id="club-select-all"]').should('be.visible')
+  })
+
+  it('back button on shot count selector returns to swing type selector', () => {
+    cy.visit('/calibrate')
+    cy.wait('@userRequest')
+    navigateSetupSteps()
+
+    cy.get('[data-test-id="shot-count-back-button"]').click()
+    cy.get('[data-test-id="swing-select-all"]').should('be.visible')
   })
 })

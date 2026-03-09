@@ -5,12 +5,13 @@ const shotCounts: ShotCount[] = [5, 10, 15]
 
 const emit = defineEmits<{
   select: [shotCount: ShotCount]
+  back: []
 }>()
 </script>
 
 <template>
   <section class="component-container">
-    <h2 class="section-title">How many shots per club?</h2>
+    <h2 class="section-title">How many shots per club per swing type?</h2>
 
     <section class="option-section">
       <div
@@ -23,6 +24,16 @@ const emit = defineEmits<{
         <div>{{ count }} Shots</div>
       </div>
     </section>
+
+    <div class="button-row">
+      <button
+        class="button button-secondary"
+        data-test-id="shot-count-back-button"
+        @click="emit('back')"
+      >
+        Back
+      </button>
+    </div>
   </section>
 </template>
 
@@ -44,6 +55,36 @@ const emit = defineEmits<{
 .shot-tile {
   min-width: 90px;
   text-align: center;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.button {
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button-secondary {
+  background-color: #374151;
+  color: #9ca3af;
+  border: 1px solid #4b5563;
+}
+
+.button-secondary:hover {
+  background-color: #4b5563;
+  border-color: #818cf8;
 }
 
 @media (max-width: 480px) {

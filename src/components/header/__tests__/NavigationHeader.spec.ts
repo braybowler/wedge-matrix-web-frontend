@@ -24,31 +24,59 @@ describe('NavigationHeader Component', () => {
       expect(wrapper.exists()).toBe(true)
     })
 
-    it('displays Wedge Matrix link', () => {
+    it('renders the hamburger button', () => {
       const wrapper = mount(NavigationHeader, { global: { plugins: [router] } })
 
-      const link = wrapper.find('a[href="/matrix"]')
+      const button = wrapper.find('[data-test-id="hamburger-button"]')
 
-      expect(link.exists()).toBe(true)
-      expect(link.text()).toBe('Wedge Matrix')
+      expect(button.exists()).toBe(true)
     })
 
-    it('displays Configure link', () => {
+    it('does not show drawer by default', () => {
       const wrapper = mount(NavigationHeader, { global: { plugins: [router] } })
 
-      const link = wrapper.find('a[href="/configure"]')
+      const drawer = wrapper.find('[data-test-id="mobile-drawer"]')
 
-      expect(link.exists()).toBe(true)
-      expect(link.text()).toBe('Configure')
+      expect(drawer.exists()).toBe(false)
     })
 
-    it('displays Calibrate link', () => {
+    it('opens drawer when hamburger button is clicked', async () => {
       const wrapper = mount(NavigationHeader, { global: { plugins: [router] } })
 
-      const link = wrapper.find('a[href="/calibrate"]')
+      await wrapper.find('[data-test-id="hamburger-button"]').trigger('click')
 
-      expect(link.exists()).toBe(true)
-      expect(link.text()).toBe('Calibrate')
+      const drawer = wrapper.find('[data-test-id="mobile-drawer"]')
+      expect(drawer.exists()).toBe(true)
+    })
+
+    it('displays nav links in open drawer', async () => {
+      const wrapper = mount(NavigationHeader, { global: { plugins: [router] } })
+
+      await wrapper.find('[data-test-id="hamburger-button"]').trigger('click')
+
+      expect(wrapper.find('a[href="/matrix"]').text()).toBe('Wedge Matrix')
+      expect(wrapper.find('a[href="/configure"]').text()).toBe('Configure')
+      expect(wrapper.find('a[href="/calibrate"]').text()).toBe('Calibrate')
+    })
+
+    it('displays category headings in open drawer', async () => {
+      const wrapper = mount(NavigationHeader, { global: { plugins: [router] } })
+
+      await wrapper.find('[data-test-id="hamburger-button"]').trigger('click')
+
+      const categories = wrapper.findAll('.nav-category').map((c) => c.text())
+      expect(categories).toEqual(['Matrix', 'Practice'])
+    })
+
+    it('closes drawer when close button is clicked', async () => {
+      const wrapper = mount(NavigationHeader, { global: { plugins: [router] } })
+
+      await wrapper.find('[data-test-id="hamburger-button"]').trigger('click')
+      expect(wrapper.find('[data-test-id="mobile-drawer"]').exists()).toBe(true)
+
+      await wrapper.find('[data-test-id="close-drawer-button"]').trigger('click')
+
+      expect(wrapper.find('[data-test-id="mobile-drawer"]').exists()).toBe(false)
     })
   })
 })

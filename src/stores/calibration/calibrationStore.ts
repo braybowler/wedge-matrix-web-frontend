@@ -19,6 +19,8 @@ export type CalibrationStepData = {
 export type CalibrationSession = {
   matrixId: number
   shotCount: ShotCount
+  selectedClubIndices: number[]
+  selectedColumnIndices: number[]
   currentStepIndex: number
   steps: CalibrationStepData[]
   completed: boolean
@@ -47,17 +49,15 @@ export const useCalibrationStore = defineStore('calibration', () => {
     }
   }
 
-  function startCalibration(shotCount: ShotCount) {
+  function startCalibration(shotCount: ShotCount, clubIndices: number[], columnIndices: number[]) {
     const matrixStore = useMatrixConfigurationStore()
-    const clubs = matrixStore.selectedClubs
-    const columns = matrixStore.matrixColumns
     const matrixId = matrixStore.selectedMatrixId
 
     if (!matrixId) return
 
     const steps: CalibrationStepData[] = []
-    for (let clubIndex = 0; clubIndex < clubs.length; clubIndex++) {
-      for (let columnIndex = 0; columnIndex < columns; columnIndex++) {
+    for (const clubIndex of clubIndices) {
+      for (const columnIndex of columnIndices) {
         steps.push({
           clubIndex,
           columnIndex,
@@ -72,6 +72,8 @@ export const useCalibrationStore = defineStore('calibration', () => {
     session.value = {
       matrixId,
       shotCount,
+      selectedClubIndices: [...clubIndices],
+      selectedColumnIndices: [...columnIndices],
       currentStepIndex: 0,
       steps,
       completed: false,
@@ -154,6 +156,26 @@ export const useCalibrationStore = defineStore('calibration', () => {
     return matrixStore.yardageValues.map((row) => row.map((cell) => ({ ...cell })))
   }
 
+  function getFilteredOldValues(): YardageGrid {
+    if (!session.value) return []
+    const matrixStore = useMatrixConfigurationStore()
+    return session.value.selectedClubIndices.map((ci) =>
+      session.value!.selectedColumnIndices.map((coli) => ({
+        ...(matrixStore.yardageValues[ci]?.[coli] ?? { carry_value: null, total_value: null }),
+      })),
+    )
+  }
+
+  function getFilteredNewValues(): YardageGrid {
+    if (!session.value) return []
+    const averages = computeAverages()
+    return session.value.selectedClubIndices.map((ci) =>
+      session.value!.selectedColumnIndices.map((coli) => ({
+        ...(averages[ci]?.[coli] ?? { carry_value: null, total_value: null }),
+      })),
+    )
+  }
+
   function applyCalibration() {
     const matrixStore = useMatrixConfigurationStore()
     const averages = computeAverages()
@@ -202,7 +224,26 @@ export const useCalibrationStore = defineStore('calibration', () => {
         return
       }
 
-      const expectedSteps = matrixStore.selectedClubs.length * matrixStore.matrixColumns
+      if (
+        !Array.isArray(parsed.selectedClubIndices) ||
+        !Array.isArray(parsed.selectedColumnIndices)
+      ) {
+        localStorage.removeItem(STORAGE_KEY)
+        return
+      }
+
+      const clubsInBounds = parsed.selectedClubIndices.every(
+        (i) => i >= 0 && i < matrixStore.selectedClubs.length,
+      )
+      const colsInBounds = parsed.selectedColumnIndices.every(
+        (i) => i >= 0 && i < matrixStore.matrixColumns,
+      )
+      if (!clubsInBounds || !colsInBounds) {
+        localStorage.removeItem(STORAGE_KEY)
+        return
+      }
+
+      const expectedSteps = parsed.selectedClubIndices.length * parsed.selectedColumnIndices.length
       if (parsed.steps.length !== expectedSteps) {
         localStorage.removeItem(STORAGE_KEY)
         return
@@ -230,6 +271,8 @@ export const useCalibrationStore = defineStore('calibration', () => {
     goBackStep,
     computeAverages,
     getOldValues,
+    getFilteredOldValues,
+    getFilteredNewValues,
     applyCalibration,
     clearSession,
     loadFromStorage,

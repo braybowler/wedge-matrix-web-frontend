@@ -42,6 +42,9 @@ function initMatrixStore(overrides: Partial<WedgeMatrix> = {}) {
   return matrixStore
 }
 
+const ALL_CLUBS = [0, 1]
+const ALL_COLS = [0, 1]
+
 describe('useCalibrationStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
@@ -49,21 +52,21 @@ describe('useCalibrationStore', () => {
   })
 
   describe('startCalibration', () => {
-    it('creates correct number of steps (clubs × columns)', () => {
+    it('creates correct number of steps (clubs x columns)', () => {
       initMatrixStore()
       const store = useCalibrationStore()
 
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       expect(store.session).not.toBeNull()
-      expect(store.session!.steps).toHaveLength(4) // 2 clubs × 2 columns
+      expect(store.session!.steps).toHaveLength(4) // 2 clubs x 2 columns
     })
 
     it('initializes shots array with correct count of empty shots', () => {
       initMatrixStore()
       const store = useCalibrationStore()
 
-      store.startCalibration(10)
+      store.startCalibration(10, ALL_CLUBS, ALL_COLS)
 
       for (const step of store.session!.steps) {
         expect(step.shots).toHaveLength(10)
@@ -78,7 +81,7 @@ describe('useCalibrationStore', () => {
       initMatrixStore()
       const store = useCalibrationStore()
 
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       const stored = localStorage.getItem('wedge_matrix_calibration_session')
       expect(stored).not.toBeNull()
@@ -91,7 +94,7 @@ describe('useCalibrationStore', () => {
       initMatrixStore()
       const store = useCalibrationStore()
 
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       expect(store.session!.currentStepIndex).toBe(0)
       expect(store.session!.completed).toBe(false)
@@ -101,7 +104,7 @@ describe('useCalibrationStore', () => {
       initMatrixStore()
       const store = useCalibrationStore()
 
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       const steps = store.session!.steps
       // LW@col0, LW@col1, SW@col0, SW@col1
@@ -114,13 +117,34 @@ describe('useCalibrationStore', () => {
       expect(steps[3]!.clubIndex).toBe(1)
       expect(steps[3]!.columnIndex).toBe(1)
     })
+
+    it('creates steps only for selected clubs and columns', () => {
+      initMatrixStore()
+      const store = useCalibrationStore()
+
+      store.startCalibration(5, [0], [1])
+
+      expect(store.session!.steps).toHaveLength(1)
+      expect(store.session!.steps[0]!.clubIndex).toBe(0)
+      expect(store.session!.steps[0]!.columnIndex).toBe(1)
+    })
+
+    it('stores selectedClubIndices and selectedColumnIndices on session', () => {
+      initMatrixStore()
+      const store = useCalibrationStore()
+
+      store.startCalibration(5, [1], [0, 1])
+
+      expect(store.session!.selectedClubIndices).toEqual([1])
+      expect(store.session!.selectedColumnIndices).toEqual([0, 1])
+    })
   })
 
   describe('setShotValue', () => {
     it('sets carry value and persists', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.setShotValue(0, 'carry_value', '105')
 
@@ -132,7 +156,7 @@ describe('useCalibrationStore', () => {
     it('rounds decimals to 1 decimal place', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.setShotValue(0, 'carry_value', '105.67')
 
@@ -142,7 +166,7 @@ describe('useCalibrationStore', () => {
     it('sets to null for empty string', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
       store.setShotValue(0, 'carry_value', '100')
 
       store.setShotValue(0, 'carry_value', '')
@@ -153,7 +177,7 @@ describe('useCalibrationStore', () => {
     it('sets to null for invalid values', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.setShotValue(0, 'carry_value', '-5')
       expect(store.currentStep!.shots[0]!.carry_value).toBeNull()
@@ -168,7 +192,7 @@ describe('useCalibrationStore', () => {
     it('sets total value', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.setShotValue(0, 'total_value', '115')
 
@@ -180,7 +204,7 @@ describe('useCalibrationStore', () => {
     it('increments currentStepIndex', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.advanceStep()
 
@@ -190,7 +214,7 @@ describe('useCalibrationStore', () => {
     it('decrements currentStepIndex', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
       store.advanceStep()
 
       store.goBackStep()
@@ -201,7 +225,7 @@ describe('useCalibrationStore', () => {
     it('does not go below 0', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.goBackStep()
 
@@ -211,7 +235,7 @@ describe('useCalibrationStore', () => {
     it('sets completed to true on last step', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       // 4 steps total, advance through all
       store.advanceStep() // step 1
@@ -227,7 +251,7 @@ describe('useCalibrationStore', () => {
     it('computes correct averages for non-null shots', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.setShotValue(0, 'carry_value', '100')
       store.setShotValue(1, 'carry_value', '110')
@@ -241,7 +265,7 @@ describe('useCalibrationStore', () => {
     it('ignores null shots in average calculation', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.setShotValue(0, 'carry_value', '100')
       store.setShotValue(1, 'carry_value', '200')
@@ -255,7 +279,7 @@ describe('useCalibrationStore', () => {
     it('returns null for all-null shots', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       const averages = store.computeAverages()
 
@@ -266,7 +290,7 @@ describe('useCalibrationStore', () => {
     it('rounds averages to 1 decimal place', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.setShotValue(0, 'carry_value', '100')
       store.setShotValue(1, 'carry_value', '101')
@@ -283,7 +307,7 @@ describe('useCalibrationStore', () => {
       const matrixStore = initMatrixStore()
       const spy = vi.spyOn(matrixStore, 'setYardageValue')
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       // Set carry values for step 0 (club 0, col 0)
       store.setShotValue(0, 'carry_value', '100')
@@ -302,7 +326,7 @@ describe('useCalibrationStore', () => {
     it('clears session after applying', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       // advance to completion
       store.advanceStep()
@@ -321,7 +345,7 @@ describe('useCalibrationStore', () => {
     it('nulls session and removes localStorage', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       store.clearSession()
 
@@ -336,15 +360,14 @@ describe('useCalibrationStore', () => {
       const session = {
         matrixId: matrixStore.selectedMatrixId,
         shotCount: 5,
+        selectedClubIndices: [0, 1],
+        selectedColumnIndices: [0, 1],
         currentStepIndex: 1,
-        steps: Array.from(
-          { length: matrixStore.selectedClubs.length * matrixStore.matrixColumns },
-          (_, i) => ({
-            clubIndex: Math.floor(i / matrixStore.matrixColumns),
-            columnIndex: i % matrixStore.matrixColumns,
-            shots: Array.from({ length: 5 }, () => ({ carry_value: null, total_value: null })),
-          }),
-        ),
+        steps: Array.from({ length: 4 }, (_, i) => ({
+          clubIndex: Math.floor(i / 2),
+          columnIndex: i % 2,
+          shots: Array.from({ length: 5 }, () => ({ carry_value: null, total_value: null })),
+        })),
         completed: false,
       }
       localStorage.setItem('wedge_matrix_calibration_session', JSON.stringify(session))
@@ -361,6 +384,8 @@ describe('useCalibrationStore', () => {
       const session = {
         matrixId: 999,
         shotCount: 5,
+        selectedClubIndices: [0],
+        selectedColumnIndices: [0],
         currentStepIndex: 0,
         steps: [
           {
@@ -396,6 +421,8 @@ describe('useCalibrationStore', () => {
       const session = {
         matrixId: matrixStore.selectedMatrixId,
         shotCount: 5,
+        selectedClubIndices: [0, 1],
+        selectedColumnIndices: [0, 1],
         currentStepIndex: 0,
         steps: [
           {
@@ -413,13 +440,81 @@ describe('useCalibrationStore', () => {
 
       expect(store.session).toBeNull()
     })
+
+    it('discards old-format sessions without selectedClubIndices', () => {
+      const matrixStore = initMatrixStore()
+      const session = {
+        matrixId: matrixStore.selectedMatrixId,
+        shotCount: 5,
+        currentStepIndex: 0,
+        steps: Array.from({ length: 4 }, (_, i) => ({
+          clubIndex: Math.floor(i / 2),
+          columnIndex: i % 2,
+          shots: Array.from({ length: 5 }, () => ({ carry_value: null, total_value: null })),
+        })),
+        completed: false,
+      }
+      localStorage.setItem('wedge_matrix_calibration_session', JSON.stringify(session))
+
+      const store = useCalibrationStore()
+      store.loadFromStorage()
+
+      expect(store.session).toBeNull()
+      expect(localStorage.getItem('wedge_matrix_calibration_session')).toBeNull()
+    })
+
+    it('discards session with out-of-bounds club indices', () => {
+      const matrixStore = initMatrixStore()
+      const session = {
+        matrixId: matrixStore.selectedMatrixId,
+        shotCount: 5,
+        selectedClubIndices: [0, 5],
+        selectedColumnIndices: [0],
+        currentStepIndex: 0,
+        steps: Array.from({ length: 2 }, (_, i) => ({
+          clubIndex: i === 0 ? 0 : 5,
+          columnIndex: 0,
+          shots: Array.from({ length: 5 }, () => ({ carry_value: null, total_value: null })),
+        })),
+        completed: false,
+      }
+      localStorage.setItem('wedge_matrix_calibration_session', JSON.stringify(session))
+
+      const store = useCalibrationStore()
+      store.loadFromStorage()
+
+      expect(store.session).toBeNull()
+    })
+
+    it('discards session with out-of-bounds column indices', () => {
+      const matrixStore = initMatrixStore()
+      const session = {
+        matrixId: matrixStore.selectedMatrixId,
+        shotCount: 5,
+        selectedClubIndices: [0],
+        selectedColumnIndices: [0, 10],
+        currentStepIndex: 0,
+        steps: Array.from({ length: 2 }, (_, i) => ({
+          clubIndex: 0,
+          columnIndex: i === 0 ? 0 : 10,
+          shots: Array.from({ length: 5 }, () => ({ carry_value: null, total_value: null })),
+        })),
+        completed: false,
+      }
+      localStorage.setItem('wedge_matrix_calibration_session', JSON.stringify(session))
+
+      const store = useCalibrationStore()
+      store.loadFromStorage()
+
+      expect(store.session).toBeNull()
+    })
   })
 
   describe('computed properties', () => {
     it('isActive is true when session exists and not completed', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       expect(store.isActive).toBe(true)
     })
@@ -434,7 +529,7 @@ describe('useCalibrationStore', () => {
     it('isComplete is true when session is completed', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
       store.advanceStep()
       store.advanceStep()
       store.advanceStep()
@@ -446,7 +541,7 @@ describe('useCalibrationStore', () => {
     it('totalSteps returns correct count', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       expect(store.totalSteps).toBe(4)
     })
@@ -454,7 +549,7 @@ describe('useCalibrationStore', () => {
     it('currentStepNumber is 1-indexed', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       expect(store.currentStepNumber).toBe(1)
       store.advanceStep()
@@ -464,7 +559,7 @@ describe('useCalibrationStore', () => {
     it('progressPercent calculates correctly', () => {
       initMatrixStore()
       const store = useCalibrationStore()
-      store.startCalibration(5)
+      store.startCalibration(5, ALL_CLUBS, ALL_COLS)
 
       expect(store.progressPercent).toBe(0)
       store.advanceStep()
@@ -483,6 +578,52 @@ describe('useCalibrationStore', () => {
 
       expect(oldValues[0]![0]!.carry_value).toBe(100)
       expect(oldValues[0]![0]!.total_value).toBe(110)
+    })
+  })
+
+  describe('getFilteredOldValues', () => {
+    it('returns only selected club/column values', () => {
+      initMatrixStore()
+      const store = useCalibrationStore()
+      store.startCalibration(5, [1], [0])
+
+      const filtered = store.getFilteredOldValues()
+
+      expect(filtered).toHaveLength(1)
+      expect(filtered[0]).toHaveLength(1)
+      expect(filtered[0]![0]!.carry_value).toBe(60)
+      expect(filtered[0]![0]!.total_value).toBe(70)
+    })
+
+    it('returns empty array when no session', () => {
+      initMatrixStore()
+      const store = useCalibrationStore()
+
+      expect(store.getFilteredOldValues()).toEqual([])
+    })
+  })
+
+  describe('getFilteredNewValues', () => {
+    it('returns filtered averages for selected clubs/columns', () => {
+      initMatrixStore()
+      const store = useCalibrationStore()
+      store.startCalibration(5, [0], [0])
+
+      store.setShotValue(0, 'carry_value', '100')
+      store.setShotValue(1, 'carry_value', '110')
+
+      const filtered = store.getFilteredNewValues()
+
+      expect(filtered).toHaveLength(1)
+      expect(filtered[0]).toHaveLength(1)
+      expect(filtered[0]![0]!.carry_value).toBe(105)
+    })
+
+    it('returns empty array when no session', () => {
+      initMatrixStore()
+      const store = useCalibrationStore()
+
+      expect(store.getFilteredNewValues()).toEqual([])
     })
   })
 })

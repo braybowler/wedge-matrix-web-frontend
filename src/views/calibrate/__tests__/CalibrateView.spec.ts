@@ -47,6 +47,16 @@ const router = createRouter({
   ],
 })
 
+async function navigateThroughSetup(wrapper: ReturnType<typeof mount>) {
+  // Step 1: Club selection — click Next (all selected by default)
+  await wrapper.find('[data-test-id="club-next-button"]').trigger('click')
+  await flushPromises()
+
+  // Step 2: Swing type selection — click Next (all selected by default)
+  await wrapper.find('[data-test-id="swing-next-button"]').trigger('click')
+  await flushPromises()
+}
+
 describe('CalibrateView', () => {
   beforeEach(async () => {
     vi.restoreAllMocks()
@@ -58,8 +68,28 @@ describe('CalibrateView', () => {
     await router.isReady()
   })
 
-  it('renders ShotCountSelector when no session exists', () => {
+  it('renders CalibrationClubSelector as first setup phase', () => {
     const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
+
+    expect(wrapper.find('[data-test-id="club-select-all"]').exists()).toBe(true)
+    expect(wrapper.find('[data-test-id="club-select-0"]').exists()).toBe(true)
+    expect(wrapper.find('[data-test-id="club-select-1"]').exists()).toBe(true)
+  })
+
+  it('advances to swing type selector after club selection', async () => {
+    const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
+
+    await wrapper.find('[data-test-id="club-next-button"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('[data-test-id="swing-select-all"]').exists()).toBe(true)
+    expect(wrapper.find('[data-test-id="swing-select-0"]').exists()).toBe(true)
+  })
+
+  it('advances to shot count selector after swing type selection', async () => {
+    const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
+
+    await navigateThroughSetup(wrapper)
 
     expect(wrapper.find('[data-test-id="shot-count-5"]').exists()).toBe(true)
     expect(wrapper.find('[data-test-id="shot-count-10"]').exists()).toBe(true)
@@ -69,6 +99,7 @@ describe('CalibrateView', () => {
   it('starts calibration when shot count is selected', async () => {
     const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
 
+    await navigateThroughSetup(wrapper)
     await wrapper.find('[data-test-id="shot-count-5"]').trigger('click')
     await flushPromises()
 
@@ -79,6 +110,7 @@ describe('CalibrateView', () => {
   it('shows progress and shot entry during active session', async () => {
     const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
 
+    await navigateThroughSetup(wrapper)
     await wrapper.find('[data-test-id="shot-count-5"]').trigger('click')
     await flushPromises()
 
@@ -89,6 +121,7 @@ describe('CalibrateView', () => {
   it('shows review screen when calibration is completed', async () => {
     const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
 
+    await navigateThroughSetup(wrapper)
     await wrapper.find('[data-test-id="shot-count-5"]').trigger('click')
     await flushPromises()
 
@@ -99,5 +132,28 @@ describe('CalibrateView', () => {
     }
 
     expect(wrapper.find('[data-test-id="calibration-review"]').exists()).toBe(true)
+  })
+
+  it('back button on swing type selector returns to club selector', async () => {
+    const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
+
+    await wrapper.find('[data-test-id="club-next-button"]').trigger('click')
+    await flushPromises()
+
+    await wrapper.find('[data-test-id="swing-back-button"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('[data-test-id="club-select-all"]').exists()).toBe(true)
+  })
+
+  it('back button on shot count selector returns to swing type selector', async () => {
+    const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
+
+    await navigateThroughSetup(wrapper)
+
+    await wrapper.find('[data-test-id="shot-count-back-button"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('[data-test-id="swing-select-all"]').exists()).toBe(true)
   })
 })

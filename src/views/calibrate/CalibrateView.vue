@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { useCalibrationStore } from '@/stores/calibration/calibrationStore.ts'
 import { storeToRefs } from 'pinia'
+import CalibrationClubSelector from '@/components/calibrate/CalibrationClubSelector.vue'
+import CalibrationSwingTypeSelector from '@/components/calibrate/CalibrationSwingTypeSelector.vue'
 import ShotCountSelector from '@/components/calibrate/ShotCountSelector.vue'
 import ShotEntryStep from '@/components/calibrate/ShotEntryStep.vue'
 import CalibrationProgress from '@/components/calibrate/CalibrationProgress.vue'
@@ -33,8 +35,27 @@ const {
   displayLabels,
 } = storeToRefs(matrixConfigurationStore)
 
+type SetupPhase = 'clubs' | 'swingTypes' | 'shotCount'
+const setupPhase = ref<SetupPhase>('clubs')
+const selectedClubIndices = ref<number[]>([])
+const selectedColumnIndices = ref<number[]>([])
+
+function handleClubsSelected(indices: number[]) {
+  selectedClubIndices.value = indices
+  setupPhase.value = 'swingTypes'
+}
+
+function handleSwingTypesSelected(indices: number[]) {
+  selectedColumnIndices.value = indices
+  setupPhase.value = 'shotCount'
+}
+
 function handleSelectShotCount(shotCount: ShotCount) {
-  calibrationStore.startCalibration(shotCount)
+  calibrationStore.startCalibration(
+    shotCount,
+    selectedClubIndices.value,
+    selectedColumnIndices.value,
+  )
 }
 
 function handleUpdateShot(
@@ -60,10 +81,31 @@ function handleCancel() {
 <template>
   <main class="calibrate-wrapper">
     <div class="calibrate-container">
-      <!-- Phase 1: No session — select shot count -->
-      <ShotCountSelector v-if="!session" @select="handleSelectShotCount" />
+      <!-- Setup phases (no session yet) -->
+      <template v-if="!session">
+        <CalibrationClubSelector
+          v-if="setupPhase === 'clubs'"
+          :clubs="selectedClubs"
+          :display-labels="displayLabels"
+          @select="handleClubsSelected"
+        />
 
-      <!-- Phase 2: Active session — shot entry -->
+        <CalibrationSwingTypeSelector
+          v-else-if="setupPhase === 'swingTypes'"
+          :column-headers="matrixColumnHeaders"
+          :columns="matrixColumns"
+          @select="handleSwingTypesSelected"
+          @back="setupPhase = 'clubs'"
+        />
+
+        <ShotCountSelector
+          v-else-if="setupPhase === 'shotCount'"
+          @select="handleSelectShotCount"
+          @back="setupPhase = 'swingTypes'"
+        />
+      </template>
+
+      <!-- Active session — shot entry -->
       <template v-else-if="isActive && currentStep">
         <CalibrationProgress
           :current-step="currentStepNumber"
@@ -88,16 +130,16 @@ function handleCancel() {
         />
       </template>
 
-      <!-- Phase 3: Completed — review -->
+      <!-- Completed — review (filtered to selected clubs/columns) -->
       <CalibrationReview
-        v-else-if="isComplete"
-        :old-values="calibrationStore.getOldValues()"
-        :new-values="calibrationStore.computeAverages()"
-        :clubs="selectedClubs"
-        :column-headers="matrixColumnHeaders"
-        :columns="matrixColumns"
+        v-else-if="isComplete && session"
+        :old-values="calibrationStore.getFilteredOldValues()"
+        :new-values="calibrationStore.getFilteredNewValues()"
+        :clubs="session.selectedClubIndices.map((i) => selectedClubs[i]!)"
+        :column-headers="session.selectedColumnIndices.map((i) => matrixColumnHeaders[i] ?? '')"
+        :columns="session.selectedColumnIndices.length"
         :display-option="selectedRowDisplayOption"
-        :display-labels="displayLabels"
+        :display-labels="session.selectedClubIndices.map((i) => displayLabels[i] ?? '')"
         @apply="handleApply"
         @cancel="handleCancel"
       />
