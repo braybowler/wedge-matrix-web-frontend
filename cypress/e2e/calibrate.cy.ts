@@ -71,7 +71,7 @@ describe('Calibrate Flow', () => {
   })
 
   it('navigates to calibrate page from sidebar', () => {
-    cy.get('a[href="/calibrate"]:visible').click()
+    cy.get('.desktop-sidebar a[href="/calibrate"]').should('be.visible').click()
     cy.url().should('include', '/calibrate')
     cy.get('[data-test-id="club-select-all"]').should('be.visible')
   })

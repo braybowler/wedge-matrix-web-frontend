@@ -69,6 +69,7 @@ function handleUpdateShot(
 async function handleApply() {
   calibrationStore.applyCalibration()
   await matrixConfigurationStore.synchronizeValues()
+  if (matrixConfigurationStore.syncError) return
   router.push({ name: 'matrix' })
 }
 
