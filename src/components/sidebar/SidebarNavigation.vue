@@ -24,6 +24,7 @@ const handleLogout = async () => {
       <RouterLink active-class="active-link" class="link" to="/calibrate">Calibrate</RouterLink>
 
       <span class="nav-category">Practice</span>
+      <RouterLink active-class="active-link" class="link" to="/practice">Practice</RouterLink>
     </nav>
     <div class="logout-container">
       <div class="tooltip-wrapper">

@@ -43,6 +43,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/practice',
+      name: 'practice',
+      component: () => import('../views/practice/PracticeView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: { name: 'landing' },
     },

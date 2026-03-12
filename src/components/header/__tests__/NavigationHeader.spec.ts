@@ -9,6 +9,7 @@ const router = createRouter({
     { path: '/matrix', name: 'matrix', component: { template: '<div />' } },
     { path: '/configure', name: 'configure', component: { template: '<div />' } },
     { path: '/calibrate', name: 'calibrate', component: { template: '<div />' } },
+    { path: '/practice', name: 'practice', component: { template: '<div />' } },
   ],
 })
 
@@ -57,6 +58,7 @@ describe('NavigationHeader Component', () => {
       expect(wrapper.find('a[href="/matrix"]').text()).toBe('Wedge Matrix')
       expect(wrapper.find('a[href="/configure"]').text()).toBe('Configure')
       expect(wrapper.find('a[href="/calibrate"]').text()).toBe('Calibrate')
+      expect(wrapper.find('a[href="/practice"]').text()).toBe('Practice')
     })
 
     it('displays category headings in open drawer', async () => {
