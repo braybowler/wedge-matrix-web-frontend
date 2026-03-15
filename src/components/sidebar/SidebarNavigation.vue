@@ -25,6 +25,22 @@ const handleLogout = async () => {
 
       <span class="nav-category">Practice</span>
       <RouterLink active-class="active-link" class="link" to="/practice">Practice</RouterLink>
+
+      <span class="nav-category">Socials</span>
+      <a
+        href="https://x.com/wedgematrixbray"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link social-link"
+        data-test-id="social-x-link"
+        aria-label="Follow on X"
+      >
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path
+            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+          />
+        </svg>
+      </a>
     </nav>
     <div class="logout-container">
       <div class="tooltip-wrapper">
@@ -170,6 +186,17 @@ const handleLogout = async () => {
   border-color: #818cf8;
   transform: translateY(-1px);
 }
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+}
+
+.social-icon {
+  width: 18px;
+  height: 18px;
+}
+
 .tooltip-left {
   left: 0;
   transform: none;

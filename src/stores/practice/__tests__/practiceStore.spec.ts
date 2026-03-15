@@ -440,6 +440,7 @@ describe('usePracticeStore', () => {
           id: 1,
           user_id: 1,
           wedge_matrix_id: 10,
+          mode: 'gauntlet',
           shot_count: 5,
           shots: [],
           average_difference: 3,

@@ -26,6 +26,11 @@ function differenceClass(diff: number | null): string {
   if (diff <= 8) return 'diff-ok'
   return 'diff-poor'
 }
+
+function modeLabel(mode: string): string {
+  if (mode === 'drill') return 'Drill'
+  return 'Gauntlet'
+}
 </script>
 
 <template>
@@ -33,8 +38,11 @@ function differenceClass(diff: number | null): string {
     <div class="log-summary" @click="expanded = !expanded">
       <div class="log-info">
         <span class="log-date">{{ formatDate(session.created_at) }}</span>
+        <span class="mode-badge" :class="'mode-' + session.mode" data-test-id="log-mode-badge">
+          {{ modeLabel(session.mode) }}
+        </span>
         <span class="log-detail">{{ session.shot_count }} shots</span>
-        <span class="log-detail">Avg: {{ session.average_difference }} yds</span>
+        <span class="log-detail">Avg. Dispersion: {{ session.average_difference }} yds</span>
       </div>
       <span class="expand-icon">{{ expanded ? '▾' : '▸' }}</span>
     </div>
@@ -44,14 +52,18 @@ function differenceClass(diff: number | null): string {
         <thead>
           <tr>
             <th class="cell header-cell">#</th>
+            <th v-if="session.mode === 'drill'" class="cell header-cell">Combo</th>
             <th class="cell header-cell">Target</th>
             <th class="cell header-cell">Actual</th>
-            <th class="cell header-cell">Diff</th>
+            <th class="cell header-cell">Dispersion</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="shot in session.shots" :key="shot.shot_number">
             <td class="cell shot-number-cell">{{ shot.shot_number }}</td>
+            <td v-if="session.mode === 'drill'" class="cell combo-cell">
+              {{ shot.club_label ?? '' }}{{ shot.swing_label ? ' @ ' + shot.swing_label : '' }}
+            </td>
             <td class="cell">{{ shot.target_yards }}</td>
             <td class="cell">{{ shot.actual_carry ?? '-' }}</td>
             <td class="cell" :class="differenceClass(shot.difference)">
@@ -107,6 +119,25 @@ function differenceClass(diff: number | null): string {
   font-weight: 600;
 }
 
+.mode-badge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.mode-gauntlet {
+  background-color: rgba(129, 140, 248, 0.15);
+  color: #818cf8;
+}
+
+.mode-drill {
+  background-color: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+}
+
 .log-detail {
   color: #9ca3af;
   font-size: 13px;
@@ -141,6 +172,11 @@ function differenceClass(diff: number | null): string {
 
 .shot-number-cell {
   color: #6b7280;
+}
+
+.combo-cell {
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .diff-good {

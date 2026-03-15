@@ -55,6 +55,7 @@ const loginAndSetup = () => {
         id: 42,
         user_id: 1,
         wedge_matrix_id: 1,
+        mode: 'gauntlet',
         shot_count: 5,
         shots: [],
         average_difference: 3.5,
@@ -77,6 +78,12 @@ const loginAndSetup = () => {
   cy.url().should('include', '/matrix')
 }
 
+const startGauntletSession = () => {
+  cy.get('[data-test-id="new-practice-session-button"]').click()
+  cy.get('[data-test-id="mode-gauntlet"]').click()
+  cy.get('[data-test-id="practice-shot-count-5"]').click()
+}
+
 describe('Practice Flow', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -90,24 +97,34 @@ describe('Practice Flow', () => {
     cy.get('[data-test-id="new-practice-session-button"]').should('be.visible')
   })
 
-  it('shows shot count selector when New Session is clicked', () => {
+  it('shows mode selector when New Session is clicked', () => {
     cy.visit('/practice')
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
     cy.get('[data-test-id="new-practice-session-button"]').click()
+    cy.get('[data-test-id="mode-gauntlet"]').should('be.visible')
+    cy.get('[data-test-id="mode-drill"]').should('be.visible')
+  })
+
+  it('shows shot count selector after selecting gauntlet mode', () => {
+    cy.visit('/practice')
+    cy.wait('@userRequest')
+    cy.wait('@getPracticeSessions')
+
+    cy.get('[data-test-id="new-practice-session-button"]').click()
+    cy.get('[data-test-id="mode-gauntlet"]').click()
     cy.get('[data-test-id="practice-shot-count-5"]').should('be.visible')
     cy.get('[data-test-id="practice-shot-count-10"]').should('be.visible')
     cy.get('[data-test-id="practice-shot-count-15"]').should('be.visible')
   })
 
-  it('starts practice session and shows first shot', () => {
+  it('starts gauntlet session and shows first shot', () => {
     cy.visit('/practice')
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
-    cy.get('[data-test-id="new-practice-session-button"]').click()
-    cy.get('[data-test-id="practice-shot-count-5"]').click()
+    startGauntletSession()
 
     cy.get('[data-test-id="practice-progress-label"]').should('contain.text', 'Shot 1 of 5')
     cy.get('[data-test-id="practice-target-label"]').should('contain.text', 'Hit to')
@@ -118,8 +135,7 @@ describe('Practice Flow', () => {
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
-    cy.get('[data-test-id="new-practice-session-button"]').click()
-    cy.get('[data-test-id="practice-shot-count-5"]').click()
+    startGauntletSession()
 
     for (let i = 0; i < 5; i++) {
       cy.get('[data-test-id="practice-carry-input"]').clear().type(String(50 + i))
@@ -135,8 +151,7 @@ describe('Practice Flow', () => {
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
-    cy.get('[data-test-id="new-practice-session-button"]').click()
-    cy.get('[data-test-id="practice-shot-count-5"]').click()
+    startGauntletSession()
 
     for (let i = 0; i < 5; i++) {
       cy.get('[data-test-id="practice-carry-input"]').clear().type(String(50 + i))
@@ -155,8 +170,7 @@ describe('Practice Flow', () => {
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
-    cy.get('[data-test-id="new-practice-session-button"]').click()
-    cy.get('[data-test-id="practice-shot-count-5"]').click()
+    startGauntletSession()
 
     cy.get('[data-test-id="practice-back-button"]').should('not.exist')
 
@@ -169,8 +183,7 @@ describe('Practice Flow', () => {
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
-    cy.get('[data-test-id="new-practice-session-button"]').click()
-    cy.get('[data-test-id="practice-shot-count-5"]').click()
+    startGauntletSession()
 
     cy.get('[data-test-id="practice-next-button"]').click()
     cy.get('[data-test-id="practice-progress-label"]').should('contain.text', 'Shot 2 of 5')
@@ -184,8 +197,7 @@ describe('Practice Flow', () => {
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
-    cy.get('[data-test-id="new-practice-session-button"]').click()
-    cy.get('[data-test-id="practice-shot-count-5"]').click()
+    startGauntletSession()
 
     cy.get('[data-test-id="quit-practice-button"]').click()
     cy.get('[data-test-id="confirm-button"]').click()
@@ -198,8 +210,7 @@ describe('Practice Flow', () => {
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
-    cy.get('[data-test-id="new-practice-session-button"]').click()
-    cy.get('[data-test-id="practice-shot-count-5"]').click()
+    startGauntletSession()
 
     for (let i = 0; i < 5; i++) {
       cy.get('[data-test-id="practice-carry-input"]').clear().type(String(50 + i))
@@ -216,8 +227,7 @@ describe('Practice Flow', () => {
     cy.wait('@userRequest')
     cy.wait('@getPracticeSessions')
 
-    cy.get('[data-test-id="new-practice-session-button"]').click()
-    cy.get('[data-test-id="practice-shot-count-5"]').click()
+    startGauntletSession()
 
     cy.get('[data-test-id="practice-next-button"]').click()
     cy.get('[data-test-id="practice-progress-label"]').should('contain.text', 'Shot 2 of 5')
@@ -251,6 +261,7 @@ describe('Practice Flow', () => {
             id: 1,
             user_id: 1,
             wedge_matrix_id: 1,
+            mode: 'gauntlet',
             shot_count: 5,
             shots: [
               { shot_number: 1, target_yards: 50, actual_carry: 48, difference: 2 },
@@ -267,5 +278,63 @@ describe('Practice Flow', () => {
     cy.wait('@getPracticeSessionsWithData')
 
     cy.get('[data-test-id="practice-log-item"]').should('exist')
+  })
+
+  it('shows combo selector after selecting drill mode', () => {
+    cy.visit('/practice')
+    cy.wait('@userRequest')
+    cy.wait('@getPracticeSessions')
+
+    cy.get('[data-test-id="new-practice-session-button"]').click()
+    cy.get('[data-test-id="mode-drill"]').click()
+
+    cy.get('[data-test-id="combo-select-all"]').should('be.visible')
+    cy.get('[data-test-id="combo-select-0"]').should('be.visible')
+  })
+
+  it('runs drill session through all combos to review', () => {
+    cy.intercept('POST', '**/practice-session', {
+      statusCode: 201,
+      body: {
+        data: {
+          id: 43,
+          user_id: 1,
+          wedge_matrix_id: 1,
+          mode: 'drill',
+          shot_count: 5,
+          shots: [],
+          average_difference: 4.2,
+          created_at: '2026-03-12T10:00:00Z',
+        },
+      },
+    }).as('postDrillSession')
+
+    cy.visit('/practice')
+    cy.wait('@userRequest')
+    cy.wait('@getPracticeSessions')
+
+    cy.get('[data-test-id="new-practice-session-button"]').click()
+    cy.get('[data-test-id="mode-drill"]').click()
+
+    // Select only the first combo
+    cy.get('[data-test-id="combo-select-all"]').click()
+    cy.get('[data-test-id="combo-next-button"]').click()
+
+    // Enter 5 carries for the single combo
+    cy.get('[data-test-id="drill-step-header"]').should('be.visible')
+    for (let i = 0; i < 5; i++) {
+      cy.get(`[data-test-id="drill-carry-input-${i}"]`).type(String(95 + i))
+    }
+    cy.get('[data-test-id="drill-next-button"]').click()
+
+    // Should be at review
+    cy.get('[data-test-id="drill-review"]').should('be.visible')
+    cy.get('[data-test-id="drill-avg-diff"]').should('be.visible')
+
+    // Save
+    cy.get('[data-test-id="save-drill-button"]').click()
+    cy.wait('@postDrillSession')
+
+    cy.get('[data-test-id="new-practice-session-button"]').should('be.visible')
   })
 })

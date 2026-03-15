@@ -8,6 +8,7 @@ describe('PracticeLog Component', () => {
     id: 1,
     user_id: 1,
     wedge_matrix_id: 10,
+    mode: 'gauntlet',
     shot_count: 5,
     shots: [{ shot_number: 1, target_yards: 50, actual_carry: 48, difference: 2 }],
     average_difference: 2,
