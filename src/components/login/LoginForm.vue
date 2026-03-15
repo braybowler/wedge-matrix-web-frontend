@@ -126,6 +126,16 @@ const initializeStoreValues = (user: User, accessToken: string) => {
       >
         Login
       </button>
+
+      <p class="section-text">
+        <RouterLink
+          to="/forgot-password"
+          class="forgot-password-link"
+          data-test-id="forgot-password-link"
+        >
+          Forgot your password?
+        </RouterLink>
+      </p>
     </section>
 
     <p class="section-text">
@@ -228,6 +238,16 @@ input:focus {
 }
 
 .login-link:hover {
+  text-decoration: underline;
+  color: #818cf8;
+  text-decoration-color: #818cf8;
+}
+
+.forgot-password-link {
+  text-decoration: underline;
+}
+
+.forgot-password-link:hover {
   text-decoration: underline;
   color: #818cf8;
   text-decoration-color: #818cf8;

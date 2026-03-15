@@ -1,7 +1,13 @@
 import { createRouter, createWebHistory, type RouteRecordNameGeneric } from 'vue-router'
 import { useUserStore } from '@/stores/user/userStore.ts'
 
-export const publicRoutes: Array<RouteRecordNameGeneric> = ['landing', 'login', 'register']
+export const publicRoutes: Array<RouteRecordNameGeneric> = [
+  'landing',
+  'login',
+  'register',
+  'forgot-password',
+  'reset-password',
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +28,18 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: () => import('../views/register/RegisterView.vue'),
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/forgot-password/ForgotPasswordView.vue'),
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('../views/reset-password/ResetPasswordView.vue'),
       meta: { requiresAuth: false },
     },
     {
@@ -74,11 +92,7 @@ export const routerGuard: Parameters<typeof router.beforeEach>[0] = async (to, f
   // Standard auth check
   if (to.meta.requiresAuth && !userStore.user) {
     next({ name: 'login' })
-  } else if (
-    !to.meta.requiresAuth &&
-    userStore.user &&
-    (to.name === 'landing' || to.name === 'login' || to.name === 'register')
-  ) {
+  } else if (!to.meta.requiresAuth && userStore.user && publicRoutes.includes(to.name)) {
     // If logged in and trying to access login/register, redirect to matrix
     next({ name: 'matrix' })
   } else {
