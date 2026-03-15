@@ -43,6 +43,13 @@ import { RouterLink } from 'vue-router'
           data refine your distances.
         </p>
       </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Practice Sessions</h3>
+        <p class="feature-description">
+          Test your short game with Gauntlet mode for random targets or Drill mode to sharpen
+          specific club and swing combos. Track your dispersion over time.
+        </p>
+      </div>
     </section>
 
     <section class="bottom-cta">
@@ -164,7 +171,7 @@ import { RouterLink } from 'vue-router'
   }
 
   .features {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 </style>

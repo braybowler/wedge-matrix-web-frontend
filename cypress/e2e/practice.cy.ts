@@ -316,8 +316,9 @@ describe('Practice Flow', () => {
     cy.get('[data-test-id="new-practice-session-button"]').click()
     cy.get('[data-test-id="mode-drill"]').click()
 
-    // Select only the first combo
+    // Deselect all, then select only the first combo
     cy.get('[data-test-id="combo-select-all"]').click()
+    cy.get('[data-test-id="combo-select-0"]').click()
     cy.get('[data-test-id="combo-next-button"]').click()
 
     // Enter 5 carries for the single combo
