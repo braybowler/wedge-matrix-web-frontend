@@ -67,7 +67,7 @@ describe('NavigationHeader Component', () => {
       await wrapper.find('[data-test-id="hamburger-button"]').trigger('click')
 
       const categories = wrapper.findAll('.nav-category').map((c) => c.text())
-      expect(categories).toEqual(['Matrix', 'Practice'])
+      expect(categories).toEqual(['Matrix', 'Practice', 'Socials'])
     })
 
     it('closes drawer when close button is clicked', async () => {
