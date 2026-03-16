@@ -1,5 +1,7 @@
 <script setup lang="ts">
-withDefaults(
+import { ref, watch, nextTick } from 'vue'
+
+const props = withDefaults(
   defineProps<{
     visible: boolean
     message: string
@@ -18,13 +20,25 @@ const emit = defineEmits<{
   dismiss: []
   back: []
 }>()
+
+const anchorRef = ref<HTMLElement | null>(null)
+
+watch(
+  () => props.visible,
+  async (isVisible) => {
+    if (isVisible) {
+      await nextTick()
+      anchorRef.value?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
+    }
+  },
+)
 </script>
 
 <template>
   <Teleport to="body">
     <div v-if="visible" class="tutorial-backdrop" @click="emit('dismiss')" />
   </Teleport>
-  <div class="tutorial-anchor" :class="{ active: visible }">
+  <div ref="anchorRef" class="tutorial-anchor" :class="{ active: visible }">
     <slot />
     <div v-if="visible" class="tutorial-tooltip" :class="'tutorial-tooltip-' + tooltipPosition">
       <p class="tutorial-tooltip-message">{{ message }}</p>

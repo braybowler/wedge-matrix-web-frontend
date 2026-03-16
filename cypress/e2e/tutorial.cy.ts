@@ -104,19 +104,26 @@ describe('Tutorial Flow', () => {
       cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
-      // Step 2: Swing percentage column selector
-      cy.contains('Select the number of shots you have, or would like to have, with each wedge.').should('be.visible')
+      // Step 2: Club label display
+      cy.contains('Choose how club labels appear on your matrix').should('be.visible')
       cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
-      // Step 3: Column header label input (with swing feel system)
+      // Step 3: Swing percentage column selector
+      cy.contains(
+        'Select the number of shots you have, or would like to have, with each wedge.',
+      ).should('be.visible')
+      cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
+      cy.get('[data-test-id="tutorial-got-it-button"]').click()
+
+      // Step 4: Column header label input (with swing feel system)
       cy.contains('Choose between the Percentage system for swing effort levels').should(
         'be.visible',
       )
       cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
-      // Step 4: Row display option selector
+      // Step 5: Row display option selector
       cy.contains('Choose whether to track carry distance, total distance, or both.').should(
         'be.visible',
       )
@@ -129,12 +136,12 @@ describe('Tutorial Flow', () => {
       // Should navigate back to matrix page
       cy.url().should('include', '/matrix')
 
-      // Step 5: Multi-matrix support
+      // Step 6: Multi-matrix support
       cy.contains('Create multiple matrices to track different setups').should('be.visible')
       cy.get('[data-test-id="tutorial-got-it-button"]').should('contain.text', 'Next')
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
-      // Step 6: Matrix highlight
+      // Step 7: Matrix highlight
       cy.contains(
         'Enter your yardage values to build your personalized distance chart.',
       ).should('be.visible')
@@ -169,8 +176,8 @@ describe('Tutorial Flow', () => {
       cy.contains('Start by selecting the wedges in your bag.').should('be.visible')
       cy.get('[data-test-id="tutorial-got-it-button"]').click()
 
-      // Step 2
-      cy.contains('Select the number of shots you have, or would like to have, with each wedge.').should('be.visible')
+      // Step 2: Club label display
+      cy.contains('Choose how club labels appear on your matrix').should('be.visible')
       cy.get('[data-test-id="tutorial-back-button"]').should('be.visible')
       cy.get('[data-test-id="tutorial-back-button"]').click()
 

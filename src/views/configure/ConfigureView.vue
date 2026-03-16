@@ -18,9 +18,10 @@ const tutorialStore = useTutorialStore()
 const { syncError } = storeToRefs(matrixConfigurationStore)
 
 const showClubHighlight = computed(() => tutorialStore.tutorialStep === 1)
-const showSwingHighlight = computed(() => tutorialStore.tutorialStep === 2)
-const showLabelHighlight = computed(() => tutorialStore.tutorialStep === 3)
-const showRowDisplayHighlight = computed(() => tutorialStore.tutorialStep === 4)
+const showClubDisplayHighlight = computed(() => tutorialStore.tutorialStep === 2)
+const showSwingHighlight = computed(() => tutorialStore.tutorialStep === 3)
+const showLabelHighlight = computed(() => tutorialStore.tutorialStep === 4)
+const showRowDisplayHighlight = computed(() => tutorialStore.tutorialStep === 5)
 
 function advanceStep() {
   tutorialStore.nextStep()
@@ -52,7 +53,16 @@ onBeforeUnmount(async () => {
         >
           <ClubSelector />
         </TutorialHighlight>
-        <ClubDisplaySettings />
+        <TutorialHighlight
+          :visible="showClubDisplayHighlight"
+          message="Choose how club labels appear on your matrix — by club name or by loft degree."
+          button-label="Next"
+          show-back
+          @dismiss="advanceStep"
+          @back="tutorialStore.previousStep()"
+        >
+          <ClubDisplaySettings />
+        </TutorialHighlight>
       </div>
       <div class="settings-group">
         <TutorialHighlight
@@ -69,6 +79,7 @@ onBeforeUnmount(async () => {
           :visible="showLabelHighlight"
           message="Choose between the Percentage system for swing effort levels (25%–100%) or the Clock system for backswing positions (7:00–12:00), then set your column labels."
           button-label="Next"
+          tooltip-position="above"
           show-back
           @dismiss="advanceStep"
           @back="tutorialStore.previousStep()"

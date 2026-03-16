@@ -47,8 +47,8 @@ const emit = defineEmits<{
 }>()
 
 const tutorialStore = useTutorialStore()
-const showMultiMatrixHighlight = computed(() => tutorialStore.tutorialStep === 5)
-const showMatrixHighlight = computed(() => tutorialStore.tutorialStep === 6)
+const showMultiMatrixHighlight = computed(() => tutorialStore.tutorialStep === 6)
+const showMatrixHighlight = computed(() => tutorialStore.tutorialStep === 7)
 
 function handleStepFiveBack() {
   tutorialStore.previousStep()

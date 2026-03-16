@@ -106,7 +106,7 @@ describe('ConfigureView', () => {
       await router.isReady()
 
       const tutorialStore = useTutorialStore()
-      tutorialStore.tutorialStep = 4
+      tutorialStore.tutorialStep = 5
 
       const wrapper = mount(ConfigureView, { global: { plugins: [router] } })
 
