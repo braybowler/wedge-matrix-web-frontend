@@ -123,12 +123,13 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
   }
 
   async function renameMatrix(matrixId: number, label: string): Promise<boolean> {
+    const cols = matrixColumns.value
     const response = await put('/wedge-matrix/' + matrixId, {
       label,
-      number_of_columns: matrixColumns.value,
-      column_headers: matrixColumnHeaders.value,
+      number_of_columns: cols,
+      column_headers: matrixColumnHeaders.value.slice(0, cols),
       selected_row_display_option: selectedRowDisplayOption.value,
-      yardage_values: yardageValues.value,
+      yardage_values: yardageValues.value.map((row) => row.slice(0, cols)),
       club_labels: selectedClubs.value,
       club_lofts: clubLofts.value,
       club_label_display_mode: clubLabelDisplayMode.value,
@@ -148,11 +149,12 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
     isSyncing = true
     syncError.value = null
     try {
+      const cols = matrixColumns.value
       const response = await put('/wedge-matrix/' + selectedMatrixId.value, {
-        number_of_columns: matrixColumns.value,
-        column_headers: matrixColumnHeaders.value,
+        number_of_columns: cols,
+        column_headers: matrixColumnHeaders.value.slice(0, cols),
         selected_row_display_option: selectedRowDisplayOption.value,
-        yardage_values: yardageValues.value,
+        yardage_values: yardageValues.value.map((row) => row.slice(0, cols)),
         club_labels: selectedClubs.value,
         club_lofts: clubLofts.value,
         club_label_display_mode: clubLabelDisplayMode.value,
@@ -163,10 +165,12 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
       } else {
         requiresSync.value = false
         useUserStore().updateWedgeMatrix(selectedMatrixId.value!, {
-          number_of_columns: matrixColumns.value,
-          column_headers: [...matrixColumnHeaders.value],
+          number_of_columns: cols,
+          column_headers: matrixColumnHeaders.value.slice(0, cols),
           selected_row_display_option: selectedRowDisplayOption.value,
-          yardage_values: yardageValues.value.map((row) => row.map((cell) => ({ ...cell }))),
+          yardage_values: yardageValues.value.map((row) =>
+            row.slice(0, cols).map((cell) => ({ ...cell })),
+          ),
           club_labels: [...selectedClubs.value],
           club_lofts: [...clubLofts.value],
           club_label_display_mode: clubLabelDisplayMode.value,

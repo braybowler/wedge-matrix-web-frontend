@@ -426,6 +426,33 @@ describe('useMatrixConfigurationStore', () => {
       expect(store.requiresSync).toBe(false)
     })
 
+    it('truncates column_headers and yardage_values to matrixColumns length', async () => {
+      putMock.mockResolvedValue({ data: {}, status: 200 })
+      const store = useMatrixConfigurationStore()
+      store.initializeMatrixValues([
+        buildMatrix({
+          number_of_columns: 4,
+          column_headers: ['25%', '50%', '75%', '100%'],
+          yardage_values: [
+            [
+              { carry_value: 20, total_value: 25 },
+              { carry_value: 40, total_value: 50 },
+              { carry_value: 60, total_value: 75 },
+              { carry_value: 80, total_value: 100 },
+            ],
+          ],
+        }),
+      ])
+      store.setNumberOfMatrixColumns(3)
+
+      await store.synchronizeValues()
+
+      const payload = putMock.mock.calls[0]![1]
+      expect(payload.column_headers).toEqual(['25%', '50%', '75%'])
+      expect(payload.yardage_values[0]).toHaveLength(3)
+      expect(payload.number_of_columns).toBe(3)
+    })
+
     it('does nothing when requiresSync is false', async () => {
       const store = useMatrixConfigurationStore()
       store.requiresSync = false
