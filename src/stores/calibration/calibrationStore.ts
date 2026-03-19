@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { MAX_YARDAGE, type YardageGrid } from '@/types/matrix'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
+import { useSessionStorage } from '@/composables/sessionStorage/useSessionStorage.ts'
+import { deepCopyYardageGrid } from '@/utils/deepCopyYardageGrid.ts'
 
 export type ShotCount = 5 | 10 | 15
 
@@ -29,6 +31,27 @@ export type CalibrationSession = {
 const STORAGE_KEY = 'wedge_matrix_calibration_session'
 
 export const useCalibrationStore = defineStore('calibration', () => {
+  const storage = useSessionStorage<CalibrationSession>(STORAGE_KEY, (parsed) => {
+    if (
+      !Array.isArray(parsed.selectedClubIndices) ||
+      !Array.isArray(parsed.selectedColumnIndices)
+    ) {
+      return false
+    }
+
+    const matrixStore = useMatrixConfigurationStore()
+    const clubsInBounds = parsed.selectedClubIndices.every(
+      (i) => i >= 0 && i < matrixStore.selectedClubs.length,
+    )
+    const colsInBounds = parsed.selectedColumnIndices.every(
+      (i) => i >= 0 && i < matrixStore.matrixColumns,
+    )
+    if (!clubsInBounds || !colsInBounds) return false
+
+    const expectedSteps = parsed.selectedClubIndices.length * parsed.selectedColumnIndices.length
+    return parsed.steps.length === expectedSteps
+  })
+
   const session = ref<CalibrationSession | null>(null)
 
   const isActive = computed(() => session.value !== null && !session.value.completed)
@@ -45,7 +68,7 @@ export const useCalibrationStore = defineStore('calibration', () => {
 
   function persist() {
     if (session.value) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(session.value))
+      storage.persist(session.value)
     }
   }
 
@@ -153,7 +176,7 @@ export const useCalibrationStore = defineStore('calibration', () => {
 
   function getOldValues(): YardageGrid {
     const matrixStore = useMatrixConfigurationStore()
-    return matrixStore.yardageValues.map((row) => row.map((cell) => ({ ...cell })))
+    return deepCopyYardageGrid(matrixStore.yardageValues)
   }
 
   function getFilteredOldValues(): YardageGrid {
@@ -208,51 +231,11 @@ export const useCalibrationStore = defineStore('calibration', () => {
 
   function clearSession() {
     session.value = null
-    localStorage.removeItem(STORAGE_KEY)
+    storage.clear()
   }
 
   function loadFromStorage() {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return
-
-    try {
-      const parsed = JSON.parse(raw) as CalibrationSession
-      const matrixStore = useMatrixConfigurationStore()
-
-      if (parsed.matrixId !== matrixStore.selectedMatrixId) {
-        localStorage.removeItem(STORAGE_KEY)
-        return
-      }
-
-      if (
-        !Array.isArray(parsed.selectedClubIndices) ||
-        !Array.isArray(parsed.selectedColumnIndices)
-      ) {
-        localStorage.removeItem(STORAGE_KEY)
-        return
-      }
-
-      const clubsInBounds = parsed.selectedClubIndices.every(
-        (i) => i >= 0 && i < matrixStore.selectedClubs.length,
-      )
-      const colsInBounds = parsed.selectedColumnIndices.every(
-        (i) => i >= 0 && i < matrixStore.matrixColumns,
-      )
-      if (!clubsInBounds || !colsInBounds) {
-        localStorage.removeItem(STORAGE_KEY)
-        return
-      }
-
-      const expectedSteps = parsed.selectedClubIndices.length * parsed.selectedColumnIndices.length
-      if (parsed.steps.length !== expectedSteps) {
-        localStorage.removeItem(STORAGE_KEY)
-        return
-      }
-
-      session.value = parsed
-    } catch {
-      localStorage.removeItem(STORAGE_KEY)
-    }
+    session.value = storage.load()
   }
 
   loadFromStorage()

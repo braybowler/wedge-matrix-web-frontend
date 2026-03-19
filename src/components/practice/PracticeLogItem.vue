@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { PracticeSessionRecord } from '@/types/practice'
+import { differenceClass } from '@/utils/differenceClass.ts'
 
 defineProps<{
   session: PracticeSessionRecord
@@ -18,13 +19,6 @@ function formatDate(dateString: string): string {
     month: 'short',
     day: 'numeric',
   })
-}
-
-function differenceClass(diff: number | null): string {
-  if (diff === null) return ''
-  if (diff <= 3) return 'diff-good'
-  if (diff <= 8) return 'diff-ok'
-  return 'diff-poor'
 }
 
 function modeLabel(mode: string): string {

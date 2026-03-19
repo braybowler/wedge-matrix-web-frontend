@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import BaseModal from '@/components/shared/BaseModal.vue'
 
 defineProps<{
   visible: boolean
@@ -23,64 +24,40 @@ function handleDismiss() {
 </script>
 
 <template>
-  <Teleport to="body">
-    <div
-      v-if="visible"
-      class="overlay"
-      data-test-id="tutorial-modal-overlay"
-      @click.self="handleDismiss"
-    >
-      <div class="modal" role="dialog" aria-modal="true" aria-label="Welcome to Wedge Matrix">
-        <h2 class="modal-title">Welcome to Wedge Matrix!</h2>
-        <p class="modal-message">
-          Would you like to learn how to use Wedge Matrix to track and optimize your wedge yardages?
-        </p>
-        <label class="checkbox-label">
-          <input v-model="doNotShowAgain" type="checkbox" class="checkbox" />
-          Do not show me this again
-        </label>
-        <div class="button-row">
-          <button
-            class="button learn-more-button"
-            data-test-id="tutorial-learn-more-button"
-            @click="emit('learnMore')"
-          >
-            Learn More
-          </button>
-          <button
-            class="button dismiss-button"
-            data-test-id="tutorial-dismiss-button"
-            @click="handleDismiss"
-          >
-            Close
-          </button>
-        </div>
-      </div>
+  <BaseModal
+    :visible="visible"
+    label="Welcome to Wedge Matrix"
+    test-id="tutorial-modal-overlay"
+    @close="handleDismiss"
+  >
+    <h2 class="modal-title">Welcome to Wedge Matrix!</h2>
+    <p class="modal-message">
+      Would you like to learn how to use Wedge Matrix to track and optimize your wedge yardages?
+    </p>
+    <label class="checkbox-label">
+      <input v-model="doNotShowAgain" type="checkbox" class="checkbox" />
+      Do not show me this again
+    </label>
+    <div class="button-row">
+      <button
+        class="button learn-more-button"
+        data-test-id="tutorial-learn-more-button"
+        @click="emit('learnMore')"
+      >
+        Learn More
+      </button>
+      <button
+        class="button dismiss-button"
+        data-test-id="tutorial-dismiss-button"
+        @click="handleDismiss"
+      >
+        Close
+      </button>
     </div>
-  </Teleport>
+  </BaseModal>
 </template>
 
 <style scoped>
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  background: #1f2937;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 24px;
-  max-width: 400px;
-  width: 100%;
-  margin: 0 16px;
-}
-
 .modal-title {
   color: #f3f4f6;
   font-weight: 700;

@@ -44,6 +44,13 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
+describe('axios plugin configuration', () => {
+  it('sets a 30-second timeout', async () => {
+    const axiosModule = await import('@/plugins/axios.ts')
+    expect(axiosModule.default.defaults.timeout).toBe(30000)
+  })
+})
+
 describe('useAxios Composable', () => {
   describe('HTTP GET', () => {
     it('sends a GET request and returns data and status', async () => {

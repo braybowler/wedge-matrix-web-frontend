@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { CLUB_LABELS } from '@/types/matrix'
+import { CLUB_LABELS, type ClubLabel } from '@/types/matrix'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { storeToRefs } from 'pinia'
+import TileSelector from '@/components/shared/TileSelector.vue'
+
+const clubOptions: ClubLabel[] = [...CLUB_LABELS]
 
 const matrixConfigurationStore = useMatrixConfigurationStore()
 const { setSelectedClubs } = matrixConfigurationStore
 const { selectedClubs } = storeToRefs(matrixConfigurationStore)
 
-const toggleClub = (club: (typeof CLUB_LABELS)[number]) => {
+const toggleClub = (club: ClubLabel) => {
   const current = selectedClubs.value
   const index = current.indexOf(club)
 
@@ -23,18 +26,12 @@ const toggleClub = (club: (typeof CLUB_LABELS)[number]) => {
 <template>
   <section>
     <h2 class="section-title">Clubs</h2>
-
-    <section class="selector-section">
-      <div
-        v-for="club in CLUB_LABELS"
-        :key="club"
-        :class="selectedClubs.includes(club) ? 'tile-active' : 'tile'"
-        :data-test-id="'club-selector-' + club"
-        @click="toggleClub(club)"
-      >
-        <div>{{ club }}</div>
-      </div>
-    </section>
+    <TileSelector
+      :options="clubOptions"
+      :model-value="selectedClubs"
+      test-id-prefix="club-selector-"
+      @update:model-value="toggleClub"
+    />
   </section>
 </template>
 
@@ -43,21 +40,5 @@ const toggleClub = (club: (typeof CLUB_LABELS)[number]) => {
   color: #f3f4f6;
   font-size: 16px;
   font-weight: 700;
-}
-
-.selector-section {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-@media (max-width: 480px) {
-  .selector-section {
-    margin-top: 4px;
-    gap: 6px;
-  }
 }
 </style>

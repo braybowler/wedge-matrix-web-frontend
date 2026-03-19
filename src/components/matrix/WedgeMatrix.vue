@@ -23,6 +23,7 @@ const {
 } = storeToRefs(matrixConfigurationStore)
 
 const showClearConfirm = ref(false)
+const isDownloading = ref(false)
 
 const handleClearMatrixButtonPress = () => {
   showClearConfirm.value = true
@@ -39,7 +40,13 @@ const handleClearCancel = () => {
 }
 
 const handleDownload = async () => {
-  await downloadMatrix()
+  if (isDownloading.value) return
+  isDownloading.value = true
+  try {
+    await downloadMatrix()
+  } finally {
+    isDownloading.value = false
+  }
 }
 
 const emit = defineEmits<{
@@ -197,6 +204,7 @@ function handleFinishTutorial() {
           class="icon-button"
           aria-label="Download PDF"
           data-test-id="download-pdf-button"
+          :disabled="isDownloading"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

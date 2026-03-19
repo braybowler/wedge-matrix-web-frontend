@@ -138,6 +138,29 @@ describe('WedgeMatrix Component', () => {
       expect(downloadSpy).toHaveBeenCalled()
     })
 
+    it('prevents concurrent download requests', async () => {
+      const matrixConfigurationStore = useMatrixConfigurationStore()
+      let resolveDownload: () => void
+      const downloadPromise = new Promise<void>((resolve) => {
+        resolveDownload = resolve
+      })
+      const downloadSpy = vi
+        .spyOn(matrixConfigurationStore, 'downloadMatrix')
+        .mockReturnValue(downloadPromise)
+
+      const wrapper = mount(WedgeMatrix)
+      const downloadButton = wrapper.find('[data-test-id="download-pdf-button"]')
+
+      await downloadButton.trigger('click')
+      await downloadButton.trigger('click')
+      await downloadButton.trigger('click')
+
+      expect(downloadSpy).toHaveBeenCalledTimes(1)
+
+      resolveDownload!()
+      await downloadPromise
+    })
+
     it('clears the matrix values on clear matrix button press', async () => {
       const wrapper = mount(WedgeMatrix, {
         attachTo: document.body,

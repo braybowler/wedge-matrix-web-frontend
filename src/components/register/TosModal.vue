@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TOS_CONTENT } from '@/components/register/tosContent.ts'
+import BaseModal from '@/components/shared/BaseModal.vue'
 
 defineProps<{
   visible: boolean
@@ -11,56 +12,41 @@ defineEmits<{
 </script>
 
 <template>
-  <Teleport to="body">
-    <div
-      v-if="visible"
-      class="overlay"
-      data-test-id="tos-modal-overlay"
-      @click.self="$emit('close')"
-    >
-      <div class="modal" role="dialog" aria-modal="true" aria-label="Terms of Service">
-        <div class="modal-header">
-          <h2 class="modal-title">Terms of Service</h2>
-          <button class="close-icon" data-test-id="tos-close-icon" @click="$emit('close')">
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <div v-for="(section, index) in TOS_CONTENT" :key="index" class="tos-section">
-            <h3 class="tos-heading">{{ section.heading }}</h3>
-            <p class="tos-text">{{ section.text }}</p>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="button" data-test-id="tos-close-button" @click="$emit('close')">
-            Close
-          </button>
+  <BaseModal
+    :visible="visible"
+    label="Terms of Service"
+    max-width="600px"
+    test-id="tos-modal-overlay"
+    @close="$emit('close')"
+  >
+    <div class="tos-layout">
+      <div class="modal-header">
+        <h2 class="modal-title">Terms of Service</h2>
+        <button class="close-icon" data-test-id="tos-close-icon" @click="$emit('close')">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div v-for="(section, index) in TOS_CONTENT" :key="index" class="tos-section">
+          <h3 class="tos-heading">{{ section.heading }}</h3>
+          <p class="tos-text">{{ section.text }}</p>
         </div>
       </div>
+      <div class="modal-footer">
+        <button class="button" data-test-id="tos-close-button" @click="$emit('close')">
+          Close
+        </button>
+      </div>
     </div>
-  </Teleport>
+  </BaseModal>
 </template>
 
 <style scoped>
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  background: #1f2937;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  max-width: 600px;
-  width: 100%;
-  max-height: 80vh;
+.tos-layout {
   display: flex;
   flex-direction: column;
+  max-height: calc(80vh - 48px);
+  margin: -24px;
 }
 
 .modal-header {

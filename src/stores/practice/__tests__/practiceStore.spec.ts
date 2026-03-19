@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { usePracticeStore } from '@/stores/practice/practiceStore.ts'
+import { usePracticeGauntletStore } from '@/stores/practice/practiceGauntletStore.ts'
+import { usePracticeDrillStore } from '@/stores/practice/practiceDrillStore.ts'
+import { usePracticeLogStore } from '@/stores/practice/practiceLogStore.ts'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import type { WedgeMatrix } from '@/types/matrix'
+import type { DrillCombo } from '@/types/practice'
 
 const mockGet = vi.fn()
 const mockPost = vi.fn()
@@ -46,7 +49,7 @@ function initMatrixStore(overrides: Partial<WedgeMatrix> = {}) {
   return matrixStore
 }
 
-describe('usePracticeStore', () => {
+describe('practiceGauntletStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     localStorage.clear()
@@ -58,7 +61,7 @@ describe('usePracticeStore', () => {
   describe('startPractice', () => {
     it('creates session with correct shot count', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
 
       store.startPractice(5)
 
@@ -69,7 +72,7 @@ describe('usePracticeStore', () => {
 
     it('generates targets within valid range', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
 
       store.startPractice(15)
 
@@ -92,7 +95,7 @@ describe('usePracticeStore', () => {
           ],
         ],
       })
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
 
       store.startPractice(10)
 
@@ -103,7 +106,7 @@ describe('usePracticeStore', () => {
 
     it('initializes shots with null actual_carry and difference', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
 
       store.startPractice(5)
 
@@ -115,7 +118,7 @@ describe('usePracticeStore', () => {
 
     it('persists session to localStorage', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
 
       store.startPractice(5)
 
@@ -128,7 +131,7 @@ describe('usePracticeStore', () => {
 
     it('sets currentShotIndex to 0 and completed to false', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
 
       store.startPractice(5)
 
@@ -140,7 +143,7 @@ describe('usePracticeStore', () => {
   describe('setActualCarry', () => {
     it('parses carry and computes difference', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
       const target = store.session!.shots[0]!.target_yards
 
@@ -152,7 +155,7 @@ describe('usePracticeStore', () => {
 
     it('rounds to 1 decimal place', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       store.setActualCarry('50.67')
@@ -162,7 +165,7 @@ describe('usePracticeStore', () => {
 
     it('sets null for empty string', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
       store.setActualCarry('50')
 
@@ -174,7 +177,7 @@ describe('usePracticeStore', () => {
 
     it('sets null for invalid values', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       store.setActualCarry('abc')
@@ -186,7 +189,7 @@ describe('usePracticeStore', () => {
 
     it('allows zero as carry value', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       store.setActualCarry('0')
@@ -198,7 +201,7 @@ describe('usePracticeStore', () => {
   describe('advanceShot / goBackShot', () => {
     it('increments currentShotIndex', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       store.advanceShot()
@@ -208,7 +211,7 @@ describe('usePracticeStore', () => {
 
     it('decrements currentShotIndex', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
       store.advanceShot()
 
@@ -219,7 +222,7 @@ describe('usePracticeStore', () => {
 
     it('does not go below 0', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       store.goBackShot()
@@ -229,7 +232,7 @@ describe('usePracticeStore', () => {
 
     it('sets completed to true on last shot', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       for (let i = 0; i < 5; i++) store.advanceShot()
@@ -241,7 +244,7 @@ describe('usePracticeStore', () => {
   describe('averageDifference', () => {
     it('computes average of absolute differences', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       // Manually set differences
@@ -254,7 +257,7 @@ describe('usePracticeStore', () => {
 
     it('returns 0 when no differences computed', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       expect(store.averageDifference).toBe(0)
@@ -262,7 +265,7 @@ describe('usePracticeStore', () => {
 
     it('rounds to 1 decimal', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       store.session!.shots[0]!.difference = 1
@@ -276,7 +279,7 @@ describe('usePracticeStore', () => {
   describe('clearSession', () => {
     it('nulls session and removes localStorage', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
 
       store.clearSession()
@@ -303,7 +306,7 @@ describe('usePracticeStore', () => {
       }
       localStorage.setItem('wedge_matrix_practice_session', JSON.stringify(session))
 
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.loadFromStorage()
 
       expect(store.session).not.toBeNull()
@@ -326,7 +329,7 @@ describe('usePracticeStore', () => {
       }
       localStorage.setItem('wedge_matrix_practice_session', JSON.stringify(session))
 
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.loadFromStorage()
 
       expect(store.session).toBeNull()
@@ -337,7 +340,7 @@ describe('usePracticeStore', () => {
       initMatrixStore()
       localStorage.setItem('wedge_matrix_practice_session', '{invalid json}')
 
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.loadFromStorage()
 
       expect(store.session).toBeNull()
@@ -360,44 +363,17 @@ describe('usePracticeStore', () => {
       }
       localStorage.setItem('wedge_matrix_practice_session', JSON.stringify(session))
 
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.loadFromStorage()
 
       expect(store.session).toBeNull()
     })
   })
 
-  describe('fetchPracticeLog', () => {
-    it('populates practiceLog on success', async () => {
-      initMatrixStore()
-      const store = usePracticeStore()
-      mockGet.mockResolvedValue({
-        data: {
-          data: [{ id: 1, shot_count: 5, average_difference: 3.2, created_at: '2026-03-12' }],
-        },
-      })
-
-      await store.fetchPracticeLog()
-
-      expect(store.practiceLog).toHaveLength(1)
-      expect(store.logError).toBeNull()
-    })
-
-    it('sets logError on failure', async () => {
-      initMatrixStore()
-      const store = usePracticeStore()
-      mockGet.mockResolvedValue({ error: 'Network error' })
-
-      await store.fetchPracticeLog()
-
-      expect(store.logError).toBe('Network error')
-    })
-  })
-
   describe('saveSession', () => {
     it('posts session and prepends to log', async () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
       // Complete the session
       for (let i = 0; i < 5; i++) store.advanceShot()
@@ -412,14 +388,15 @@ describe('usePracticeStore', () => {
 
       await store.saveSession()
 
+      const logStore = usePracticeLogStore()
       expect(mockPost).toHaveBeenCalled()
-      expect(store.practiceLog[0]!.id).toBe(42)
+      expect(logStore.practiceLog[0]!.id).toBe(42)
       expect(store.session).toBeNull()
     })
 
     it('sets logError on failure', async () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeGauntletStore()
       store.startPractice(5)
       for (let i = 0; i < 5; i++) store.advanceShot()
 
@@ -427,14 +404,108 @@ describe('usePracticeStore', () => {
 
       await store.saveSession()
 
-      expect(store.logError).toBe('Save failed')
+      const logStore = usePracticeLogStore()
+      expect(logStore.logError).toBe('Save failed')
+    })
+  })
+
+  describe('computed properties', () => {
+    it('isActive is true when session exists and not completed', () => {
+      initMatrixStore()
+      const store = usePracticeGauntletStore()
+      store.startPractice(5)
+
+      expect(store.isActive).toBe(true)
+    })
+
+    it('isActive is false when no session', () => {
+      initMatrixStore()
+      const store = usePracticeGauntletStore()
+
+      expect(store.isActive).toBe(false)
+    })
+
+    it('isComplete is true when session is completed', () => {
+      initMatrixStore()
+      const store = usePracticeGauntletStore()
+      store.startPractice(5)
+      for (let i = 0; i < 5; i++) store.advanceShot()
+
+      expect(store.isComplete).toBe(true)
+    })
+
+    it('totalShots returns correct count', () => {
+      initMatrixStore()
+      const store = usePracticeGauntletStore()
+      store.startPractice(10)
+
+      expect(store.totalShots).toBe(10)
+    })
+
+    it('currentShotNumber is 1-indexed', () => {
+      initMatrixStore()
+      const store = usePracticeGauntletStore()
+      store.startPractice(5)
+
+      expect(store.currentShotNumber).toBe(1)
+      store.advanceShot()
+      expect(store.currentShotNumber).toBe(2)
+    })
+
+    it('progressPercent calculates correctly', () => {
+      initMatrixStore()
+      const store = usePracticeGauntletStore()
+      store.startPractice(5)
+
+      expect(store.progressPercent).toBe(0)
+      store.advanceShot()
+      expect(store.progressPercent).toBe(20)
+      store.advanceShot()
+      expect(store.progressPercent).toBe(40)
+    })
+  })
+})
+
+describe('practiceLogStore', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    localStorage.clear()
+    mockGet.mockReset()
+    mockPost.mockReset()
+    mockDel.mockReset()
+  })
+
+  describe('fetchPracticeLog', () => {
+    it('populates practiceLog on success', async () => {
+      initMatrixStore()
+      const store = usePracticeLogStore()
+      mockGet.mockResolvedValue({
+        data: {
+          data: [{ id: 1, shot_count: 5, average_difference: 3.2, created_at: '2026-03-12' }],
+        },
+      })
+
+      await store.fetchPracticeLog()
+
+      expect(store.practiceLog).toHaveLength(1)
+      expect(store.logError).toBeNull()
+    })
+
+    it('sets logError on failure', async () => {
+      initMatrixStore()
+      const store = usePracticeLogStore()
+      mockGet.mockResolvedValue({ error: 'Network error' })
+
+      await store.fetchPracticeLog()
+
+      expect(store.logError).toBe('Network error')
     })
   })
 
   describe('deleteSession', () => {
     it('removes session from log', async () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeLogStore()
       store.practiceLog = [
         {
           id: 1,
@@ -457,7 +528,7 @@ describe('usePracticeStore', () => {
 
     it('sets logError on failure', async () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeLogStore()
       mockDel.mockResolvedValue({ error: 'Delete failed' })
 
       await store.deleteSession(1)
@@ -465,60 +536,390 @@ describe('usePracticeStore', () => {
       expect(store.logError).toBe('Delete failed')
     })
   })
+})
+
+const buildCombos = (): DrillCombo[] => [
+  { clubIndex: 0, columnIndex: 0, clubLabel: 'LW', swingLabel: '50%', targetYards: 60 },
+  { clubIndex: 1, columnIndex: 1, clubLabel: 'SW', swingLabel: '100%', targetYards: 40 },
+]
+
+describe('practiceDrillStore', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    localStorage.clear()
+    mockGet.mockReset()
+    mockPost.mockReset()
+    mockDel.mockReset()
+  })
+
+  describe('startDrill', () => {
+    it('creates a drill session with steps for each combo', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      const combos = buildCombos()
+
+      store.startDrill(combos)
+
+      expect(store.drillSession).not.toBeNull()
+      expect(store.drillSession!.steps).toHaveLength(2)
+      expect(store.drillSession!.currentStepIndex).toBe(0)
+      expect(store.drillSession!.completed).toBe(false)
+    })
+
+    it('each step has 5 null shots', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+
+      store.startDrill(buildCombos())
+
+      for (const step of store.drillSession!.steps) {
+        expect(step.shots).toHaveLength(5)
+        expect(step.shots.every((s) => s === null)).toBe(true)
+      }
+    })
+
+    it('does not start drill with empty combos', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+
+      store.startDrill([])
+
+      expect(store.drillSession).toBeNull()
+    })
+
+    it('persists to localStorage', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+
+      store.startDrill(buildCombos())
+
+      const stored = localStorage.getItem('wedge_matrix_drill_session')
+      expect(stored).not.toBeNull()
+      expect(JSON.parse(stored!).matrixId).toBe(10)
+    })
+  })
+
+  describe('setDrillCarry', () => {
+    it('sets a carry value on the current step', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      store.setDrillCarry(0, '55')
+
+      expect(store.drillCurrentStep!.shots[0]).toBe(55)
+    })
+
+    it('rounds to 1 decimal place', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      store.setDrillCarry(0, '55.67')
+
+      expect(store.drillCurrentStep!.shots[0]).toBe(55.7)
+    })
+
+    it('sets null for empty string', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+      store.setDrillCarry(0, '55')
+
+      store.setDrillCarry(0, '')
+
+      expect(store.drillCurrentStep!.shots[0]).toBeNull()
+    })
+
+    it('sets null for invalid input', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      store.setDrillCarry(0, 'abc')
+
+      expect(store.drillCurrentStep!.shots[0]).toBeNull()
+    })
+
+    it('sets null for values over 999', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      store.setDrillCarry(0, '1000')
+
+      expect(store.drillCurrentStep!.shots[0]).toBeNull()
+    })
+  })
+
+  describe('advanceDrillStep / goBackDrillStep', () => {
+    it('advances to the next step', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      store.advanceDrillStep()
+
+      expect(store.drillSession!.currentStepIndex).toBe(1)
+    })
+
+    it('sets completed to true when advancing past the last step', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      store.advanceDrillStep()
+      store.advanceDrillStep()
+
+      expect(store.drillSession!.completed).toBe(true)
+    })
+
+    it('goes back to the previous step', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+      store.advanceDrillStep()
+
+      store.goBackDrillStep()
+
+      expect(store.drillSession!.currentStepIndex).toBe(0)
+    })
+
+    it('does not go below step 0', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      store.goBackDrillStep()
+
+      expect(store.drillSession!.currentStepIndex).toBe(0)
+    })
+  })
 
   describe('computed properties', () => {
-    it('isActive is true when session exists and not completed', () => {
+    it('isDrillActive is true when session exists and not completed', () => {
       initMatrixStore()
-      const store = usePracticeStore()
-      store.startPractice(5)
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
 
-      expect(store.isActive).toBe(true)
+      expect(store.isDrillActive).toBe(true)
     })
 
-    it('isActive is false when no session', () => {
+    it('isDrillActive is false when no session', () => {
       initMatrixStore()
-      const store = usePracticeStore()
+      const store = usePracticeDrillStore()
 
-      expect(store.isActive).toBe(false)
+      expect(store.isDrillActive).toBe(false)
     })
 
-    it('isComplete is true when session is completed', () => {
+    it('isDrillComplete is true when completed', () => {
       initMatrixStore()
-      const store = usePracticeStore()
-      store.startPractice(5)
-      for (let i = 0; i < 5; i++) store.advanceShot()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+      store.advanceDrillStep()
+      store.advanceDrillStep()
 
-      expect(store.isComplete).toBe(true)
+      expect(store.isDrillComplete).toBe(true)
     })
 
-    it('totalShots returns correct count', () => {
+    it('drillTotalSteps returns the number of steps', () => {
       initMatrixStore()
-      const store = usePracticeStore()
-      store.startPractice(10)
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
 
-      expect(store.totalShots).toBe(10)
+      expect(store.drillTotalSteps).toBe(2)
     })
 
-    it('currentShotNumber is 1-indexed', () => {
+    it('drillCurrentStepNumber is 1-indexed', () => {
       initMatrixStore()
-      const store = usePracticeStore()
-      store.startPractice(5)
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
 
-      expect(store.currentShotNumber).toBe(1)
-      store.advanceShot()
-      expect(store.currentShotNumber).toBe(2)
+      expect(store.drillCurrentStepNumber).toBe(1)
+      store.advanceDrillStep()
+      expect(store.drillCurrentStepNumber).toBe(2)
     })
 
-    it('progressPercent calculates correctly', () => {
+    it('drillProgressPercent calculates correctly', () => {
       initMatrixStore()
-      const store = usePracticeStore()
-      store.startPractice(5)
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
 
-      expect(store.progressPercent).toBe(0)
-      store.advanceShot()
-      expect(store.progressPercent).toBe(20)
-      store.advanceShot()
-      expect(store.progressPercent).toBe(40)
+      expect(store.drillProgressPercent).toBe(0)
+      store.advanceDrillStep()
+      expect(store.drillProgressPercent).toBe(50)
+    })
+  })
+
+  describe('drillStepAverages', () => {
+    it('computes average differences per step using targetYards as reference', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      // Step 0: targetYards = 60, shots at 55 and 65 → diffs 5, 5 → avg 5
+      store.setDrillCarry(0, '55')
+      store.setDrillCarry(1, '65')
+
+      expect(store.drillStepAverages[0]).toBe(5)
+    })
+
+    it('returns null for steps with no filled shots', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      expect(store.drillStepAverages[0]).toBeNull()
+    })
+  })
+
+  describe('drillAverageDifference', () => {
+    it('computes overall average across all steps', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      // Step 0: target 60, shoot 55 → diff 5
+      store.setDrillCarry(0, '55')
+      // Step 1: target 40, shoot 45 → diff 5
+      store.advanceDrillStep()
+      store.setDrillCarry(0, '45')
+
+      expect(store.drillAverageDifference).toBe(5)
+    })
+
+    it('returns 0 when no shots are filled', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      expect(store.drillAverageDifference).toBe(0)
+    })
+  })
+
+  describe('clearDrillSession', () => {
+    it('nulls session and removes localStorage', () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      store.clearDrillSession()
+
+      expect(store.drillSession).toBeNull()
+      expect(localStorage.getItem('wedge_matrix_drill_session')).toBeNull()
+    })
+  })
+
+  describe('loadDrillFromStorage', () => {
+    it('loads a valid drill session from localStorage', () => {
+      const matrixStore = initMatrixStore()
+      const session = {
+        matrixId: matrixStore.selectedMatrixId,
+        steps: [
+          {
+            combo: buildCombos()[0],
+            shots: [null, null, null, null, null],
+          },
+        ],
+        currentStepIndex: 0,
+        completed: false,
+      }
+      localStorage.setItem('wedge_matrix_drill_session', JSON.stringify(session))
+
+      const store = usePracticeDrillStore()
+      store.loadDrillFromStorage()
+
+      expect(store.drillSession).not.toBeNull()
+      expect(store.drillSession!.steps).toHaveLength(1)
+    })
+
+    it('discards session with mismatched matrixId', () => {
+      initMatrixStore()
+      const session = {
+        matrixId: 999,
+        steps: [{ combo: buildCombos()[0], shots: [null, null, null, null, null] }],
+        currentStepIndex: 0,
+        completed: false,
+      }
+      localStorage.setItem('wedge_matrix_drill_session', JSON.stringify(session))
+
+      const store = usePracticeDrillStore()
+      store.loadDrillFromStorage()
+
+      expect(store.drillSession).toBeNull()
+    })
+
+    it('discards session with empty steps', () => {
+      const matrixStore = initMatrixStore()
+      const session = {
+        matrixId: matrixStore.selectedMatrixId,
+        steps: [],
+        currentStepIndex: 0,
+        completed: false,
+      }
+      localStorage.setItem('wedge_matrix_drill_session', JSON.stringify(session))
+
+      const store = usePracticeDrillStore()
+      store.loadDrillFromStorage()
+
+      expect(store.drillSession).toBeNull()
+    })
+  })
+
+  describe('saveDrillSession', () => {
+    it('posts session and prepends to log', async () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+      // Fill some shots and complete
+      store.setDrillCarry(0, '55')
+      store.advanceDrillStep()
+      store.setDrillCarry(0, '45')
+      store.advanceDrillStep() // completes
+
+      const savedRecord = {
+        id: 99,
+        user_id: 1,
+        wedge_matrix_id: 10,
+        mode: 'drill',
+        shot_count: 10,
+        shots: [],
+        average_difference: 5,
+        created_at: '2026-03-19',
+      }
+      mockPost.mockResolvedValue({ data: { data: savedRecord } })
+
+      await store.saveDrillSession()
+
+      const logStore = usePracticeLogStore()
+      expect(mockPost).toHaveBeenCalled()
+      expect(logStore.practiceLog[0]!.id).toBe(99)
+      expect(store.drillSession).toBeNull()
+    })
+
+    it('sets logError on failure', async () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+      store.advanceDrillStep()
+      store.advanceDrillStep()
+
+      mockPost.mockResolvedValue({ error: 'Save failed' })
+
+      await store.saveDrillSession()
+
+      const logStore = usePracticeLogStore()
+      expect(logStore.logError).toBe('Save failed')
+    })
+
+    it('does not post when session is not completed', async () => {
+      initMatrixStore()
+      const store = usePracticeDrillStore()
+      store.startDrill(buildCombos())
+
+      await store.saveDrillSession()
+
+      expect(mockPost).not.toHaveBeenCalled()
     })
   })
 })

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BaseModal from '@/components/shared/BaseModal.vue'
+
 defineProps<{
   visible: boolean
   title: string
@@ -12,53 +14,21 @@ defineEmits<{
 </script>
 
 <template>
-  <Teleport to="body">
-    <div v-if="visible" class="overlay" data-test-id="modal-overlay" @click.self="$emit('cancel')">
-      <div class="modal" role="dialog" aria-modal="true" :aria-label="title">
-        <h2 class="modal-title">{{ title }}</h2>
-        <p class="modal-message">{{ message }}</p>
-        <div class="button-row">
-          <button
-            class="button confirm-button"
-            data-test-id="confirm-button"
-            @click="$emit('confirm')"
-          >
-            Confirm
-          </button>
-          <button
-            class="button cancel-button"
-            data-test-id="cancel-button"
-            @click="$emit('cancel')"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
+  <BaseModal :visible="visible" :label="title" test-id="modal-overlay" @close="$emit('cancel')">
+    <h2 class="modal-title">{{ title }}</h2>
+    <p class="modal-message">{{ message }}</p>
+    <div class="button-row">
+      <button class="button confirm-button" data-test-id="confirm-button" @click="$emit('confirm')">
+        Confirm
+      </button>
+      <button class="button cancel-button" data-test-id="cancel-button" @click="$emit('cancel')">
+        Cancel
+      </button>
     </div>
-  </Teleport>
+  </BaseModal>
 </template>
 
 <style scoped>
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  background: #1f2937;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 24px;
-  max-width: 400px;
-  width: 100%;
-  margin: 0 16px;
-}
-
 .modal-title {
   color: #f3f4f6;
   font-weight: 700;

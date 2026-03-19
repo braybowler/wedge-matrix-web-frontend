@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import BaseModal from '@/components/shared/BaseModal.vue'
 import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useUserStore } from '@/stores/user/userStore.ts'
@@ -44,44 +45,38 @@ const handleCancelDelete = () => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <div
-      v-if="visible"
-      class="overlay"
-      data-test-id="account-settings-overlay"
-      @click.self="emit('close')"
-    >
-      <div class="modal" role="dialog" aria-modal="true" aria-label="Account Settings">
-        <div class="modal-header">
-          <h2 class="modal-title">Account Settings</h2>
-          <button
-            class="close-button"
-            data-test-id="account-settings-close-button"
-            @click="emit('close')"
-          >
-            &times;
-          </button>
-        </div>
-
-        <div class="danger-zone">
-          <h3 class="danger-zone-title">Danger Zone</h3>
-          <p class="danger-zone-message">
-            Permanently delete your account and all associated data.
-          </p>
-          <p v-if="errorMessage" class="error-message" data-test-id="error-message">
-            {{ errorMessage }}
-          </p>
-          <button
-            class="delete-button"
-            data-test-id="delete-account-button"
-            @click="handleDeleteAccount"
-          >
-            Delete Account
-          </button>
-        </div>
-      </div>
+  <BaseModal
+    :visible="visible"
+    label="Account Settings"
+    test-id="account-settings-overlay"
+    @close="emit('close')"
+  >
+    <div class="modal-header">
+      <h2 class="modal-title">Account Settings</h2>
+      <button
+        class="close-button"
+        data-test-id="account-settings-close-button"
+        @click="emit('close')"
+      >
+        &times;
+      </button>
     </div>
-  </Teleport>
+
+    <div class="danger-zone">
+      <h3 class="danger-zone-title">Danger Zone</h3>
+      <p class="danger-zone-message">Permanently delete your account and all associated data.</p>
+      <p v-if="errorMessage" class="error-message" data-test-id="error-message">
+        {{ errorMessage }}
+      </p>
+      <button
+        class="delete-button"
+        data-test-id="delete-account-button"
+        @click="handleDeleteAccount"
+      >
+        Delete Account
+      </button>
+    </div>
+  </BaseModal>
 
   <ConfirmationModal
     :visible="showDeleteConfirmation"
@@ -93,26 +88,6 @@ const handleCancelDelete = () => {
 </template>
 
 <style scoped>
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  background: #1f2937;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 24px;
-  max-width: 400px;
-  width: 100%;
-  margin: 0 16px;
-}
-
 .modal-header {
   display: flex;
   justify-content: space-between;

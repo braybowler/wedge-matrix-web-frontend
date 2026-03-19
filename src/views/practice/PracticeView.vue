@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { usePracticeStore } from '@/stores/practice/practiceStore.ts'
+import { usePracticeLogStore } from '@/stores/practice/practiceLogStore.ts'
+import { usePracticeGauntletStore } from '@/stores/practice/practiceGauntletStore.ts'
+import { usePracticeDrillStore } from '@/stores/practice/practiceDrillStore.ts'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { storeToRefs } from 'pinia'
 import PracticeModeSelector from '@/components/practice/PracticeModeSelector.vue'
@@ -15,16 +17,19 @@ import DrillReview from '@/components/practice/DrillReview.vue'
 import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
 import type { DrillCombo, PracticeMode, PracticeShotCount } from '@/types/practice'
 
-const practiceStore = usePracticeStore()
+const logStore = usePracticeLogStore()
+const gauntletStore = usePracticeGauntletStore()
+const drillStore = usePracticeDrillStore()
 const matrixStore = useMatrixConfigurationStore()
 const showQuitModal = ref(false)
 const showModeSelector = ref(false)
 const showShotCountSelector = ref(false)
 const showComboSelector = ref(false)
 
+const { practiceLog, logError } = storeToRefs(logStore)
+
 const {
   session,
-  drillSession,
   isActive,
   isComplete,
   totalShots,
@@ -32,6 +37,10 @@ const {
   currentShot,
   progressPercent,
   averageDifference,
+} = storeToRefs(gauntletStore)
+
+const {
+  drillSession,
   isDrillActive,
   isDrillComplete,
   drillTotalSteps,
@@ -40,9 +49,7 @@ const {
   drillProgressPercent,
   drillStepAverages,
   drillAverageDifference,
-  practiceLog,
-  logError,
-} = storeToRefs(practiceStore)
+} = storeToRefs(drillStore)
 
 const hasActiveSession = computed(() => session.value !== null || drillSession.value !== null)
 
@@ -71,7 +78,7 @@ const availableCombos = computed<DrillCombo[]>(() => {
 
 onMounted(() => {
   if (!hasActiveSession.value) {
-    practiceStore.fetchPracticeLog()
+    logStore.fetchPracticeLog()
   }
 })
 
@@ -89,15 +96,15 @@ function handleModeSelect(mode: PracticeMode) {
 }
 
 function handleSelectShotCount(shotCount: PracticeShotCount) {
-  practiceStore.startPractice(shotCount)
-  if (practiceStore.session) {
+  gauntletStore.startPractice(shotCount)
+  if (gauntletStore.session) {
     showShotCountSelector.value = false
   }
 }
 
 function handleSelectCombos(combos: DrillCombo[]) {
-  practiceStore.startDrill(combos)
-  if (practiceStore.drillSession) {
+  drillStore.startDrill(combos)
+  if (drillStore.drillSession) {
     showComboSelector.value = false
   }
 }
@@ -109,30 +116,30 @@ function handleComboBack() {
 
 function handleQuitConfirm() {
   if (session.value) {
-    practiceStore.clearSession()
+    gauntletStore.clearSession()
   } else if (drillSession.value) {
-    practiceStore.clearDrillSession()
+    drillStore.clearDrillSession()
   }
   showQuitModal.value = false
-  practiceStore.fetchPracticeLog()
+  logStore.fetchPracticeLog()
 }
 
 async function handleSave() {
-  await practiceStore.saveSession()
+  await gauntletStore.saveSession()
 }
 
 async function handleDrillSave() {
-  await practiceStore.saveDrillSession()
+  await drillStore.saveDrillSession()
 }
 
 function handleDiscard() {
-  practiceStore.clearSession()
-  practiceStore.fetchPracticeLog()
+  gauntletStore.clearSession()
+  logStore.fetchPracticeLog()
 }
 
 function handleDrillDiscard() {
-  practiceStore.clearDrillSession()
-  practiceStore.fetchPracticeLog()
+  drillStore.clearDrillSession()
+  logStore.fetchPracticeLog()
 }
 </script>
 
@@ -169,8 +176,8 @@ function handleDrillDiscard() {
           <PracticeLog
             :sessions="practiceLog"
             :error="logError"
-            @delete="practiceStore.deleteSession($event)"
-            @retry="practiceStore.fetchPracticeLog()"
+            @delete="logStore.deleteSession($event)"
+            @retry="logStore.fetchPracticeLog()"
           />
         </template>
       </template>
@@ -185,9 +192,9 @@ function handleDrillDiscard() {
         <PracticeShotEntry
           :shot="currentShot"
           :is-first-shot="session!.currentShotIndex === 0"
-          @update-carry="practiceStore.setActualCarry($event)"
-          @next="practiceStore.advanceShot()"
-          @back="practiceStore.goBackShot()"
+          @update-carry="gauntletStore.setActualCarry($event)"
+          @next="gauntletStore.advanceShot()"
+          @back="gauntletStore.goBackShot()"
           @quit="showQuitModal = true"
         />
       </template>
@@ -211,9 +218,9 @@ function handleDrillDiscard() {
         <DrillShotEntry
           :step="drillCurrentStep"
           :is-first-step="drillSession!.currentStepIndex === 0"
-          @update-carry="(idx: number, val: string) => practiceStore.setDrillCarry(idx, val)"
-          @next="practiceStore.advanceDrillStep()"
-          @back="practiceStore.goBackDrillStep()"
+          @update-carry="(idx: number, val: string) => drillStore.setDrillCarry(idx, val)"
+          @next="drillStore.advanceDrillStep()"
+          @back="drillStore.goBackDrillStep()"
           @quit="showQuitModal = true"
         />
       </template>

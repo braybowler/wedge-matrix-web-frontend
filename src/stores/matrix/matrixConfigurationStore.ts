@@ -15,6 +15,7 @@ import {
 } from '@/types/matrix'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useUserStore } from '@/stores/user/userStore.ts'
+import { deepCopyYardageGrid } from '@/utils/deepCopyYardageGrid.ts'
 
 const DEFAULT_CLUBS: ClubLabel[] = ['LW', 'SW', 'GW', 'PW']
 
@@ -94,7 +95,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
 
     const clubs = selectedClubs.value
     yardageValues.value = matrix.yardage_values
-      ? matrix.yardage_values.map((row) => row.map((cell) => ({ ...cell })))
+      ? deepCopyYardageGrid(matrix.yardage_values)
       : createEmptyGrid(clubs.length, cols)
   }
 
@@ -168,9 +169,7 @@ export const useMatrixConfigurationStore = defineStore('matrixConfiguration', ()
           number_of_columns: cols,
           column_headers: matrixColumnHeaders.value.slice(0, cols),
           selected_row_display_option: selectedRowDisplayOption.value,
-          yardage_values: yardageValues.value.map((row) =>
-            row.slice(0, cols).map((cell) => ({ ...cell })),
-          ),
+          yardage_values: deepCopyYardageGrid(yardageValues.value.map((row) => row.slice(0, cols))),
           club_labels: [...selectedClubs.value],
           club_lofts: [...clubLofts.value],
           club_label_display_mode: clubLabelDisplayMode.value,
