@@ -1,4 +1,6 @@
-export type PracticeShotCount = 5 | 10 | 15
+import { type ShotCount } from '@/constants/practice.ts'
+
+export type { ShotCount as PracticeShotCount }
 
 export type PracticeMode = 'gauntlet' | 'drill'
 
@@ -13,7 +15,7 @@ export type PracticeShot = {
 
 export type PracticeSession = {
   matrixId: number
-  shotCount: PracticeShotCount
+  shotCount: ShotCount
   shots: PracticeShot[]
   currentShotIndex: number
   completed: boolean

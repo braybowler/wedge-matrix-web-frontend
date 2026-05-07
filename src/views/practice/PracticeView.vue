@@ -7,7 +7,7 @@ import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfiguration
 import { storeToRefs } from 'pinia'
 import PracticeModeSelector from '@/components/practice/PracticeModeSelector.vue'
 import PracticeShotCountSelector from '@/components/practice/PracticeShotCountSelector.vue'
-import PracticeProgress from '@/components/practice/PracticeProgress.vue'
+import ProgressBar from '@/components/shared/ProgressBar.vue'
 import PracticeShotEntry from '@/components/practice/PracticeShotEntry.vue'
 import PracticeReview from '@/components/practice/PracticeReview.vue'
 import PracticeLog from '@/components/practice/PracticeLog.vue'
@@ -184,10 +184,11 @@ function handleDrillDiscard() {
 
       <!-- Gauntlet: active shot entry -->
       <template v-else-if="isActive && currentShot">
-        <PracticeProgress
-          :current-shot="currentShotNumber"
-          :total-shots="totalShots"
+        <ProgressBar
+          :current="currentShotNumber"
+          :total="totalShots"
           :percent="progressPercent"
+          unit="Shot"
         />
         <PracticeShotEntry
           :shot="currentShot"
@@ -210,9 +211,9 @@ function handleDrillDiscard() {
 
       <!-- Drill: active step entry -->
       <template v-else-if="isDrillActive && drillCurrentStep">
-        <PracticeProgress
-          :current-shot="drillCurrentStepNumber"
-          :total-shots="drillTotalSteps"
+        <ProgressBar
+          :current="drillCurrentStepNumber"
+          :total="drillTotalSteps"
           :percent="drillProgressPercent"
         />
         <DrillShotEntry

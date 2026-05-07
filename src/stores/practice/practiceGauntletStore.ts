@@ -4,6 +4,7 @@ import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfiguration
 import { usePracticeLogStore } from '@/stores/practice/practiceLogStore.ts'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useSessionStorage } from '@/composables/sessionStorage/useSessionStorage.ts'
+import { STORAGE_KEYS } from '@/constants/storageKeys.ts'
 import type {
   PracticeSession,
   PracticeSessionRecord,
@@ -11,11 +12,13 @@ import type {
   PracticeShotCount,
 } from '@/types/practice'
 
-const STORAGE_KEY = 'wedge_matrix_practice_session'
+const STORAGE_KEY = STORAGE_KEYS.PRACTICE_SESSION
 
 export const usePracticeGauntletStore = defineStore('practiceGauntlet', () => {
   const { post } = useAxios()
   const storage = useSessionStorage<PracticeSession>(STORAGE_KEY, (parsed) => {
+    const matrixStore = useMatrixConfigurationStore()
+    if (parsed.matrixId !== matrixStore.selectedMatrixId) return false
     return Array.isArray(parsed.shots) && parsed.shots.length === parsed.shotCount
   })
 

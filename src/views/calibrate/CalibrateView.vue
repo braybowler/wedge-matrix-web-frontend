@@ -8,10 +8,10 @@ import CalibrationClubSelector from '@/components/calibrate/CalibrationClubSelec
 import CalibrationSwingTypeSelector from '@/components/calibrate/CalibrationSwingTypeSelector.vue'
 import ShotCountSelector from '@/components/calibrate/ShotCountSelector.vue'
 import ShotEntryStep from '@/components/calibrate/ShotEntryStep.vue'
-import CalibrationProgress from '@/components/calibrate/CalibrationProgress.vue'
+import ProgressBar from '@/components/shared/ProgressBar.vue'
 import CalibrationReview from '@/components/calibrate/CalibrationReview.vue'
 import ConfirmationModal from '@/components/matrix/ConfirmationModal.vue'
-import type { ShotCount } from '@/stores/calibration/calibrationStore.ts'
+import type { ShotCount } from '@/constants/practice.ts'
 
 const router = useRouter()
 const matrixConfigurationStore = useMatrixConfigurationStore()
@@ -108,11 +108,7 @@ function handleCancel() {
 
       <!-- Active session — shot entry -->
       <template v-else-if="isActive && currentStep">
-        <CalibrationProgress
-          :current-step="currentStepNumber"
-          :total-steps="totalSteps"
-          :percent="progressPercent"
-        />
+        <ProgressBar :current="currentStepNumber" :total="totalSteps" :percent="progressPercent" />
         <ShotEntryStep
           :club-label="
             displayLabels[currentStep.clubIndex] ?? selectedClubs[currentStep.clubIndex] ?? ''

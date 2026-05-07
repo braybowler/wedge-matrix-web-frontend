@@ -4,8 +4,10 @@ import { MAX_YARDAGE, type YardageGrid } from '@/types/matrix'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
 import { useSessionStorage } from '@/composables/sessionStorage/useSessionStorage.ts'
 import { deepCopyYardageGrid } from '@/utils/deepCopyYardageGrid.ts'
+import { STORAGE_KEYS } from '@/constants/storageKeys.ts'
+import { type ShotCount } from '@/constants/practice.ts'
 
-export type ShotCount = 5 | 10 | 15
+export type { ShotCount }
 
 export type CalibrationShot = {
   carry_value: number | null
@@ -28,10 +30,13 @@ export type CalibrationSession = {
   completed: boolean
 }
 
-const STORAGE_KEY = 'wedge_matrix_calibration_session'
+const STORAGE_KEY = STORAGE_KEYS.CALIBRATION_SESSION
 
 export const useCalibrationStore = defineStore('calibration', () => {
   const storage = useSessionStorage<CalibrationSession>(STORAGE_KEY, (parsed) => {
+    const matrixStore = useMatrixConfigurationStore()
+    if (parsed.matrixId !== matrixStore.selectedMatrixId) return false
+
     if (
       !Array.isArray(parsed.selectedClubIndices) ||
       !Array.isArray(parsed.selectedColumnIndices)
@@ -39,7 +44,6 @@ export const useCalibrationStore = defineStore('calibration', () => {
       return false
     }
 
-    const matrixStore = useMatrixConfigurationStore()
     const clubsInBounds = parsed.selectedClubIndices.every(
       (i) => i >= 0 && i < matrixStore.selectedClubs.length,
     )

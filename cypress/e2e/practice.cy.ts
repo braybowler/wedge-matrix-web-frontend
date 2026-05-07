@@ -126,7 +126,7 @@ describe('Practice Flow', () => {
 
     startGauntletSession()
 
-    cy.get('[data-test-id="practice-progress-label"]').should('contain.text', 'Shot 1 of 5')
+    cy.get('[data-test-id="progress-label"]').should('contain.text', 'Shot 1 of 5')
     cy.get('[data-test-id="practice-target-label"]').should('contain.text', 'Hit to')
   })
 
@@ -186,10 +186,10 @@ describe('Practice Flow', () => {
     startGauntletSession()
 
     cy.get('[data-test-id="practice-next-button"]').click()
-    cy.get('[data-test-id="practice-progress-label"]').should('contain.text', 'Shot 2 of 5')
+    cy.get('[data-test-id="progress-label"]').should('contain.text', 'Shot 2 of 5')
 
     cy.get('[data-test-id="practice-back-button"]').click()
-    cy.get('[data-test-id="practice-progress-label"]').should('contain.text', 'Shot 1 of 5')
+    cy.get('[data-test-id="progress-label"]').should('contain.text', 'Shot 1 of 5')
   })
 
   it('quit mid-session returns to practice log', () => {
@@ -230,7 +230,7 @@ describe('Practice Flow', () => {
     startGauntletSession()
 
     cy.get('[data-test-id="practice-next-button"]').click()
-    cy.get('[data-test-id="practice-progress-label"]').should('contain.text', 'Shot 2 of 5')
+    cy.get('[data-test-id="progress-label"]').should('contain.text', 'Shot 2 of 5')
 
     // Navigate away
     cy.get('a[href="/matrix"]:visible').first().click()
@@ -241,7 +241,7 @@ describe('Practice Flow', () => {
     cy.url().should('include', '/practice')
 
     // Should resume at shot 2
-    cy.get('[data-test-id="practice-progress-label"]').should('contain.text', 'Shot 2 of 5')
+    cy.get('[data-test-id="progress-label"]').should('contain.text', 'Shot 2 of 5')
   })
 
   it('shows empty state when no practice sessions', () => {

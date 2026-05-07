@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ShotCount } from '@/stores/calibration/calibrationStore.ts'
+import { SHOT_COUNTS, type ShotCount } from '@/constants/practice.ts'
 
-const shotCounts: ShotCount[] = [5, 10, 15]
+const shotCounts = SHOT_COUNTS
 
 const emit = defineEmits<{
   select: [shotCount: ShotCount]

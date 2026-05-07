@@ -6,52 +6,52 @@ describe('useValidation Composable', () => {
     it.each([
       {
         email: '',
-        expectedValidation: false,
-        expectedErrorMessage: 'Email is required.',
+        expectedValid: false,
+        expectedMessage: 'Email is required.',
       },
       {
         email: 'test',
-        expectedValidation: false,
-        expectedErrorMessage: 'Email must be valid.',
+        expectedValid: false,
+        expectedMessage: 'Email must be valid.',
       },
       {
         email: 'test@domain',
-        expectedValidation: false,
-        expectedErrorMessage: 'Email must be valid.',
+        expectedValid: false,
+        expectedMessage: 'Email must be valid.',
       },
       {
         email: 'test@domain.',
-        expectedValidation: false,
-        expectedErrorMessage: 'Email must be valid.',
+        expectedValid: false,
+        expectedMessage: 'Email must be valid.',
       },
       {
         email: 'test@.',
-        expectedValidation: false,
-        expectedErrorMessage: 'Email must be valid.',
+        expectedValid: false,
+        expectedMessage: 'Email must be valid.',
       },
       {
         email: 'test@@domain.com',
-        expectedValidation: false,
-        expectedErrorMessage: 'Email must be valid.',
+        expectedValid: false,
+        expectedMessage: 'Email must be valid.',
       },
       {
         email: 'test @domain.com',
-        expectedValidation: false,
-        expectedErrorMessage: 'Email must be valid.',
+        expectedValid: false,
+        expectedMessage: 'Email must be valid.',
       },
       {
         email: 'test@domain.com',
-        expectedValidation: true,
-        expectedErrorMessage: '',
+        expectedValid: true,
+        expectedMessage: null,
       },
     ])(
-      'validates email input: $email and reports: $expectedErrorMessage',
-      ({ email, expectedValidation, expectedErrorMessage }) => {
+      'validates email input: $email and reports: $expectedMessage',
+      ({ email, expectedValid, expectedMessage }) => {
         const validation = useValidation()
-        const emailValidationObject = validation.validateEmail(email)
+        const result = validation.validateEmail(email)
 
-        expect(emailValidationObject.isEmailValid).toBe(expectedValidation)
-        expect(emailValidationObject.errorMessage).toBe(expectedErrorMessage)
+        expect(result.isValid).toBe(expectedValid)
+        expect(result.message).toBe(expectedMessage)
       },
     )
   })
@@ -61,45 +61,41 @@ describe('useValidation Composable', () => {
       {
         password: '',
         passwordConfirmation: 'password',
-        expectedErrorMessage: 'Password is required.',
-        expectedValidation: false,
+        expectedMessage: 'Password is required.',
+        expectedValid: false,
       },
       {
         password: 'password',
         passwordConfirmation: '',
-        expectedErrorMessage: 'Password Confirmation is required.',
-        expectedValidation: false,
+        expectedMessage: 'Password Confirmation is required.',
+        expectedValid: false,
       },
       {
         password: 'password',
         passwordConfirmation: 'different',
-        expectedErrorMessage: 'Password and Password Confirmation must match.',
-        expectedValidation: false,
+        expectedMessage: 'Password and Password Confirmation must match.',
+        expectedValid: false,
       },
       {
         password: 'different',
         passwordConfirmation: 'password',
-        expectedErrorMessage: 'Password and Password Confirmation must match.',
-        expectedValidation: false,
+        expectedMessage: 'Password and Password Confirmation must match.',
+        expectedValid: false,
       },
       {
         password: 'password',
         passwordConfirmation: 'password',
-        expectedErrorMessage: '',
-        expectedValidation: true,
+        expectedMessage: null,
+        expectedValid: true,
       },
     ])(
-      'validates password: $password and password confirmation: $passwordConfirmation input and reports: $expectedErrorMessage',
-      ({ password, passwordConfirmation, expectedErrorMessage, expectedValidation }) => {
+      'validates password: $password and password confirmation: $passwordConfirmation input and reports: $expectedMessage',
+      ({ password, passwordConfirmation, expectedMessage, expectedValid }) => {
         const validation = useValidation()
-        const passwordValidationObject = validation.validatePassword(
-          password,
-          passwordConfirmation,
-          true,
-        )
+        const result = validation.validatePassword(password, passwordConfirmation, true)
 
-        expect(passwordValidationObject.isPasswordValid).toBe(expectedValidation)
-        expect(passwordValidationObject.errorMessage).toBe(expectedErrorMessage)
+        expect(result.isValid).toBe(expectedValid)
+        expect(result.message).toBe(expectedMessage)
       },
     )
   })

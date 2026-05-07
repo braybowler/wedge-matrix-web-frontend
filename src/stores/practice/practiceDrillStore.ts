@@ -4,6 +4,7 @@ import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfiguration
 import { usePracticeLogStore } from '@/stores/practice/practiceLogStore.ts'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useSessionStorage } from '@/composables/sessionStorage/useSessionStorage.ts'
+import { STORAGE_KEYS } from '@/constants/storageKeys.ts'
 import type {
   DrillCombo,
   DrillSession,
@@ -12,12 +13,14 @@ import type {
   PracticeShot,
 } from '@/types/practice'
 
-const DRILL_STORAGE_KEY = 'wedge_matrix_drill_session'
+const DRILL_STORAGE_KEY = STORAGE_KEYS.DRILL_SESSION
 const SHOTS_PER_COMBO = 5
 
 export const usePracticeDrillStore = defineStore('practiceDrill', () => {
   const { post } = useAxios()
   const storage = useSessionStorage<DrillSession>(DRILL_STORAGE_KEY, (parsed) => {
+    const matrixStore = useMatrixConfigurationStore()
+    if (parsed.matrixId !== matrixStore.selectedMatrixId) return false
     return Array.isArray(parsed.steps) && parsed.steps.length > 0
   })
 

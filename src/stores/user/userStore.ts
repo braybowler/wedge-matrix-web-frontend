@@ -4,9 +4,7 @@ import type { User } from '@/types/user'
 import type { WedgeMatrix } from '@/types/matrix'
 import { useAxios } from '@/composables/axios/axios.ts'
 import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
-
-const USER_STORAGE_KEY = 'wedge_matrix_user'
-const TOKEN_STORAGE_KEY = 'wedge_matrix_token'
+import { STORAGE_KEYS } from '@/constants/storageKeys.ts'
 
 export const useUserStore = defineStore('user', () => {
   const user = ref<User | null>(loadUserFromStorage())
@@ -15,7 +13,7 @@ export const useUserStore = defineStore('user', () => {
 
   function loadUserFromStorage(): User | null {
     try {
-      const storedUser = localStorage.getItem(USER_STORAGE_KEY)
+      const storedUser = localStorage.getItem(STORAGE_KEYS.USER)
       return storedUser ? JSON.parse(storedUser) : null
     } catch (error) {
       console.error('Failed to load user from storage:', error)
@@ -25,7 +23,7 @@ export const useUserStore = defineStore('user', () => {
 
   function loadTokenFromStorage(): string | null {
     try {
-      return localStorage.getItem(TOKEN_STORAGE_KEY)
+      return localStorage.getItem(STORAGE_KEYS.TOKEN)
     } catch (error) {
       console.error('Failed to load token from storage:', error)
       return null
@@ -34,8 +32,8 @@ export const useUserStore = defineStore('user', () => {
 
   function saveToStorage(newUser: User, newAccessToken: string) {
     try {
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser))
-      localStorage.setItem(TOKEN_STORAGE_KEY, newAccessToken)
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser))
+      localStorage.setItem(STORAGE_KEYS.TOKEN, newAccessToken)
     } catch (error) {
       console.error('Failed to save to storage:', error)
     }
@@ -43,8 +41,8 @@ export const useUserStore = defineStore('user', () => {
 
   function clearStorage() {
     try {
-      localStorage.removeItem(USER_STORAGE_KEY)
-      localStorage.removeItem(TOKEN_STORAGE_KEY)
+      localStorage.removeItem(STORAGE_KEYS.USER)
+      localStorage.removeItem(STORAGE_KEYS.TOKEN)
     } catch (error) {
       console.error('Failed to clear storage:', error)
     }

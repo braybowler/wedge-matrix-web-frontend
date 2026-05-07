@@ -1,27 +1,14 @@
+type ValidationResult = { isValid: boolean; message: string | null }
+
 export function useValidation() {
-  const validateEmail = (email: string) => {
-    let errorMessage: string
+  const validateEmail = (email: string): ValidationResult => {
+    const presentError = isEmailValuePresent(email)
+    if (presentError) return { isValid: false, message: presentError }
 
-    errorMessage = isEmailValuePresent(email)
-    if (errorMessage) {
-      return {
-        isEmailValid: false,
-        errorMessage: errorMessage,
-      }
-    }
+    const formatError = isEmailValid(email)
+    if (formatError) return { isValid: false, message: formatError }
 
-    errorMessage = isEmailValid(email)
-    if (errorMessage) {
-      return {
-        isEmailValid: false,
-        errorMessage: errorMessage,
-      }
-    }
-
-    return {
-      isEmailValid: true,
-      errorMessage: errorMessage,
-    }
+    return { isValid: true, message: null }
   }
 
   const isEmailValuePresent = (email: string) => {
@@ -29,14 +16,14 @@ export function useValidation() {
       return 'Email is required.'
     }
 
-    return ''
+    return null
   }
 
   const isEmailValid = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
     if (emailRegex.test(email.trim())) {
-      return ''
+      return null
     }
 
     return 'Email must be valid.'
@@ -46,46 +33,23 @@ export function useValidation() {
     password: string,
     passwordConfirmation?: string,
     shouldMatchConfirmation: boolean = false,
-  ) => {
-    let errorMessage: string
-
-    errorMessage = isPasswordValuePresent(password)
-    if (errorMessage) {
-      return {
-        isPasswordValid: false,
-        errorMessage: errorMessage,
-      }
-    }
+  ): ValidationResult => {
+    const presentError = isPasswordValuePresent(password)
+    if (presentError) return { isValid: false, message: presentError }
 
     if (shouldMatchConfirmation) {
       if (!passwordConfirmation) {
-        return {
-          isPasswordValid: false,
-          errorMessage: 'Password Confirmation is required.',
-        }
+        return { isValid: false, message: 'Password Confirmation is required.' }
       }
 
-      errorMessage = isPasswordConfirmationValuePresent(passwordConfirmation)
-      if (errorMessage) {
-        return {
-          isPasswordValid: false,
-          errorMessage: errorMessage,
-        }
-      }
+      const confirmPresentError = isPasswordConfirmationValuePresent(passwordConfirmation)
+      if (confirmPresentError) return { isValid: false, message: confirmPresentError }
 
-      errorMessage = passwordValuesMatch(password, passwordConfirmation)
-      if (errorMessage) {
-        return {
-          isPasswordValid: false,
-          errorMessage: errorMessage,
-        }
-      }
+      const matchError = passwordValuesMatch(password, passwordConfirmation)
+      if (matchError) return { isValid: false, message: matchError }
     }
 
-    return {
-      isPasswordValid: true,
-      errorMessage: '',
-    }
+    return { isValid: true, message: null }
   }
 
   const isPasswordValuePresent = (password: string) => {
@@ -93,7 +57,7 @@ export function useValidation() {
       return 'Password is required.'
     }
 
-    return ''
+    return null
   }
 
   const isPasswordConfirmationValuePresent = (passwordConfirmation: string) => {
@@ -101,7 +65,7 @@ export function useValidation() {
       return 'Password Confirmation is required.'
     }
 
-    return ''
+    return null
   }
 
   const passwordValuesMatch = (password: string, passwordConfirmation: string) => {
@@ -109,7 +73,7 @@ export function useValidation() {
       return 'Password and Password Confirmation must match.'
     }
 
-    return ''
+    return null
   }
 
   return {

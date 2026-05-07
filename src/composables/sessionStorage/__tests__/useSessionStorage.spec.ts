@@ -1,64 +1,22 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { createPinia, setActivePinia } from 'pinia'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { useSessionStorage } from '@/composables/sessionStorage/useSessionStorage.ts'
-import { useMatrixConfigurationStore } from '@/stores/matrix/matrixConfigurationStore.ts'
-import type { WedgeMatrix } from '@/types/matrix'
-
-vi.mock('@/composables/axios/axios.ts', () => ({
-  useAxios: () => ({
-    put: vi.fn(),
-    get: vi.fn(),
-    post: vi.fn(),
-    del: vi.fn(),
-    getBlob: vi.fn(),
-  }),
-}))
 
 const TEST_KEY = 'test_session_key'
 
-type TestSession = { matrixId: number; items: string[] }
+type TestSession = { id: number; items: string[] }
 
 const alwaysValid = () => true
 const requireItems = (parsed: TestSession) => Array.isArray(parsed.items) && parsed.items.length > 0
 
-const buildMatrix = (overrides: Partial<WedgeMatrix> = {}): WedgeMatrix => ({
-  id: 10,
-  user_id: 1,
-  label: null,
-  number_of_rows: 2,
-  number_of_columns: 2,
-  column_headers: ['50%', '100%'],
-  selected_row_display_option: 'Carry',
-  yardage_values: [
-    [
-      { carry_value: 80, total_value: 90 },
-      { carry_value: 60, total_value: 70 },
-    ],
-    [
-      { carry_value: 40, total_value: 50 },
-      { carry_value: 30, total_value: 40 },
-    ],
-  ],
-  club_labels: ['LW', 'SW'],
-  ...overrides,
-})
-
-function initMatrixStore() {
-  const store = useMatrixConfigurationStore()
-  store.initializeMatrixValues([buildMatrix()])
-  return store
-}
-
 describe('useSessionStorage', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
     localStorage.clear()
   })
 
   describe('persist', () => {
     it('stores data as JSON in localStorage', () => {
       const { persist } = useSessionStorage<TestSession>(TEST_KEY, alwaysValid)
-      const data: TestSession = { matrixId: 10, items: ['a', 'b'] }
+      const data: TestSession = { id: 10, items: ['a', 'b'] }
 
       persist(data)
 
@@ -70,7 +28,7 @@ describe('useSessionStorage', () => {
 
   describe('clear', () => {
     it('removes the key from localStorage', () => {
-      localStorage.setItem(TEST_KEY, '{"matrixId":10}')
+      localStorage.setItem(TEST_KEY, '{"id":10}')
 
       const { clear } = useSessionStorage<TestSession>(TEST_KEY, alwaysValid)
       clear()
@@ -81,15 +39,13 @@ describe('useSessionStorage', () => {
 
   describe('load', () => {
     it('returns null when no data exists', () => {
-      initMatrixStore()
       const { load } = useSessionStorage<TestSession>(TEST_KEY, alwaysValid)
 
       expect(load()).toBeNull()
     })
 
-    it('returns parsed data when matrixId matches and validator passes', () => {
-      initMatrixStore()
-      const data: TestSession = { matrixId: 10, items: ['a'] }
+    it('returns parsed data when validator passes', () => {
+      const data: TestSession = { id: 10, items: ['a'] }
       localStorage.setItem(TEST_KEY, JSON.stringify(data))
 
       const { load } = useSessionStorage<TestSession>(TEST_KEY, requireItems)
@@ -97,20 +53,17 @@ describe('useSessionStorage', () => {
       expect(load()).toEqual(data)
     })
 
-    it('returns null and clears storage when matrixId does not match', () => {
-      initMatrixStore()
-      const data: TestSession = { matrixId: 999, items: ['a'] }
+    it('returns parsed data when no validator is provided', () => {
+      const data: TestSession = { id: 10, items: ['a'] }
       localStorage.setItem(TEST_KEY, JSON.stringify(data))
 
-      const { load } = useSessionStorage<TestSession>(TEST_KEY, alwaysValid)
+      const { load } = useSessionStorage<TestSession>(TEST_KEY)
 
-      expect(load()).toBeNull()
-      expect(localStorage.getItem(TEST_KEY)).toBeNull()
+      expect(load()).toEqual(data)
     })
 
     it('returns null and clears storage when validator fails', () => {
-      initMatrixStore()
-      const data: TestSession = { matrixId: 10, items: [] }
+      const data: TestSession = { id: 10, items: [] }
       localStorage.setItem(TEST_KEY, JSON.stringify(data))
 
       const { load } = useSessionStorage<TestSession>(TEST_KEY, requireItems)
@@ -120,7 +73,6 @@ describe('useSessionStorage', () => {
     })
 
     it('returns null and clears storage on invalid JSON', () => {
-      initMatrixStore()
       localStorage.setItem(TEST_KEY, '{not valid json}')
 
       const { load } = useSessionStorage<TestSession>(TEST_KEY, alwaysValid)

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { PracticeShotCount } from '@/types/practice'
+import { SHOT_COUNTS, type ShotCount } from '@/constants/practice.ts'
 
-const shotCounts: PracticeShotCount[] = [5, 10, 15]
+const shotCounts = SHOT_COUNTS
 
 const emit = defineEmits<{
-  select: [shotCount: PracticeShotCount]
+  select: [shotCount: ShotCount]
 }>()
 </script>
 

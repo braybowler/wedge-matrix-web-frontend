@@ -1,6 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordNameGeneric } from 'vue-router'
 import { useUserStore } from '@/stores/user/userStore.ts'
 
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth: boolean
+  }
+}
+
 export const publicRoutes: Array<RouteRecordNameGeneric> = [
   'landing',
   'login',

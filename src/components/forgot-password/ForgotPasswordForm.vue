@@ -21,8 +21,8 @@ const handleForgotPasswordSubmission = async () => {
   showSuccessMessage.value = false
 
   const validEmail = validateEmail(email.value)
-  if (!validEmail.isEmailValid) {
-    invalidEmailErrorMessage.value = validEmail.errorMessage
+  if (!validEmail.isValid) {
+    invalidEmailErrorMessage.value = validEmail.message ?? ''
     showInvalidEmailErrorMessage.value = true
     return
   }

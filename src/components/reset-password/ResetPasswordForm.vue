@@ -27,8 +27,8 @@ const handleResetPasswordSubmission = async () => {
   showErrorMessage.value = false
 
   const validPassword = validatePassword(password.value, passwordConfirmation.value, true)
-  if (!validPassword.isPasswordValid) {
-    invalidPasswordErrorMessage.value = validPassword.errorMessage
+  if (!validPassword.isValid) {
+    invalidPasswordErrorMessage.value = validPassword.message ?? ''
     showInvalidPasswordErrorMessage.value = true
     return
   }

@@ -40,6 +40,21 @@ Vue 3 + TypeScript + Vite application for managing golf wedge yardage matrices. 
 
 Login → API returns user + access_token → stored in userStore (+ localStorage) → matrix store initialized → redirect to `/matrix`. Protected route navigation triggers token verification via the router guard.
 
+## Session Start Protocol
+
+**Before writing any code**, read the relevant note in `/Users/braydenbowler/Documents/Obsidian Vault/Features/` and post a plain-English summary of:
+- What the feature/task is and its current status
+- Which specific items from the task list you plan to tackle this session
+- Which files you expect to touch
+
+Wait for the user to confirm the plan before proceeding. Do not start implementation until they say so.
+
+When finishing a session, update the note's **WIP — Last Session** section with what was completed and what remains.
+
+## Obsidian Vault
+
+Active feature work is tracked in `/Users/braydenbowler/Documents/Obsidian Vault/Features/`. Each feature has a note with a task list, WIP status, and files touched.
+
 ## Conventions
 
 - **No semicolons**, single quotes, 100-char print width (Prettier).

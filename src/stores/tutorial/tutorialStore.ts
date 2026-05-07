@@ -3,18 +3,17 @@ import { computed, ref, watch } from 'vue'
 import { useUserStore } from '@/stores/user/userStore.ts'
 import { useAxios } from '@/composables/axios/axios.ts'
 import type { User } from '@/types/user'
-
-const TUTORIAL_DISMISSED_KEY = 'wedge_matrix_tutorial_dismissed'
+import { STORAGE_KEYS } from '@/constants/storageKeys.ts'
 
 export const useTutorialStore = defineStore('tutorial', () => {
   const { patch } = useAxios()
   const tutorialStep = ref<number | null>(null)
 
-  const showModal = ref(sessionStorage.getItem(TUTORIAL_DISMISSED_KEY) !== 'true')
+  const showModal = ref(sessionStorage.getItem(STORAGE_KEYS.TUTORIAL_DISMISSED) !== 'true')
 
   watch(showModal, (value) => {
     if (!value) {
-      sessionStorage.setItem(TUTORIAL_DISMISSED_KEY, 'true')
+      sessionStorage.setItem(STORAGE_KEYS.TUTORIAL_DISMISSED, 'true')
     }
   })
 

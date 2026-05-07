@@ -1,20 +1,24 @@
 <script setup lang="ts">
-defineProps<{
-  currentShot: number
-  totalShots: number
-  percent: number
-}>()
+withDefaults(
+  defineProps<{
+    current: number
+    total: number
+    percent: number
+    unit?: string
+  }>(),
+  { unit: 'Step' },
+)
 </script>
 
 <template>
   <div class="progress-container">
-    <span class="progress-label" data-test-id="practice-progress-label">
-      Shot {{ currentShot }} of {{ totalShots }}
+    <span class="progress-label" data-test-id="progress-label">
+      {{ unit }} {{ current }} of {{ total }}
     </span>
     <div class="progress-track">
       <div
         class="progress-fill"
-        data-test-id="practice-progress-bar-fill"
+        data-test-id="progress-bar-fill"
         :style="{ width: percent + '%' }"
       />
     </div>

@@ -41,16 +41,16 @@ const handleLoginSubmission = async () => {
   showLoginErrorMessage.value = false
 
   const validEmail = validateEmail(email.value)
-  if (!validEmail.isEmailValid) {
-    invalidEmailErrorMessage.value = validEmail.errorMessage
+  if (!validEmail.isValid) {
+    invalidEmailErrorMessage.value = validEmail.message ?? ''
     showInvalidEmailErrorMessage.value = true
     return
   }
   showInvalidEmailErrorMessage.value = false
 
   const validPassword = validatePassword(password.value)
-  if (!validPassword.isPasswordValid) {
-    invalidPasswordErrorMessage.value = validPassword.errorMessage
+  if (!validPassword.isValid) {
+    invalidPasswordErrorMessage.value = validPassword.message ?? ''
     showInvalidPasswordErrorMessage.value = true
     return
   }
