@@ -73,198 +73,289 @@ const handleRegisterSubmission = async () => {
 </script>
 
 <template>
-  <div class="component-container">
-    <h2 class="section-title">Wedge Matrix</h2>
-    <p class="section-text">Ready to take your short game to the next level?</p>
+  <div class="wm-form-panel">
+    <div class="wm-form-card">
+      <div class="wm-form-head">
+        <h1 class="wm-form-title">Create your account</h1>
+        <p class="wm-form-sub">Ready to take your short game to the next level?</p>
+      </div>
 
-    <section class="input-container">
-      <input
-        class="input"
-        type="email"
-        placeholder="Email"
-        v-model="email"
-        data-test-id="email-input"
-      />
-      <input
-        class="input"
-        type="password"
-        placeholder="Password"
-        v-model="password"
-        data-test-id="password-input"
-      />
-      <input
-        class="input"
-        type="password"
-        placeholder="Confirm Password"
-        v-model="passwordConfirmation"
-        data-test-id="password-confirmation-input"
-      />
+      <form class="wm-form" @submit.prevent="handleRegisterSubmission">
+        <label class="wm-field">
+          <span class="wm-field-label">Email</span>
+          <input
+            class="wm-input"
+            type="email"
+            placeholder="you@example.com"
+            v-model="email"
+            data-test-id="email-input"
+          />
+        </label>
 
-      <div class="tos-container">
-        <input
-          class="tos-checkbox"
-          type="checkbox"
-          v-model="tosAccepted"
-          data-test-id="tos-checkbox"
-        />
-        <label class="tos-label">
-          I agree to the
-          <span class="tos-link" data-test-id="tos-link" @click="showTosModal = true">
-            Terms of Service
+        <label class="wm-field">
+          <span class="wm-field-label">Password</span>
+          <input
+            class="wm-input"
+            type="password"
+            placeholder="At least 8 characters"
+            v-model="password"
+            data-test-id="password-input"
+          />
+        </label>
+
+        <label class="wm-field">
+          <span class="wm-field-label">Confirm password</span>
+          <input
+            class="wm-input"
+            type="password"
+            placeholder="Re-enter your password"
+            v-model="passwordConfirmation"
+            data-test-id="password-confirmation-input"
+          />
+        </label>
+
+        <label class="wm-tos-row">
+          <input
+            class="wm-check"
+            type="checkbox"
+            v-model="tosAccepted"
+            data-test-id="tos-checkbox"
+          />
+          <span class="wm-tos-text">
+            I agree to the
+            <span class="wm-tos-link" data-test-id="tos-link" @click.prevent="showTosModal = true">
+              Terms of Service
+            </span>
           </span>
         </label>
-      </div>
-      <p v-if="showInvalidEmailErrorMessage" class="error-message">
-        {{ invalidEmailErrorMessage }}
-      </p>
-      <p v-if="showInvalidPasswordErrorMessage" class="error-message">
-        {{ invalidPasswordErrorMessage }}
-      </p>
-      <p v-if="showTosErrorMessage" class="error-message" data-test-id="tos-error-message">
-        You must accept the Terms of Service to register.
-      </p>
 
-      <TosModal :visible="showTosModal" @close="showTosModal = false" />
+        <p v-if="showInvalidEmailErrorMessage" class="error-message">
+          {{ invalidEmailErrorMessage }}
+        </p>
+        <p v-if="showInvalidPasswordErrorMessage" class="error-message">
+          {{ invalidPasswordErrorMessage }}
+        </p>
+        <p v-if="showTosErrorMessage" class="error-message" data-test-id="tos-error-message">
+          You must accept the Terms of Service to register.
+        </p>
 
-      <button
-        class="button"
-        type="submit"
-        :disabled="isLoading"
-        @click="handleRegisterSubmission"
-        data-test-id="register-button"
-      >
-        Register
-      </button>
-    </section>
+        <TosModal :visible="showTosModal" @close="showTosModal = false" />
 
-    <p class="section-text">
-      Already have an account?
-      <RouterLink to="/login" class="register-link" data-test-id="login-page-link">
-        Login here.
-      </RouterLink>
-    </p>
+        <button
+          class="wm-submit"
+          type="submit"
+          :disabled="isLoading"
+          @click.prevent="handleRegisterSubmission"
+          data-test-id="register-button"
+        >
+          Create account
+        </button>
+      </form>
+
+      <p class="wm-form-foot">
+        Already have an account?
+        <RouterLink to="/login" class="wm-foot-link" data-test-id="login-page-link">
+          Log in
+        </RouterLink>
+      </p>
+    </div>
   </div>
 </template>
 
 <style scoped>
 @reference "tailwindcss";
 
-.component-container {
-  padding: 16px;
+.wm-form-panel {
   display: flex;
-  flex-direction: column;
-  text-align: center;
-  justify-content: center;
-}
-
-.section-title {
-  color: #f3f4f6;
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-
-.section-text {
-  color: #9ca3af;
-  font-size: 12px;
-  font-weight: 300;
-}
-
-.input-container {
-  background-color: #1f2937;
-  border-radius: 8px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  margin-top: 12px;
-  margin-bottom: 12px;
-  gap: 12px;
   align-items: center;
-}
-
-.input {
-  color: #f3f4f6;
-  background-color: #374151;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 4px 8px;
+  justify-content: center;
+  padding: 48px 32px;
   width: 100%;
 }
 
-input:focus {
-  color: #f3f4f6;
-  background-color: #374151;
-  border: 1px solid #818cf8;
-  border-radius: 8px;
-  padding: 4px 8px;
+.wm-form-card {
+  width: 100%;
+  max-width: 392px;
+  animation: wmRise 0.6s ease 0.06s both;
 }
 
-.input:focus::placeholder {
-  color: transparent;
+@keyframes wmRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wm-form-head {
+  margin-bottom: 30px;
+}
+
+.wm-form-title {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #f4f6fb;
+  margin: 0 0 8px;
+}
+
+.wm-form-sub {
+  font-size: 15.5px;
+  color: #aab2c5;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.wm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wm-field-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #828aa0;
+}
+
+.wm-input {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: 'Archivo', sans-serif;
+  font-size: 15.5px;
+  color: #f4f6fb;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+  width: 100%;
+}
+
+.wm-input::placeholder {
+  color: #6c7488;
+}
+
+.wm-input:focus {
+  outline: none;
+  border-color: #8b8cf6;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.wm-tos-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.wm-check {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s;
+}
+
+.wm-check:checked {
+  background: #8b8cf6;
+  border-color: #8b8cf6;
+}
+
+.wm-check:checked::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid #0a0e1a;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+.wm-tos-text {
+  font-size: 14.5px;
+  color: #aab2c5;
+  line-height: 1.5;
+}
+
+.wm-tos-link {
+  color: #8b8cf6;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wm-tos-link:hover {
+  text-decoration: underline;
 }
 
 .error-message {
   color: #ef4444;
-  font-size: 12px;
-  font-weight: 300;
+  font-size: 13px;
+  font-weight: 400;
+  margin: 0;
 }
 
-.button {
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 6px 16px;
+.wm-submit {
+  margin-top: 8px;
+  background: #8b8cf6;
+  color: #0a0e1a;
+  border: none;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 700;
   font-size: 16px;
-  font-weight: 500;
+  padding: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    opacity 0.15s;
 }
 
-.button:hover:not(:disabled) {
-  background-color: #4b5563;
-  border-color: #818cf8;
-  cursor: pointer;
+.wm-submit:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
-.button:disabled {
-  opacity: 0.5;
+.wm-submit:disabled {
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
-.tos-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
+.wm-form-foot {
+  text-align: center;
+  font-size: 14.5px;
+  color: #828aa0;
+  margin: 26px 0 0;
 }
 
-.tos-checkbox {
-  accent-color: #818cf8;
-  width: 16px;
-  height: 16px;
+.wm-foot-link {
+  color: #f4f6fb;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  padding-bottom: 1px;
 }
 
-.tos-label {
-  color: #9ca3af;
-  font-size: 12px;
-  font-weight: 300;
-}
-
-.tos-link {
-  color: #818cf8;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.register-link {
-  text-decoration: underline;
-}
-
-.register-link:hover {
-  text-decoration: underline;
-  color: #818cf8;
-  text-decoration-color: #818cf8;
+.wm-foot-link:hover {
+  border-bottom-color: #8b8cf6;
 }
 </style>
