@@ -21,10 +21,11 @@ describe('LandingView', () => {
     expect(wrapper.text()).toContain('Wedge Matrix')
   })
 
-  it('renders the tagline', () => {
+  it('renders the hero headline', () => {
     const wrapper = mountComponent()
 
-    expect(wrapper.text()).toContain('Dial in your short game')
+    expect(wrapper.text()).toContain('Know your number')
+    expect(wrapper.text()).toContain('on every wedge shot.')
   })
 
   it('renders a Get Started link to /register', () => {
@@ -45,12 +46,13 @@ describe('LandingView', () => {
     expect(loginLink.attributes('href')).toBe('/login')
   })
 
-  it('renders the three feature cards', () => {
+  it('renders the four feature cards', () => {
     const wrapper = mountComponent()
 
-    expect(wrapper.text()).toContain('Personalized Yardage Chart')
-    expect(wrapper.text()).toContain('Built-in Tutorial')
-    expect(wrapper.text()).toContain('Calibrate on the Range')
+    expect(wrapper.text()).toContain('Personalized yardage chart')
+    expect(wrapper.text()).toContain('Built-in tutorial')
+    expect(wrapper.text()).toContain('Calibrate on the range')
+    expect(wrapper.text()).toContain('Always in your pocket')
   })
 
   it('renders the bottom CTA linking to /register', () => {
