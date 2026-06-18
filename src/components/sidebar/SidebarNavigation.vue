@@ -17,14 +17,33 @@ const handleLogout = async () => {
 
 <template>
   <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <div class="brand-ring" />
+      </div>
+      <span class="brand-name">Wedge Matrix</span>
+    </div>
+
     <nav class="nav-links">
       <span class="nav-category">Matrix</span>
-      <RouterLink active-class="active-link" class="link" to="/matrix">Wedge Matrix</RouterLink>
-      <RouterLink active-class="active-link" class="link" to="/configure">Configure</RouterLink>
-      <RouterLink active-class="active-link" class="link" to="/calibrate">Calibrate</RouterLink>
+      <RouterLink active-class="active-link" class="link" to="/matrix">
+        <span class="link-dot" aria-hidden="true" />
+        Wedge Matrix
+      </RouterLink>
+      <RouterLink active-class="active-link" class="link" to="/configure">
+        <span class="link-dot" aria-hidden="true" />
+        Configure
+      </RouterLink>
+      <RouterLink active-class="active-link" class="link" to="/calibrate">
+        <span class="link-dot" aria-hidden="true" />
+        Calibrate
+      </RouterLink>
 
       <span class="nav-category">Practice</span>
-      <RouterLink active-class="active-link" class="link" to="/practice">Practice</RouterLink>
+      <RouterLink active-class="active-link" class="link" to="/practice">
+        <span class="link-dot" aria-hidden="true" />
+        Practice
+      </RouterLink>
 
       <span class="nav-category">Socials</span>
       <a
@@ -104,59 +123,161 @@ const handleLogout = async () => {
 @reference "tailwindcss";
 
 .sidebar {
-  background-color: #1f2937;
-  border-right: 1px solid #4b5563;
+  background: linear-gradient(180deg, #0d1426, #0a0e1a);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 16px;
+  padding: 22px 18px;
+  color: #f4f6fb;
+  font-family: 'Archivo', system-ui, sans-serif;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 6px 8px 22px;
+}
+
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: #8b8cf6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-ring {
+  width: 13px;
+  height: 13px;
+  border: 2.5px solid #0a0e1a;
+  border-radius: 50%;
+}
+
+.brand-name {
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  font-size: 16px;
 }
 
 .nav-links {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
 }
 
 .nav-category {
-  color: #6b7280;
-  font-size: 16px;
-  font-weight: 600;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0 12px 8px;
-  border-bottom: 1px solid #818cf8;
+  color: #5b6276;
+  padding: 16px 8px 10px;
 }
 
-.nav-category:not(:first-child) {
-  margin-top: 16px;
+.nav-category:first-child {
+  padding-top: 0;
 }
 
 .link {
-  color: #9ca3af;
-  padding: 8px 12px;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  border-radius: 11px;
+  color: #aab2c5;
   text-decoration: none;
-  font-size: 14px;
-  transition: background-color 0.2s ease;
+  font-size: 15px;
+  font-weight: 500;
+  transition:
+    background 0.14s,
+    color 0.14s;
+}
+
+.link-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #39415a;
+  flex: none;
+  transition: background 0.14s;
 }
 
 .link:hover {
-  background-color: #374151;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f4f6fb;
 }
 
 .active-link {
-  color: #818cf8;
+  color: #f4f6fb;
   font-weight: 700;
+  background: rgba(139, 140, 246, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(139, 140, 246, 0.4);
+}
+
+.active-link .link-dot {
+  background: #8b8cf6;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-left: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #aab2c5;
+  transition:
+    border-color 0.14s,
+    color 0.14s;
+}
+
+.social-link:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #f4f6fb;
+}
+
+.social-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .logout-container {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-top: 16px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.icon-button {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #aab2c5;
+  border-radius: 11px;
+  cursor: pointer;
+  transition:
+    border-color 0.14s,
+    color 0.14s;
+}
+
+.icon-button:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #f4f6fb;
+  transform: none;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .settings-button {
@@ -164,37 +285,34 @@ const handleLogout = async () => {
 }
 
 .icon {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
 }
 
 .logout-button {
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 6px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  width: 100%;
-  transition: all 0.2s ease;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f4f6fb;
+  border-radius: 11px;
+  padding: 11px;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  width: auto;
   cursor: pointer;
+  transition:
+    border-color 0.14s,
+    background 0.14s;
 }
 
 .logout-button:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
-  transform: translateY(-1px);
-}
-.social-link {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-}
-
-.social-icon {
-  width: 18px;
-  height: 18px;
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  transform: none;
 }
 
 .tooltip-left {

@@ -45,6 +45,8 @@ const isPublicRoute = computed(() => publicRoutes.includes(router.currentRoute.v
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background: #090d18;
+  color: #f4f6fb;
 }
 
 .main-body {
@@ -93,7 +95,7 @@ const isPublicRoute = computed(() => publicRoutes.includes(router.currentRoute.v
   .page-content {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .page-content :deep(> *) {
@@ -104,6 +106,12 @@ const isPublicRoute = computed(() => publicRoutes.includes(router.currentRoute.v
   .page-content :deep(> .wide-page-content) {
     width: 80%;
     max-width: 700px;
+    align-self: flex-start;
+  }
+
+  .page-content :deep(> .wider-page-content) {
+    width: 100%;
+    max-width: 1100px;
     align-self: flex-start;
   }
 }

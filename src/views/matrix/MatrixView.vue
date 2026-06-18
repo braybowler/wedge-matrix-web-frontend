@@ -22,7 +22,7 @@ function handleLearnMore() {
 </script>
 
 <template>
-  <main>
+  <main class="wider-page-content">
     <WedgeMatrix @finish-tutorial="tutorialStore.finishTutorial" />
     <TutorialModal
       :visible="tutorialStore.modalVisible"
