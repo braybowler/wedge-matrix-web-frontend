@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+body {
+  font-family: 'Archivo', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
 /* Shared selector tile styles */
 .tile {
   background-color: #374151;

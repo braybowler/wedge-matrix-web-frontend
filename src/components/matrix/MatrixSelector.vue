@@ -88,35 +88,49 @@ function cancelRename() {
   <div class="matrix-selector-root" data-test-id="matrix-selector">
     <label v-if="props.label" class="selector-label">{{ props.label }}</label>
     <div class="selector-row">
-      <select
-        class="matrix-select"
-        :value="selectedMatrixId"
-        data-test-id="matrix-dropdown"
-        @change="handleMatrixChange"
-      >
-        <option v-for="(matrix, index) in matrices" :key="matrix.id" :value="matrix.id">
-          {{ matrixDisplayLabel(matrix, index) }}
-        </option>
-      </select>
+      <div class="select-wrap">
+        <select
+          class="matrix-select"
+          :value="selectedMatrixId"
+          data-test-id="matrix-dropdown"
+          @change="handleMatrixChange"
+        >
+          <option v-for="(matrix, index) in matrices" :key="matrix.id" :value="matrix.id">
+            {{ matrixDisplayLabel(matrix, index) }}
+          </option>
+        </select>
+        <svg
+          class="select-chevron"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          aria-hidden="true"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </div>
 
       <div v-if="!props.readonly" class="action-buttons">
         <div class="tooltip-wrapper">
           <button
-            class="icon-button"
+            class="primary-button"
             aria-label="New Matrix"
             data-test-id="create-matrix-button"
             @click="handleCreate"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.6"
               class="icon"
               aria-hidden="true"
             >
-              <path
-                d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
-              />
+              <path d="M12 5v14M5 12h14" />
             </svg>
           </button>
           <span class="tooltip">New Matrix</span>
@@ -124,24 +138,22 @@ function cancelRename() {
 
         <div class="tooltip-wrapper">
           <button
-            class="icon-button"
+            class="ghost-button"
             aria-label="Rename"
             data-test-id="rename-matrix-button"
             @click="startRename"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
               class="icon"
               aria-hidden="true"
             >
-              <path
-                d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
-              />
-              <path
-                d="M3.5 5.75c0-.69.56-1.25 1.25-1.25h5.5a.75.75 0 0 0 0-1.5h-5.5A2.75 2.75 0 0 0 2 5.75v8.5A2.75 2.75 0 0 0 4.75 17h8.5A2.75 2.75 0 0 0 16 14.25v-5.5a.75.75 0 0 0-1.5 0v5.5c0 .69-.56 1.25-1.25 1.25h-8.5c-.69 0-1.25-.56-1.25-1.25v-8.5Z"
-              />
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z" />
             </svg>
           </button>
           <span class="tooltip">Rename</span>
@@ -149,7 +161,7 @@ function cancelRename() {
 
         <div class="tooltip-wrapper">
           <button
-            class="icon-button"
+            class="ghost-button danger"
             :class="{ disabled: !canDelete }"
             :disabled="!canDelete"
             aria-label="Delete Matrix"
@@ -158,15 +170,15 @@ function cancelRename() {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
               class="icon"
               aria-hidden="true"
             >
               <path
-                fill-rule="evenodd"
-                d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.519.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
-                clip-rule="evenodd"
+                d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
               />
             </svg>
           </button>
@@ -212,56 +224,130 @@ function cancelRename() {
 </template>
 
 <style scoped>
+.matrix-selector-root {
+  font-family: 'Archivo', system-ui, sans-serif;
+  color: #f4f6fb;
+}
+
 .selector-label {
-  color: #f3f4f6;
-  font-size: 16px;
-  font-weight: 700;
   display: block;
-  margin-bottom: 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #828aa0;
+  margin-bottom: 10px;
 }
 
 .selector-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+
+.select-wrap {
+  position: relative;
+  flex: 1;
 }
 
 .matrix-select {
-  flex: 1;
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 8px 24px 8px 12px;
-  font-size: 14px;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #0f1525;
+  color: #f4f6fb;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 13px;
+  padding: 14px 44px 14px 18px;
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 600;
   outline: none;
   cursor: pointer;
-  appearance: auto;
+  transition: border-color 0.14s;
+}
+
+.matrix-select:hover {
+  border-color: rgba(255, 255, 255, 0.24);
 }
 
 .matrix-select:focus {
-  border-color: #818cf8;
+  border-color: #8b8cf6;
+}
+
+.select-chevron {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #828aa0;
+  pointer-events: none;
 }
 
 .action-buttons {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
-.icon-button:hover:not(.disabled) {
-  background-color: #4b5563;
-  border-color: #818cf8;
-  color: #f3f4f6;
+.tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.primary-button,
+.ghost-button {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
   cursor: pointer;
+  font-family: inherit;
+  transition:
+    border-color 0.14s,
+    background 0.14s,
+    color 0.14s,
+    transform 0.14s;
+}
+
+.primary-button {
+  background: #8b8cf6;
+  color: #0a0e1a;
+  border: none;
+}
+
+.primary-button:hover {
   transform: translateY(-1px);
 }
 
-.icon-button.disabled {
+.ghost-button {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #aab2c5;
+}
+
+.ghost-button:hover:not(.disabled) {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #f4f6fb;
+}
+
+.ghost-button.danger:hover:not(.disabled) {
+  border-color: rgba(239, 108, 108, 0.5);
+  color: #ef6c6c;
+}
+
+.ghost-button.disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
 .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.primary-button .icon {
   width: 20px;
   height: 20px;
 }
@@ -270,90 +356,67 @@ function cancelRename() {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .rename-input {
   flex: 1;
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #f4f6fb;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: inherit;
   font-size: 14px;
   outline: none;
 }
 
 .rename-input:focus {
-  border-color: #818cf8;
+  border-color: #8b8cf6;
 }
 
 .rename-action-button {
-  border-radius: 8px;
-  padding: 6px 12px;
+  border-radius: 10px;
+  padding: 9px 14px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.14s;
 }
 
 .save-button {
-  background-color: #818cf8;
-  color: #f3f4f6;
-  border: 1px solid #818cf8;
+  background: #8b8cf6;
+  color: #0a0e1a;
+  border: 1px solid #8b8cf6;
 }
 
 .save-button:hover {
-  background-color: #6366f1;
+  transform: translateY(-1px);
 }
 
 .cancel-button {
-  background-color: #374151;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f4f6fb;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cancel-button:hover {
-  background-color: #4b5563;
+  border-color: rgba(255, 255, 255, 0.28);
 }
 
 @media (max-width: 360px) {
-  .matrix-selector-root {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .selector-label {
-    margin-bottom: 0;
-  }
-
   .selector-row {
-    display: contents;
-  }
-
-  .matrix-select {
-    order: 1;
-  }
-
-  .rename-row {
-    order: 2;
-    margin-top: 0;
     flex-wrap: wrap;
   }
 
-  .rename-input {
+  .select-wrap {
     flex-basis: 100%;
   }
 
-  .rename-action-button {
-    flex: 1;
-  }
-
   .action-buttons {
-    order: 3;
+    flex: 1;
     justify-content: center;
-    gap: 8px;
   }
 }
 </style>

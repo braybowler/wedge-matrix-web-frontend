@@ -60,18 +60,29 @@ describe('Configure Page', () => {
   })
 
   describe('page rendering', () => {
-    it('renders all four configuration sections', () => {
+    it('starts on the Clubs step', () => {
       navigateToConfigure()
 
-      cy.contains('Clubs').should('be.visible')
-      cy.contains('Number of Swing Columns').should('be.visible')
-      cy.contains('Column Header Labels').should('be.visible')
-      cy.contains('Row Display Options').scrollIntoView().should('be.visible')
+      cy.contains('Step 1 of 4').should('be.visible')
+      cy.contains('Which wedges are in your bag?').should('be.visible')
+    })
+
+    it('advances through every step via Continue', () => {
+      navigateToConfigure()
+
+      cy.get('[data-test-id="wizard-next-button"]').click()
+      cy.contains('How should rows be labeled?').should('be.visible')
+
+      cy.get('[data-test-id="wizard-next-button"]').click()
+      cy.contains('Set your swing lengths.').should('be.visible')
+
+      cy.get('[data-test-id="wizard-next-button"]').click()
+      cy.contains('What goes in each cell?').should('be.visible')
     })
   })
 
   describe('club selection', () => {
-    it('shows selected clubs as active', () => {
+    it('shows selected clubs as active on the Clubs step', () => {
       navigateToConfigure()
 
       cy.get('[data-test-id="club-selector-LW"]').should('have.class', 'tile-active')
@@ -98,15 +109,17 @@ describe('Configure Page', () => {
   })
 
   describe('swing column count', () => {
-    it('shows current column count as active', () => {
+    it('shows current column count as active on the Columns step', () => {
       navigateToConfigure()
 
+      cy.get('[data-test-id="step-columns"]').click()
       cy.get('[data-test-id="column-count-3"]').should('have.class', 'tile-active')
     })
 
     it('changes column count when a tile is clicked', () => {
       navigateToConfigure()
 
+      cy.get('[data-test-id="step-columns"]').click()
       cy.get('[data-test-id="column-count-2"]').should('have.class', 'tile')
       cy.get('[data-test-id="column-count-2"]').click()
       cy.get('[data-test-id="column-count-2"]').should('have.class', 'tile-active')
@@ -118,12 +131,14 @@ describe('Configure Page', () => {
     it('renders correct number of column header dropdowns', () => {
       navigateToConfigure()
 
+      cy.get('[data-test-id="step-columns"]').click()
       cy.get('[data-test-id="column-label-selector-pair"]').should('have.length', 3)
     })
 
     it('changes a column header label via dropdown', () => {
       navigateToConfigure()
 
+      cy.get('[data-test-id="step-columns"]').click()
       cy.get('[data-test-id="column-header-selector"]').first().select('25%')
       cy.get('[data-test-id="column-header-selector"]').first().should('have.value', '25%')
     })
@@ -131,36 +146,48 @@ describe('Configure Page', () => {
     it('switches to Clock system and shows clock options', () => {
       navigateToConfigure()
 
-      cy.get('[data-test-id="swing-feel-system-Percentage"]').should('have.class', 'tile-active')
+      cy.get('[data-test-id="step-columns"]').click()
+      cy.get('[data-test-id="swing-feel-system-Percentage"]').should('have.class', 'is-active')
       cy.get('[data-test-id="swing-feel-system-Clock"]').click()
-      cy.get('[data-test-id="swing-feel-system-Clock"]').should('have.class', 'tile-active')
+      cy.get('[data-test-id="swing-feel-system-Clock"]').should('have.class', 'is-active')
 
-      cy.get('[data-test-id="column-header-selector"]').first().find('option').first().should('have.value', '7:00')
+      cy.get('[data-test-id="column-header-selector"]')
+        .first()
+        .find('option')
+        .first()
+        .should('have.value', '7:00')
     })
 
     it('switches back to Percentage system', () => {
       navigateToConfigure()
 
+      cy.get('[data-test-id="step-columns"]').click()
       cy.get('[data-test-id="swing-feel-system-Clock"]').click()
-      cy.get('[data-test-id="swing-feel-system-Clock"]').should('have.class', 'tile-active')
+      cy.get('[data-test-id="swing-feel-system-Clock"]').should('have.class', 'is-active')
 
       cy.get('[data-test-id="swing-feel-system-Percentage"]').click()
-      cy.get('[data-test-id="swing-feel-system-Percentage"]').should('have.class', 'tile-active')
+      cy.get('[data-test-id="swing-feel-system-Percentage"]').should('have.class', 'is-active')
 
-      cy.get('[data-test-id="column-header-selector"]').first().find('option').first().should('have.value', '25%')
+      cy.get('[data-test-id="column-header-selector"]')
+        .first()
+        .find('option')
+        .first()
+        .should('have.value', '25%')
     })
   })
 
   describe('row display option', () => {
-    it('shows current option as active', () => {
+    it('shows current option as active on the Display step', () => {
       navigateToConfigure()
 
+      cy.get('[data-test-id="step-display"]').click()
       cy.get('[data-test-id="row-display-option-Carry"]').should('have.class', 'tile-active')
     })
 
     it('changes display option when a tile is clicked', () => {
       navigateToConfigure()
 
+      cy.get('[data-test-id="step-display"]').click()
       cy.get('[data-test-id="row-display-option-Both"]').should('have.class', 'tile')
       cy.get('[data-test-id="row-display-option-Both"]').click()
       cy.get('[data-test-id="row-display-option-Both"]').should('have.class', 'tile-active')
@@ -168,18 +195,24 @@ describe('Configure Page', () => {
     })
   })
 
-  describe('sync on navigation', () => {
+  describe('save matrix and navigation', () => {
+    it('navigates back to /matrix when Save matrix is clicked on the final step', () => {
+      navigateToConfigure()
+
+      cy.get('[data-test-id="step-display"]').click()
+      cy.get('[data-test-id="wizard-next-button"]').should('contain.text', 'Save matrix').click()
+
+      cy.url().should('include', '/matrix')
+    })
+
     it('triggers sync PUT when navigating away', () => {
       login()
 
-      // Navigate to configure via sidebar link
       cy.get('.desktop-sidebar').contains('a', 'Configure').click()
       cy.url().should('include', '/configure')
 
-      // Make a change to trigger requiresSync
       cy.get('[data-test-id="club-selector-AW"]').click()
 
-      // Navigate away via sidebar link
       cy.get('.desktop-sidebar').contains('a', 'Wedge Matrix').click()
 
       cy.wait('@syncRequest')

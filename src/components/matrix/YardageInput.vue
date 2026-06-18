@@ -29,23 +29,34 @@ const emit = defineEmits<{
 
 <style scoped>
 .input {
-  background-color: #374151;
-  padding: 2px 0px;
-  color: #f3f4f6;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
+  width: 46px;
+  max-width: 46px;
   text-align: center;
-  max-width: 50px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 15px;
+  font-weight: 500;
+  color: #f4f6fb;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  padding: 8px 0;
+  transition: border-color 0.14s;
+  -moz-appearance: textfield;
 }
 
-.input:nth-child(2) {
-  margin-top: 4px;
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input::placeholder {
+  color: #5b6276;
 }
 
 .input:focus {
-  border-color: #818cf8;
+  outline: none;
+  border-color: #8b8cf6;
 }
 
 .input:focus::placeholder {
