@@ -40,7 +40,7 @@ describe('CalibrationShotInput Component', () => {
       props: { ...defaultProps, shotIndex: 2 },
     })
 
-    expect(wrapper.find('.shot-label').text()).toBe('Shot 3')
+    expect(wrapper.find('.cal-shot-label').text()).toBe('Shot 3')
   })
 
   it('emits change with correct arguments on carry input change', async () => {

@@ -46,97 +46,74 @@ function handleNext() {
 </script>
 
 <template>
-  <section class="component-container">
-    <h2 class="section-title">Which swing types to calibrate?</h2>
+  <section>
+    <div class="cal-card">
+      <h2 class="cal-card-title">Which swing types to calibrate?</h2>
+      <p class="cal-card-desc">Choose the swing lengths to dial in for each club.</p>
 
-    <section class="option-section">
-      <div
-        :class="allSelected ? 'tile-active' : 'tile'"
-        data-test-id="swing-select-all"
-        @click="toggleAll"
-      >
-        All
+      <div class="cal-chip-grid">
+        <button
+          type="button"
+          class="cal-chip"
+          :class="{ 'is-active': allSelected }"
+          data-test-id="swing-select-all"
+          @click="toggleAll"
+        >
+          All
+        </button>
+        <button
+          v-for="(header, i) in headers"
+          :key="i"
+          type="button"
+          class="cal-chip"
+          :class="{ 'is-active': selected.has(i) }"
+          :data-test-id="`swing-select-${i}`"
+          @click="toggle(i)"
+        >
+          {{ header || `Col ${i + 1}` }}
+        </button>
       </div>
-      <div
-        v-for="(header, i) in headers"
-        :key="i"
-        :class="selected.has(i) ? 'tile-active' : 'tile'"
-        :data-test-id="`swing-select-${i}`"
-        @click="toggle(i)"
-      >
-        {{ header || `Col ${i + 1}` }}
-      </div>
-    </section>
+    </div>
 
-    <div class="button-row">
+    <div class="cal-footer">
       <button
-        class="button button-secondary"
+        type="button"
+        class="cal-btn cal-btn-back"
         data-test-id="swing-back-button"
         @click="emit('back')"
       >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          aria-hidden="true"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
         Back
       </button>
-      <button class="button button-primary" data-test-id="swing-next-button" @click="handleNext">
+      <button
+        type="button"
+        class="cal-btn cal-btn-next"
+        data-test-id="swing-next-button"
+        @click="handleNext"
+      >
         Next
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          aria-hidden="true"
+        >
+          <path d="M9 18l6-6-6-6" />
+        </svg>
       </button>
     </div>
   </section>
 </template>
-
-<style scoped>
-.section-title {
-  color: #f3f4f6;
-  font-size: 16px;
-  font-weight: 700;
-  text-align: center;
-}
-
-.option-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.button-row {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.button {
-  border-radius: 8px;
-  padding: 8px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.button:hover {
-  transform: translateY(-1px);
-}
-
-.button-primary {
-  background-color: #818cf8;
-  color: #f3f4f6;
-  border: 1px solid #818cf8;
-}
-
-.button-primary:hover {
-  background-color: #6366f1;
-}
-
-.button-secondary {
-  background-color: #374151;
-  color: #9ca3af;
-  border: 1px solid #4b5563;
-}
-
-.button-secondary:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
-}
-</style>

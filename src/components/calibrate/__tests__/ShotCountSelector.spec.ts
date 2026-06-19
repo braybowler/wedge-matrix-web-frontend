@@ -14,9 +14,11 @@ describe('ShotCountSelector Component', () => {
   it('displays correct text for each option', () => {
     const wrapper = mount(ShotCountSelector)
 
-    expect(wrapper.find('[data-test-id="shot-count-5"]').text()).toBe('5 Shots')
-    expect(wrapper.find('[data-test-id="shot-count-10"]').text()).toBe('10 Shots')
-    expect(wrapper.find('[data-test-id="shot-count-15"]').text()).toBe('15 Shots')
+    for (const count of [5, 10, 15]) {
+      const text = wrapper.find(`[data-test-id="shot-count-${count}"]`).text()
+      expect(text).toContain(String(count))
+      expect(text.toLowerCase()).toContain('shots')
+    }
   })
 
   it('emits select with 5 when 5 Shots is clicked', async () => {

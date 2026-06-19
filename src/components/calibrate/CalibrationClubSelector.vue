@@ -44,78 +44,55 @@ function handleNext() {
 </script>
 
 <template>
-  <section class="component-container">
-    <h2 class="section-title">Which clubs to calibrate?</h2>
+  <section>
+    <div class="cal-card">
+      <h2 class="cal-card-title">Which clubs to calibrate?</h2>
+      <p class="cal-card-desc">Pick the wedges you'll be hitting in this session.</p>
 
-    <section class="option-section">
-      <div
-        :class="allSelected ? 'tile-active' : 'tile'"
-        data-test-id="club-select-all"
-        @click="toggleAll"
-      >
-        All
+      <div class="cal-chip-grid">
+        <button
+          type="button"
+          class="cal-chip"
+          :class="{ 'is-active': allSelected }"
+          data-test-id="club-select-all"
+          @click="toggleAll"
+        >
+          All
+        </button>
+        <button
+          v-for="(club, i) in clubs"
+          :key="club"
+          type="button"
+          class="cal-chip"
+          :class="{ 'is-active': selected.has(i) }"
+          :data-test-id="`club-select-${i}`"
+          @click="toggle(i)"
+        >
+          {{ displayLabels?.[i] ?? club }}
+        </button>
       </div>
-      <div
-        v-for="(club, i) in clubs"
-        :key="club"
-        :class="selected.has(i) ? 'tile-active' : 'tile'"
-        :data-test-id="`club-select-${i}`"
-        @click="toggle(i)"
-      >
-        {{ displayLabels?.[i] ?? club }}
-      </div>
-    </section>
+    </div>
 
-    <div class="button-row">
-      <button class="button button-primary" data-test-id="club-next-button" @click="handleNext">
+    <div class="cal-footer">
+      <button
+        type="button"
+        class="cal-btn cal-btn-next"
+        data-test-id="club-next-button"
+        @click="handleNext"
+      >
         Next
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          aria-hidden="true"
+        >
+          <path d="M9 18l6-6-6-6" />
+        </svg>
       </button>
     </div>
   </section>
 </template>
-
-<style scoped>
-.section-title {
-  color: #f3f4f6;
-  font-size: 16px;
-  font-weight: 700;
-  text-align: center;
-}
-
-.option-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.button-row {
-  display: flex;
-  justify-content: center;
-  margin-top: 12px;
-}
-
-.button {
-  border-radius: 8px;
-  padding: 8px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.button:hover {
-  transform: translateY(-1px);
-}
-
-.button-primary {
-  background-color: #818cf8;
-  color: #f3f4f6;
-  border: 1px solid #818cf8;
-}
-
-.button-primary:hover {
-  background-color: #6366f1;
-}
-</style>
