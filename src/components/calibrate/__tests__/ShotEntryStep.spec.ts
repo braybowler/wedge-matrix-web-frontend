@@ -15,6 +15,9 @@ describe('ShotEntryStep Component', () => {
     shotCount: 3,
     displayOption: 'Carry' as const,
     isFirstStep: true,
+    currentStep: 1,
+    totalSteps: 3,
+    percent: 0,
   }
 
   it('renders the step header with club and swing label', () => {

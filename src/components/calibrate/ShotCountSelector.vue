@@ -10,88 +10,46 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <section class="component-container">
-    <h2 class="section-title">How many shots per club per swing type?</h2>
+  <section>
+    <div class="cal-card">
+      <h2 class="cal-card-title">How many shots per club, per swing?</h2>
+      <p class="cal-card-desc">More shots means a tighter, more reliable average.</p>
 
-    <section class="option-section">
-      <div
-        v-for="count in shotCounts"
-        :key="count"
-        class="tile shot-tile"
-        :data-test-id="`shot-count-${count}`"
-        @click="emit('select', count)"
-      >
-        <div>{{ count }} Shots</div>
+      <div class="cal-shot-opts">
+        <button
+          v-for="count in shotCounts"
+          :key="count"
+          type="button"
+          class="cal-shot-opt"
+          :data-test-id="`shot-count-${count}`"
+          @click="emit('select', count)"
+        >
+          <span class="cal-shot-opt-num">{{ count }}</span>
+          <span class="cal-shot-opt-label">shots</span>
+        </button>
       </div>
-    </section>
+    </div>
 
-    <div class="button-row">
+    <div class="cal-footer">
       <button
-        class="button button-secondary"
+        type="button"
+        class="cal-btn cal-btn-back"
         data-test-id="shot-count-back-button"
         @click="emit('back')"
       >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          aria-hidden="true"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
         Back
       </button>
     </div>
   </section>
 </template>
-
-<style scoped>
-.section-title {
-  color: #f3f4f6;
-  font-size: 16px;
-  font-weight: 700;
-  text-align: center;
-}
-
-.option-section {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin-top: 8px;
-}
-
-.shot-tile {
-  min-width: 90px;
-  text-align: center;
-}
-
-.button-row {
-  display: flex;
-  justify-content: center;
-  margin-top: 12px;
-}
-
-.button {
-  border-radius: 8px;
-  padding: 8px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.button:hover {
-  transform: translateY(-1px);
-}
-
-.button-secondary {
-  background-color: #374151;
-  color: #9ca3af;
-  border: 1px solid #4b5563;
-}
-
-.button-secondary:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
-}
-
-@media (max-width: 480px) {
-  .option-section {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-}
-</style>

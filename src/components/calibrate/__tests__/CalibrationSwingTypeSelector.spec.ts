@@ -23,14 +23,14 @@ describe('CalibrationSwingTypeSelector', () => {
     const wrapper = mountSelector()
 
     for (let i = 0; i < 3; i++) {
-      expect(wrapper.find(`[data-test-id="swing-select-${i}"]`).classes()).toContain('tile-active')
+      expect(wrapper.find(`[data-test-id="swing-select-${i}"]`).classes()).toContain('is-active')
     }
   })
 
   it('"All" tile is active when all selected', () => {
     const wrapper = mountSelector()
 
-    expect(wrapper.find('[data-test-id="swing-select-all"]').classes()).toContain('tile-active')
+    expect(wrapper.find('[data-test-id="swing-select-all"]').classes()).toContain('is-active')
   })
 
   it('toggling a swing type deselects it', async () => {
@@ -38,8 +38,8 @@ describe('CalibrationSwingTypeSelector', () => {
 
     await wrapper.find('[data-test-id="swing-select-1"]').trigger('click')
 
-    expect(wrapper.find('[data-test-id="swing-select-1"]').classes()).toContain('tile')
-    expect(wrapper.find('[data-test-id="swing-select-1"]').classes()).not.toContain('tile-active')
+    expect(wrapper.find('[data-test-id="swing-select-1"]').classes()).not.toContain('is-active')
+    expect(wrapper.find('[data-test-id="swing-select-1"]').classes()).not.toContain('is-active')
   })
 
   it('toggling "All" when all selected keeps at least one', async () => {
@@ -47,9 +47,9 @@ describe('CalibrationSwingTypeSelector', () => {
 
     await wrapper.find('[data-test-id="swing-select-all"]').trigger('click')
 
-    expect(wrapper.find('[data-test-id="swing-select-0"]').classes()).toContain('tile-active')
-    expect(wrapper.find('[data-test-id="swing-select-1"]').classes()).toContain('tile')
-    expect(wrapper.find('[data-test-id="swing-select-2"]').classes()).toContain('tile')
+    expect(wrapper.find('[data-test-id="swing-select-0"]').classes()).toContain('is-active')
+    expect(wrapper.find('[data-test-id="swing-select-1"]').classes()).not.toContain('is-active')
+    expect(wrapper.find('[data-test-id="swing-select-2"]').classes()).not.toContain('is-active')
   })
 
   it('toggling "All" when not all selected selects all', async () => {
@@ -59,7 +59,7 @@ describe('CalibrationSwingTypeSelector', () => {
     await wrapper.find('[data-test-id="swing-select-all"]').trigger('click')
 
     for (let i = 0; i < 3; i++) {
-      expect(wrapper.find(`[data-test-id="swing-select-${i}"]`).classes()).toContain('tile-active')
+      expect(wrapper.find(`[data-test-id="swing-select-${i}"]`).classes()).toContain('is-active')
     }
   })
 
@@ -71,7 +71,7 @@ describe('CalibrationSwingTypeSelector', () => {
     await wrapper.find('[data-test-id="swing-select-1"]').trigger('click')
     await wrapper.find('[data-test-id="swing-select-0"]').trigger('click')
 
-    expect(wrapper.find('[data-test-id="swing-select-0"]').classes()).toContain('tile-active')
+    expect(wrapper.find('[data-test-id="swing-select-0"]').classes()).toContain('is-active')
   })
 
   it('emits sorted indices on Next click', async () => {

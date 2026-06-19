@@ -24,14 +24,14 @@ describe('CalibrationClubSelector', () => {
     const wrapper = mountSelector()
 
     for (let i = 0; i < 3; i++) {
-      expect(wrapper.find(`[data-test-id="club-select-${i}"]`).classes()).toContain('tile-active')
+      expect(wrapper.find(`[data-test-id="club-select-${i}"]`).classes()).toContain('is-active')
     }
   })
 
   it('"All" tile is active when all clubs selected', () => {
     const wrapper = mountSelector()
 
-    expect(wrapper.find('[data-test-id="club-select-all"]').classes()).toContain('tile-active')
+    expect(wrapper.find('[data-test-id="club-select-all"]').classes()).toContain('is-active')
   })
 
   it('toggling a club deselects it', async () => {
@@ -39,8 +39,8 @@ describe('CalibrationClubSelector', () => {
 
     await wrapper.find('[data-test-id="club-select-1"]').trigger('click')
 
-    expect(wrapper.find('[data-test-id="club-select-1"]').classes()).toContain('tile')
-    expect(wrapper.find('[data-test-id="club-select-1"]').classes()).not.toContain('tile-active')
+    expect(wrapper.find('[data-test-id="club-select-1"]').classes()).not.toContain('is-active')
+    expect(wrapper.find('[data-test-id="club-select-1"]').classes()).not.toContain('is-active')
   })
 
   it('toggling "All" when all selected keeps at least one', async () => {
@@ -49,9 +49,9 @@ describe('CalibrationClubSelector', () => {
     await wrapper.find('[data-test-id="club-select-all"]').trigger('click')
 
     // Should have exactly 1 selected (first club)
-    expect(wrapper.find('[data-test-id="club-select-0"]').classes()).toContain('tile-active')
-    expect(wrapper.find('[data-test-id="club-select-1"]').classes()).toContain('tile')
-    expect(wrapper.find('[data-test-id="club-select-2"]').classes()).toContain('tile')
+    expect(wrapper.find('[data-test-id="club-select-0"]').classes()).toContain('is-active')
+    expect(wrapper.find('[data-test-id="club-select-1"]').classes()).not.toContain('is-active')
+    expect(wrapper.find('[data-test-id="club-select-2"]').classes()).not.toContain('is-active')
   })
 
   it('toggling "All" when not all selected selects all', async () => {
@@ -63,7 +63,7 @@ describe('CalibrationClubSelector', () => {
     await wrapper.find('[data-test-id="club-select-all"]').trigger('click')
 
     for (let i = 0; i < 3; i++) {
-      expect(wrapper.find(`[data-test-id="club-select-${i}"]`).classes()).toContain('tile-active')
+      expect(wrapper.find(`[data-test-id="club-select-${i}"]`).classes()).toContain('is-active')
     }
   })
 
@@ -76,7 +76,7 @@ describe('CalibrationClubSelector', () => {
     // Try to deselect LW (last one)
     await wrapper.find('[data-test-id="club-select-0"]').trigger('click')
 
-    expect(wrapper.find('[data-test-id="club-select-0"]').classes()).toContain('tile-active')
+    expect(wrapper.find('[data-test-id="club-select-0"]').classes()).toContain('is-active')
   })
 
   it('emits sorted indices on Next click', async () => {
