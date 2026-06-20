@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { ShotCount } from '@/stores/calibration/calibrationStore.ts'
 
 const shotCounts: ShotCount[] = [5, 10, 15]
@@ -7,6 +8,13 @@ const emit = defineEmits<{
   select: [shotCount: ShotCount]
   back: []
 }>()
+
+const selectedCount = ref<ShotCount | null>(null)
+
+function handleNext() {
+  if (selectedCount.value === null) return
+  emit('select', selectedCount.value)
+}
 </script>
 
 <template>
@@ -21,8 +29,9 @@ const emit = defineEmits<{
           :key="count"
           type="button"
           class="cal-shot-opt"
+          :class="{ 'is-active': selectedCount === count }"
           :data-test-id="`shot-count-${count}`"
-          @click="emit('select', count)"
+          @click="selectedCount = count"
         >
           <span class="cal-shot-opt-num">{{ count }}</span>
           <span class="cal-shot-opt-label">shots</span>
@@ -49,6 +58,26 @@ const emit = defineEmits<{
           <path d="M15 18l-6-6 6-6" />
         </svg>
         Back
+      </button>
+      <button
+        type="button"
+        class="cal-btn cal-btn-next"
+        data-test-id="shot-count-next-button"
+        :disabled="selectedCount === null"
+        @click="handleNext"
+      >
+        Next
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          aria-hidden="true"
+        >
+          <path d="M9 18l6-6-6-6" />
+        </svg>
       </button>
     </div>
   </section>

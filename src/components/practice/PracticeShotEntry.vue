@@ -2,10 +2,14 @@
 import type { PracticeShot } from '@/types/practice'
 import { differenceClass } from '@/utils/differenceClass.ts'
 
-defineProps<{
-  shot: PracticeShot
-  isFirstShot: boolean
-}>()
+withDefaults(
+  defineProps<{
+    shot: PracticeShot
+    isFirstShot: boolean
+    isLastShot?: boolean
+  }>(),
+  { isLastShot: false },
+)
 
 const emit = defineEmits<{
   'update-carry': [rawValue: string]
@@ -18,11 +22,11 @@ const emit = defineEmits<{
 <template>
   <section class="entry-container">
     <h2 class="target-label" data-test-id="practice-target-label">
-      Hit to {{ shot.target_yards }} yards
+      Hit to <span class="target-accent">{{ shot.target_yards }}</span> yards
     </h2>
 
     <div class="input-group">
-      <label class="input-label" for="practice-carry-input">Carry Distance</label>
+      <label class="input-label" for="practice-carry-input">Carry distance</label>
       <input
         id="practice-carry-input"
         class="carry-input"
@@ -36,38 +40,66 @@ const emit = defineEmits<{
         :value="shot.actual_carry ?? ''"
         @input="emit('update-carry', ($event.target as HTMLInputElement).value)"
       />
-    </div>
-
-    <div
-      v-if="shot.difference !== null"
-      class="diff-preview"
-      :class="differenceClass(shot.difference)"
-      data-test-id="practice-diff-preview"
-    >
-      {{ shot.difference }} yard{{ shot.difference !== 1 ? 's' : '' }} off
+      <div class="diff-slot">
+        <span
+          v-if="shot.difference !== null"
+          class="diff-preview"
+          :class="differenceClass(shot.difference)"
+          data-test-id="practice-diff-preview"
+        >
+          {{ shot.difference }} yard{{ shot.difference !== 1 ? 's' : '' }} off
+        </span>
+      </div>
     </div>
 
     <div class="button-row">
       <button
         v-if="!isFirstShot"
-        class="button button-secondary"
+        type="button"
+        class="btn btn-back"
         data-test-id="practice-back-button"
         @click="emit('back')"
       >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
         Back
       </button>
       <button
-        class="button button-primary"
+        type="button"
+        class="btn btn-next"
         data-test-id="practice-next-button"
         @click="emit('next')"
       >
-        Next
+        {{ isLastShot ? 'Finish' : 'Next' }}
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+        >
+          <path d="M9 18l6-6-6-6" />
+        </svg>
       </button>
     </div>
 
     <div class="quit-row">
-      <button class="quit-button" data-test-id="quit-practice-button" @click="emit('quit')">
-        Quit Practice
+      <button
+        type="button"
+        class="quit-button"
+        data-test-id="quit-practice-button"
+        @click="emit('quit')"
+      >
+        Quit practice
       </button>
     </div>
   </section>
@@ -77,54 +109,74 @@ const emit = defineEmits<{
 .entry-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  animation: prcStep 0.28s ease both;
 }
 
 .target-label {
-  color: #f3f4f6;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
   text-align: center;
+  color: #f4f6fb;
+  margin: 0 0 26px;
+}
+
+.target-accent {
+  color: #8b8cf6;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
   align-items: center;
+  width: 100%;
+  max-width: 280px;
 }
 
 .input-label {
-  color: #9ca3af;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #828aa0;
+  margin-bottom: 10px;
 }
 
 .carry-input {
-  background-color: #374151;
-  border: 1px solid #4b5563;
-  border-radius: 8px;
-  color: #f3f4f6;
-  padding: 8px 12px;
-  font-size: 16px;
-  width: 140px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 13px;
+  padding: 16px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: #f4f6fb;
   text-align: center;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.14s;
 }
 
 .carry-input:focus {
-  border-color: #818cf8;
+  border-color: #8b8cf6;
+  background: rgba(139, 140, 246, 0.06);
 }
 
 .carry-input::placeholder {
-  color: #6b7280;
+  color: #4f566b;
+}
+
+.diff-slot {
+  height: 26px;
+  text-align: center;
+  margin-top: 14px;
 }
 
 .diff-preview {
-  text-align: center;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .diff-good {
@@ -136,67 +188,69 @@ const emit = defineEmits<{
 }
 
 .diff-poor {
-  color: #f87171;
+  color: #ef6c6c;
 }
 
 .button-row {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
-.button {
-  border-radius: 8px;
-  padding: 8px 24px;
-  font-size: 14px;
-  font-weight: 500;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.14s;
 }
 
-.button:hover {
+.btn-back {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f4f6fb;
+  font-weight: 600;
+  padding: 13px 24px;
+}
+
+.btn-back:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.btn-next {
+  background: #8b8cf6;
+  border: none;
+  color: #0a0e1a;
+  padding: 13px 32px;
+}
+
+.btn-next:hover {
   transform: translateY(-1px);
-}
-
-.button-primary {
-  background-color: #818cf8;
-  color: #f3f4f6;
-  border: 1px solid #818cf8;
-}
-
-.button-primary:hover {
-  background-color: #6366f1;
-}
-
-.button-secondary {
-  background-color: #374151;
-  color: #9ca3af;
-  border: 1px solid #4b5563;
-}
-
-.button-secondary:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
 }
 
 .quit-row {
   display: flex;
   justify-content: center;
-  margin-top: 4px;
+  margin-top: 20px;
 }
 
 .quit-button {
   background: none;
   border: none;
-  color: #6b7280;
-  font-size: 13px;
+  color: #6c7488;
+  font-size: 13.5px;
+  font-weight: 500;
   cursor: pointer;
-  padding: 4px 8px;
-  transition: color 0.2s ease;
+  transition: color 0.14s;
 }
 
 .quit-button:hover {
-  color: #dc2626;
+  color: #aab2c5;
 }
 </style>

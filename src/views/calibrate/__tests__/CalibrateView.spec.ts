@@ -57,6 +57,13 @@ async function navigateThroughSetup(wrapper: ReturnType<typeof mount>) {
   await flushPromises()
 }
 
+// Step 3: Shot count — select a count, then click Next to start calibration
+async function selectShotCount(wrapper: ReturnType<typeof mount>) {
+  await wrapper.find('[data-test-id="shot-count-5"]').trigger('click')
+  await wrapper.find('[data-test-id="shot-count-next-button"]').trigger('click')
+  await flushPromises()
+}
+
 describe('CalibrateView', () => {
   beforeEach(async () => {
     vi.restoreAllMocks()
@@ -100,8 +107,7 @@ describe('CalibrateView', () => {
     const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
 
     await navigateThroughSetup(wrapper)
-    await wrapper.find('[data-test-id="shot-count-5"]').trigger('click')
-    await flushPromises()
+    await selectShotCount(wrapper)
 
     expect(wrapper.find('[data-test-id="progress-label"]').exists()).toBe(true)
     expect(wrapper.find('[data-test-id="step-header"]').exists()).toBe(true)
@@ -111,8 +117,7 @@ describe('CalibrateView', () => {
     const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
 
     await navigateThroughSetup(wrapper)
-    await wrapper.find('[data-test-id="shot-count-5"]').trigger('click')
-    await flushPromises()
+    await selectShotCount(wrapper)
 
     expect(wrapper.find('[data-test-id="progress-label"]').text()).toBe('Step 1 of 4')
     expect(wrapper.find('[data-test-id="step-header"]').text()).toBe('LW @ 50%')
@@ -122,8 +127,7 @@ describe('CalibrateView', () => {
     const wrapper = mount(CalibrateView, { global: { plugins: [router] } })
 
     await navigateThroughSetup(wrapper)
-    await wrapper.find('[data-test-id="shot-count-5"]').trigger('click')
-    await flushPromises()
+    await selectShotCount(wrapper)
 
     // Advance through all 4 steps
     for (let i = 0; i < 4; i++) {

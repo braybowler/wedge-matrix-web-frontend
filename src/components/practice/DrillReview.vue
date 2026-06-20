@@ -18,9 +18,9 @@ const emit = defineEmits<{
   <section class="review-container" data-test-id="drill-review">
     <h2 class="review-title">Drill Complete</h2>
 
-    <div class="stat-card" data-test-id="drill-avg-diff">
-      <span class="stat-label">Overall Average Dispersion</span>
-      <span class="stat-value">{{ averageDifference }} yards</span>
+    <div class="stat-card stat-card-accent" data-test-id="drill-avg-diff">
+      <span class="stat-label">Overall average dispersion</span>
+      <span class="stat-value stat-value-accent">{{ averageDifference }} yards</span>
     </div>
 
     <div class="combos-list">
@@ -31,7 +31,7 @@ const emit = defineEmits<{
         :data-test-id="`drill-combo-result-${i}`"
       >
         <div class="combo-header">
-          <span class="combo-label">{{ step.combo.clubLabel }} @ {{ step.combo.swingLabel }}</span>
+          <span class="combo-label">{{ step.combo.clubLabel }} · {{ step.combo.swingLabel }}</span>
           <span v-if="step.combo.targetYards !== null" class="combo-target">
             Target: {{ step.combo.targetYards }} yds
           </span>
@@ -58,14 +58,20 @@ const emit = defineEmits<{
 
     <div class="button-row">
       <button
-        class="button button-secondary"
+        type="button"
+        class="btn btn-secondary"
         data-test-id="discard-drill-button"
         @click="emit('discard')"
       >
         Discard
       </button>
-      <button class="button button-primary" data-test-id="save-drill-button" @click="emit('save')">
-        Save
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-test-id="save-drill-button"
+        @click="emit('save')"
+      >
+        Save session
       </button>
     </div>
   </section>
@@ -75,51 +81,69 @@ const emit = defineEmits<{
 .review-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  animation: prcStep 0.28s ease both;
 }
 
 .review-title {
-  color: #f3f4f6;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   text-align: center;
+  color: #f4f6fb;
+  margin: 0;
 }
 
 .stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 12px;
-  background-color: #374151;
-  border-radius: 8px;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-card-accent {
+  background: rgba(139, 140, 246, 0.1);
+  border-color: rgba(139, 140, 246, 0.3);
 }
 
 .stat-label {
-  color: #9ca3af;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #aab2c5;
 }
 
 .stat-value {
-  color: #818cf8;
-  font-size: 20px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 28px;
   font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f4f6fb;
+}
+
+.stat-value-accent {
+  color: #8b8cf6;
 }
 
 .combos-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .combo-card {
-  background-color: #374151;
-  border-radius: 8px;
-  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .combo-header {
@@ -129,14 +153,15 @@ const emit = defineEmits<{
 }
 
 .combo-label {
-  color: #f3f4f6;
-  font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 15px;
+  color: #f4f6fb;
 }
 
 .combo-target {
-  color: #6b7280;
-  font-size: 13px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: #828aa0;
 }
 
 .combo-shots {
@@ -146,17 +171,19 @@ const emit = defineEmits<{
 }
 
 .shot-badge {
-  background-color: #1f2937;
-  color: #d1d5db;
-  border-radius: 6px;
-  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #cdd3e0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 13px;
   font-weight: 500;
 }
 
 .combo-avg {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .diff-good {
@@ -168,47 +195,45 @@ const emit = defineEmits<{
 }
 
 .diff-poor {
-  color: #f87171;
+  color: #ef6c6c;
 }
 
 .button-row {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin-top: 8px;
 }
 
-.button {
-  border-radius: 8px;
-  padding: 8px 24px;
-  font-size: 14px;
-  font-weight: 500;
+.btn {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.14s;
 }
 
-.button:hover {
+.btn-primary {
+  background: #8b8cf6;
+  border: none;
+  color: #0a0e1a;
+  padding: 13px 32px;
+}
+
+.btn-primary:hover {
   transform: translateY(-1px);
 }
 
-.button-primary {
-  background-color: #818cf8;
-  color: #f3f4f6;
-  border: 1px solid #818cf8;
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f4f6fb;
+  font-weight: 600;
+  padding: 13px 26px;
 }
 
-.button-primary:hover {
-  background-color: #6366f1;
-}
-
-.button-secondary {
-  background-color: #374151;
-  color: #9ca3af;
-  border: 1px solid #4b5563;
-}
-
-.button-secondary:hover {
-  background-color: #4b5563;
-  border-color: #818cf8;
+.btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
 }
 </style>

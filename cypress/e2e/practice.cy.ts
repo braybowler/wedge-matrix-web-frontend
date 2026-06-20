@@ -81,7 +81,9 @@ const loginAndSetup = () => {
 const startGauntletSession = () => {
   cy.get('[data-test-id="new-practice-session-button"]').click()
   cy.get('[data-test-id="mode-gauntlet"]').click()
+  cy.get('[data-test-id="wizard-next-button"]').click()
   cy.get('[data-test-id="practice-shot-count-5"]').click()
+  cy.get('[data-test-id="wizard-next-button"]').click()
 }
 
 describe('Practice Flow', () => {
@@ -114,6 +116,7 @@ describe('Practice Flow', () => {
 
     cy.get('[data-test-id="new-practice-session-button"]').click()
     cy.get('[data-test-id="mode-gauntlet"]').click()
+    cy.get('[data-test-id="wizard-next-button"]').click()
     cy.get('[data-test-id="practice-shot-count-5"]').should('be.visible')
     cy.get('[data-test-id="practice-shot-count-10"]').should('be.visible')
     cy.get('[data-test-id="practice-shot-count-15"]').should('be.visible')
@@ -287,6 +290,7 @@ describe('Practice Flow', () => {
 
     cy.get('[data-test-id="new-practice-session-button"]').click()
     cy.get('[data-test-id="mode-drill"]').click()
+    cy.get('[data-test-id="wizard-next-button"]').click()
 
     cy.get('[data-test-id="combo-select-all"]').should('be.visible')
     cy.get('[data-test-id="combo-select-0"]').should('be.visible')
@@ -315,11 +319,12 @@ describe('Practice Flow', () => {
 
     cy.get('[data-test-id="new-practice-session-button"]').click()
     cy.get('[data-test-id="mode-drill"]').click()
+    cy.get('[data-test-id="wizard-next-button"]').click()
 
     // Deselect all, then select only the first combo
     cy.get('[data-test-id="combo-select-all"]').click()
     cy.get('[data-test-id="combo-select-0"]').click()
-    cy.get('[data-test-id="combo-next-button"]').click()
+    cy.get('[data-test-id="wizard-next-button"]').click()
 
     // Enter 5 carries for the single combo
     cy.get('[data-test-id="drill-step-header"]').should('be.visible')

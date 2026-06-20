@@ -25,27 +25,29 @@ defineProps<{
 .progress-container {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .progress-label {
-  color: #9ca3af;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #828aa0;
   text-align: center;
 }
 
 .progress-track {
-  background-color: #374151;
-  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
   height: 6px;
   overflow: hidden;
 }
 
 .progress-fill {
-  background-color: #818cf8;
+  background-color: #8b8cf6;
   height: 100%;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: width 0.3s ease;
 }
 </style>
