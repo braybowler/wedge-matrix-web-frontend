@@ -25,20 +25,41 @@ function modeLabel(mode: string): string {
   if (mode === 'drill') return 'Drill'
   return 'Gauntlet'
 }
+
+function modeBadge(mode: string): string {
+  if (mode === 'drill') return 'DRL'
+  return 'GNT'
+}
 </script>
 
 <template>
   <div class="log-item" data-test-id="practice-log-item">
     <div class="log-summary" @click="expanded = !expanded">
       <div class="log-info">
-        <span class="log-date">{{ formatDate(session.created_at) }}</span>
         <span class="mode-badge" :class="'mode-' + session.mode" data-test-id="log-mode-badge">
-          {{ modeLabel(session.mode) }}
+          {{ modeBadge(session.mode) }}
         </span>
-        <span class="log-detail">{{ session.shot_count }} shots</span>
-        <span class="log-detail">Avg. Dispersion: {{ session.average_difference }} yds</span>
+        <div class="log-meta">
+          <span class="log-mode-name">{{ modeLabel(session.mode) }}</span>
+          <span class="log-date">{{ formatDate(session.created_at) }}</span>
+        </div>
       </div>
-      <span class="expand-icon">{{ expanded ? '▾' : '▸' }}</span>
+      <div class="log-stats">
+        <span class="log-detail">{{ session.shot_count }} shots</span>
+        <span class="log-avg">{{ session.average_difference }} yd avg</span>
+        <span class="expand-icon" :class="{ open: expanded }">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </span>
+      </div>
     </div>
 
     <div v-if="expanded" class="log-details">
@@ -49,18 +70,18 @@ function modeLabel(mode: string): string {
             <th v-if="session.mode === 'drill'" class="cell header-cell">Combo</th>
             <th class="cell header-cell">Target</th>
             <th class="cell header-cell">Actual</th>
-            <th class="cell header-cell">Dispersion</th>
+            <th class="cell header-cell">Diff</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="shot in session.shots" :key="shot.shot_number">
             <td class="cell shot-number-cell">{{ shot.shot_number }}</td>
             <td v-if="session.mode === 'drill'" class="cell combo-cell">
-              {{ shot.club_label ?? '' }}{{ shot.swing_label ? ' @ ' + shot.swing_label : '' }}
+              {{ shot.club_label ?? '' }}{{ shot.swing_label ? ' · ' + shot.swing_label : '' }}
             </td>
             <td class="cell">{{ shot.target_yards }}</td>
             <td class="cell">{{ shot.actual_carry ?? '-' }}</td>
-            <td class="cell" :class="differenceClass(shot.difference)">
+            <td class="cell diff-cell" :class="differenceClass(shot.difference)">
               {{ shot.difference !== null ? shot.difference : '-' }}
             </td>
           </tr>
@@ -69,11 +90,12 @@ function modeLabel(mode: string): string {
 
       <div class="delete-row">
         <button
+          type="button"
           class="delete-button"
           data-test-id="delete-practice-session-button"
           @click.stop="emit('delete')"
         >
-          Delete Session
+          Delete session
         </button>
       </div>
     </div>
@@ -82,8 +104,9 @@ function modeLabel(mode: string): string {
 
 <style scoped>
 .log-item {
-  background-color: #374151;
-  border-radius: 8px;
+  background: linear-gradient(180deg, #10162a, #0c1120);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
   overflow: hidden;
 }
 
@@ -91,59 +114,96 @@ function modeLabel(mode: string): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  gap: 12px;
+  padding: 14px 18px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.14s;
 }
 
 .log-summary:hover {
-  background-color: #4b5563;
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .log-info {
   display: flex;
-  gap: 16px;
   align-items: center;
-  flex-wrap: wrap;
-}
-
-.log-date {
-  color: #f3f4f6;
-  font-size: 14px;
-  font-weight: 600;
+  gap: 13px;
 }
 
 .mode-badge {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 2px 8px;
-  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 .mode-gauntlet {
-  background-color: rgba(129, 140, 248, 0.15);
-  color: #818cf8;
+  background: rgba(139, 140, 246, 0.16);
+  color: #8b8cf6;
 }
 
 .mode-drill {
-  background-color: rgba(52, 211, 153, 0.15);
-  color: #34d399;
+  background: rgba(255, 255, 255, 0.06);
+  color: #aab2c5;
+}
+
+.log-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.log-mode-name {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: #f4f6fb;
+}
+
+.log-date {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: #828aa0;
+}
+
+.log-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .log-detail {
-  color: #9ca3af;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 13px;
+  color: #aab2c5;
+}
+
+.log-avg {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8b8cf6;
 }
 
 .expand-icon {
-  color: #6b7280;
-  font-size: 14px;
+  color: #5b6276;
+  display: flex;
+  transition: transform 0.16s;
+}
+
+.expand-icon.open {
+  transform: rotate(90deg);
 }
 
 .log-details {
-  padding: 0 16px 12px;
+  padding: 0 18px 14px;
 }
 
 .detail-table {
@@ -152,25 +212,33 @@ function modeLabel(mode: string): string {
 }
 
 .cell {
-  padding: 6px 8px;
+  padding: 8px;
   text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 13px;
-  color: #d1d5db;
+  color: #cdd3e0;
 }
 
 .header-cell {
-  color: #9ca3af;
-  font-weight: 600;
-  border-bottom: 1px solid #4b5563;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #828aa0;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .shot-number-cell {
-  color: #6b7280;
+  color: #5b6276;
 }
 
 .combo-cell {
   font-size: 12px;
   white-space: nowrap;
+}
+
+.diff-cell {
+  font-weight: 700;
 }
 
 .diff-good {
@@ -182,26 +250,26 @@ function modeLabel(mode: string): string {
 }
 
 .diff-poor {
-  color: #f87171;
+  color: #ef6c6c;
 }
 
 .delete-row {
   display: flex;
   justify-content: center;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .delete-button {
   background: none;
   border: none;
-  color: #6b7280;
+  color: #6c7488;
   font-size: 13px;
   cursor: pointer;
   padding: 4px 8px;
-  transition: color 0.2s ease;
+  transition: color 0.14s;
 }
 
 .delete-button:hover {
-  color: #dc2626;
+  color: #ef6c6c;
 }
 </style>

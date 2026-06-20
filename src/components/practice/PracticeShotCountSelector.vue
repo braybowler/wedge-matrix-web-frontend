@@ -3,54 +3,93 @@ import type { PracticeShotCount } from '@/types/practice'
 
 const shotCounts: PracticeShotCount[] = [5, 10, 15]
 
+defineProps<{
+  selected: PracticeShotCount | null
+}>()
+
 const emit = defineEmits<{
   select: [shotCount: PracticeShotCount]
 }>()
 </script>
 
 <template>
-  <section class="component-container">
-    <h2 class="section-title">How many shots?</h2>
+  <div class="step-body">
+    <h2 class="step-title">How many shots?</h2>
+    <p class="step-desc">Set the length of your session.</p>
 
-    <section class="option-section">
-      <div
+    <div class="shot-opts">
+      <button
         v-for="count in shotCounts"
         :key="count"
-        class="tile shot-tile"
+        type="button"
+        class="shot-opt"
+        :class="{ 'is-active': selected === count }"
         :data-test-id="`practice-shot-count-${count}`"
         @click="emit('select', count)"
       >
-        <div>{{ count }} Shots</div>
-      </div>
-    </section>
-  </section>
+        {{ count }} Shots
+      </button>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.section-title {
-  color: #f3f4f6;
-  font-size: 16px;
-  font-weight: 700;
+.step-body {
+  animation: prcStep 0.28s ease both;
+}
+
+.step-title {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  text-align: center;
+  color: #f4f6fb;
+}
+
+.step-desc {
+  font-size: 15px;
+  color: #aab2c5;
+  line-height: 1.55;
+  margin: 0 0 28px;
   text-align: center;
 }
 
-.option-section {
+.shot-opts {
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
 }
 
-.shot-tile {
-  min-width: 90px;
-  text-align: center;
+.shot-opt {
+  min-width: 128px;
+  padding: 22px 24px;
+  border-radius: 15px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 18px;
+  color: #aab2c5;
+  transition: all 0.14s;
+}
+
+.shot-opt:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.shot-opt.is-active {
+  background: rgba(139, 140, 246, 0.1);
+  border-color: #8b8cf6;
+  color: #8b8cf6;
 }
 
 @media (max-width: 480px) {
-  .option-section {
+  .shot-opts {
     flex-direction: column;
     align-items: center;
-    gap: 8px;
   }
 }
 </style>

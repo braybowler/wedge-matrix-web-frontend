@@ -64,6 +64,12 @@ const navigateSetupSteps = () => {
   cy.get('[data-test-id="swing-next-button"]').click()
 }
 
+// Shot count: select a count, then click Next to continue the wizard
+const selectShotCount = () => {
+  cy.get('[data-test-id="shot-count-5"]').click()
+  cy.get('[data-test-id="shot-count-next-button"]').click()
+}
+
 describe('Calibrate Flow', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -100,7 +106,7 @@ describe('Calibrate Flow', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
     navigateSetupSteps()
-    cy.get('[data-test-id="shot-count-5"]').click()
+    selectShotCount()
     cy.get('[data-test-id="progress-label"]').should('contain.text', 'Step 1 of 4')
     cy.get('[data-test-id="step-header"]').should('contain.text', 'LW @ 50%')
   })
@@ -109,7 +115,7 @@ describe('Calibrate Flow', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
     navigateSetupSteps()
-    cy.get('[data-test-id="shot-count-5"]').click()
+    selectShotCount()
 
     // Step 1: LW @ 50%
     for (let i = 0; i < 5; i++) {
@@ -146,7 +152,7 @@ describe('Calibrate Flow', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
     navigateSetupSteps()
-    cy.get('[data-test-id="shot-count-5"]').click()
+    selectShotCount()
 
     // Advance through all 4 steps
     for (let step = 0; step < 4; step++) {
@@ -165,7 +171,7 @@ describe('Calibrate Flow', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
     navigateSetupSteps()
-    cy.get('[data-test-id="shot-count-5"]').click()
+    selectShotCount()
 
     // Step 1: back button should not exist
     cy.get('[data-test-id="step-back-button"]').should('not.exist')
@@ -181,7 +187,7 @@ describe('Calibrate Flow', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
     navigateSetupSteps()
-    cy.get('[data-test-id="shot-count-5"]').click()
+    selectShotCount()
 
     cy.get('[data-test-id="step-next-button"]').click()
     cy.get('[data-test-id="progress-label"]').should('contain.text', 'Step 2 of 4')
@@ -194,7 +200,7 @@ describe('Calibrate Flow', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
     navigateSetupSteps()
-    cy.get('[data-test-id="shot-count-5"]').click()
+    selectShotCount()
 
     // Advance through all steps
     for (let step = 0; step < 4; step++) {
@@ -209,7 +215,7 @@ describe('Calibrate Flow', () => {
     cy.visit('/calibrate')
     cy.wait('@userRequest')
     navigateSetupSteps()
-    cy.get('[data-test-id="shot-count-5"]').click()
+    selectShotCount()
 
     // Advance to step 2
     cy.get('[data-test-id="step-next-button"]').click()

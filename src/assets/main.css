@@ -5,6 +5,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Shared step-enter animation for the practice wizard */
+@keyframes prcStep {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Shared selector tile styles */
 .tile {
   background-color: #374151;
@@ -184,6 +196,11 @@ body {
   border-color: rgba(255, 255, 255, 0.28);
 }
 
+.cal-shot-opt.is-active {
+  background: rgba(139, 140, 246, 0.1);
+  border-color: #8b8cf6;
+}
+
 .cal-shot-opt-num {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-weight: 700;
@@ -191,9 +208,17 @@ body {
   color: #aab2c5;
 }
 
+.cal-shot-opt.is-active .cal-shot-opt-num {
+  color: #8b8cf6;
+}
+
 .cal-shot-opt-label {
   font-size: 13px;
   color: #6c7488;
+}
+
+.cal-shot-opt.is-active .cal-shot-opt-label {
+  color: #cdd3e0;
 }
 
 /* Shot entry */
@@ -352,4 +377,13 @@ body {
 
 .cal-btn-next:hover {
   transform: translateY(-1px);
+}
+
+.cal-btn-next:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.cal-btn-next:disabled:hover {
+  transform: none;
 }
